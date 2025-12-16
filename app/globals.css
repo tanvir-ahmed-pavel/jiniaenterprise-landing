@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Green Theme - Jinia Enterprise Brand Colors */
+  --primary: 142 76% 36%; /* Forest Green #2E8B57 */
+  --primary-foreground: 0 0% 100%;
+
+  /* Accent Green - Lighter */
+  --secondary: 142 69% 48%; /* Lime Green #3CB371 */
+  --secondary-foreground: 0 0% 100%;
+
+  /* Backgrounds */
+  --background: 0 0% 100%;
+  --foreground: 142 50% 10%;
+
+  /* Muted/Subtle */
+  --muted: 140 20% 96%;
+  --muted-foreground: 142 20% 40%;
+
+  /* Cards/Borders */
+  --card: 0 0% 100%;
+  --card-foreground: 142 50% 10%;
+  --border: 140 20% 88%;
+  --input: 140 20% 88%;
+
+  /* Ring for focus states */
+  --ring: 142 76% 36%;
+  
+  /* Radius */
+  --radius: 0.5rem;
+
+  /* Accent colors for categories */
+  --accent-economy: 142 70% 45%;
+  --accent-luxury: 45 90% 50%;
+  --accent-bus: 200 70% 50%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container {
+    @apply mx-auto px-4 md:px-6 lg:px-8 max-w-7xl;
+  }
+  
+  /* Green gradient backgrounds */
+  .bg-gradient-green {
+    @apply bg-linear-to-br from-[hsl(142,76%,36%)] to-[hsl(142,69%,30%)];
+  }
 }
