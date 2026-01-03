@@ -5,42 +5,43 @@
   --font-heading: var(--font-outfit);
 }
 
-:root {
-  /* Green Theme - Jinia Enterprise Brand Colors */
-  --primary: 142 76% 36%; /* Forest Green #2E8B57 */
-  --primary-foreground: 0 0% 100%;
-
-  /* Accent Green - Lighter */
-  --secondary: 142 69% 48%; /* Lime Green #3CB371 */
-  --secondary-foreground: 0 0% 100%;
-
-  /* Backgrounds */
-  --background: 0 0% 100%;
-  --foreground: 142 50% 10%;
-
-  /* Muted/Subtle */
-  --muted: 140 20% 96%;
-  --muted-foreground: 142 20% 40%;
-
-  /* Cards/Borders */
-  --card: 0 0% 100%;
-  --card-foreground: 142 50% 10%;
-  --border: 140 20% 88%;
-  --input: 140 20% 88%;
-
-  /* Ring for focus states */
-  --ring: 142 76% 36%;
-  
-  /* Radius */
-  --radius: 0.5rem;
-
-  /* Accent colors for categories */
-  --accent-economy: 142 70% 45%;
-  --accent-luxury: 45 90% 50%;
-  --accent-bus: 200 70% 50%;
-}
-
 @layer base {
+  :root {
+    /* Premium Green Theme - Jinia Enterprise */
+    /* Deep Emerald / British Racing Green */
+    --primary: 155 45% 25%; /* #235D3A */
+    --primary-foreground: 0 0% 100%;
+  
+    /* Premium Gold/Bronze Accent */
+    --secondary: 35 70% 50%; /* #D9A036 */
+    --secondary-foreground: 0 0% 100%;
+  
+    /* Backgrounds - Slight Warmth for Premium Feel */
+    --background: 40 20% 99%; /* #FDFBF7 */
+    --foreground: 155 45% 15%; /* Darker green-black for text */
+  
+    /* Muted/Subtle */
+    --muted: 155 20% 96%;
+    --muted-foreground: 155 20% 45%;
+  
+    /* Cards/Borders */
+    --card: 0 0% 100%;
+    --card-foreground: 155 45% 15%;
+    --border: 155 20% 90%;
+    --input: 155 20% 90%;
+  
+    /* Ring for focus states */
+    --ring: 35 70% 50%; /* Gold ring */
+    
+    /* Radius */
+    --radius: 0.5rem;
+  
+    /* Accent colors for categories */
+    --accent-economy: 155 40% 40%;
+    --accent-luxury: 35 80% 45%;
+    --accent-bus: 210 60% 40%;
+  }
+
   body {
     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-sans antialiased;
   }
@@ -58,4 +59,66 @@
   .bg-gradient-green {
     @apply bg-linear-to-br from-[hsl(142,76%,36%)] to-[hsl(142,69%,30%)];
   }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
+
+/* Hero Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.6s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+

@@ -514,3 +514,85 @@ export const groupTransportOptions = [
   "Professional drivers",
   "Special corporate rates",
 ];
+
+// Sample Blog Posts
+export const sampleBlogPosts = [
+  {
+    id: "1",
+    title: "Top 5 Benefits of Monthly Car Rental for Corporate Clients",
+    slug: "benefits-monthly-car-rental-corporate",
+    excerpt:
+      "Discover why more businesses are choosing monthly car rental services over traditional vehicle ownership for their corporate transportation needs.",
+    content: `Monthly car rental has become increasingly popular among corporate clients in Bangladesh. Here's why...
+
+## Cost Efficiency
+Monthly rentals eliminate the need for large capital investments in vehicle purchase, maintenance costs, and depreciation concerns.
+
+## Flexibility
+Easily scale your fleet up or down based on business needs without long-term commitments.
+
+## Professional Service
+Get access to professional chauffeurs and 24/7 support included in your rental package.
+
+## Hassle-Free Maintenance
+All maintenance, insurance, and documentation are handled by the rental company.
+
+## Premium Fleet
+Access to the latest vehicle models without the burden of ownership.`,
+    cover_image: "/images/blog/corporate-rental.jpg",
+    author: "Jinia Enterprise",
+    is_published: true,
+    created_at: "2026-01-02T10:00:00Z",
+    updated_at: "2026-01-02T10:00:00Z",
+  },
+  {
+    id: "2",
+    title: "Complete Guide to Airport Transfers in Dhaka",
+    slug: "airport-transfer-guide-dhaka",
+    excerpt:
+      "Everything you need to know about booking reliable airport transfers from Hazrat Shahjalal International Airport.",
+    content: `Planning your arrival or departure from Dhaka? Here's your complete guide to hassle-free airport transfers...
+
+## Why Book in Advance?
+Pre-booked airport transfers ensure a stress-free arrival with a professional driver waiting for you.
+
+## Our Fleet Options
+From economy sedans to luxury vehicles, we have the perfect vehicle for your needs.
+
+## 24/7 Availability
+Our airport transfer service operates round the clock to match your flight schedule.
+
+## Meet & Greet Service
+Our drivers will meet you at the arrival hall with a name board for easy identification.`,
+    cover_image: "/images/blog/airport-transfer.jpg",
+    author: "Jinia Enterprise",
+    is_published: true,
+    created_at: "2025-12-28T14:30:00Z",
+    updated_at: "2025-12-28T14:30:00Z",
+  },
+  {
+    id: "3",
+    title: "Luxury Vehicle Rental: When to Choose Premium Transportation",
+    slug: "luxury-vehicle-rental-guide",
+    excerpt:
+      "Learn when luxury vehicle rental makes sense for your business or personal needs, from VIP events to executive transport.",
+    content: `Luxury vehicle rental isn't just about making a statement—it's about providing the best experience...
+
+## Corporate Executive Transport
+First impressions matter. Impress your clients and partners with premium vehicles.
+
+## Wedding & Special Events
+Make your special day memorable with our luxury fleet including Toyota Alphard and Land Cruiser Prado.
+
+## Embassy & Diplomatic Services
+We specialize in providing secure, comfortable transport for diplomatic missions.
+
+## Long-Distance Comfort
+For outstation trips, our luxury SUVs offer unmatched comfort and reliability.`,
+    cover_image: "/images/blog/luxury-rental.jpg",
+    author: "Jinia Enterprise",
+    is_published: true,
+    created_at: "2025-12-20T09:15:00Z",
+    updated_at: "2025-12-20T09:15:00Z",
+  },
+];

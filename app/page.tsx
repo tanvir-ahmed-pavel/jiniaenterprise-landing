@@ -14,6 +14,7 @@ import {
   whyChooseUs,
   corporateClients,
   sampleVehicles,
+  sampleBlogPosts,
 } from "@/lib/config";
 import {
   CheckCircle,
@@ -45,30 +46,70 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section - Green Theme */}
-      <section className="relative py-20 px-6 md:py-28 lg:py-36 bg-gradient-to-br from-green-50 via-white to-green-50 overflow-hidden">
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              {siteConfig.experience}+ Years of Excellence
+      {/* Hero Section - Premium Design with Background Image */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/hero-bg.png')" }}
+        />
+
+        {/* Dark Overlay with Gradient */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/50 to-black/80" />
+
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-pulse" />
+          <div
+            className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="container relative z-10 py-20">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            {/* Badge */}
+            <div className="opacity-0 animate-fade-in-up">
+              <span className="inline-flex items-center gap-2 glass px-5 py-2.5 rounded-full text-sm font-medium text-white">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                {siteConfig.experience}+ Years of Excellence
+              </span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight">
-              <span className="text-green-600">THE BEST</span>
+
+            {/* Main Heading */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold tracking-tight opacity-0 animate-fade-in-up animation-delay-100">
+              <span className="bg-linear-to-r from-green-400 via-emerald-300 to-green-400 bg-clip-text text-transparent">
+                THE BEST
+              </span>
               <br />
-              <span className="text-gray-800">Car Rental Service</span>
+              <span className="text-white">Car Rental Service</span>
               <br />
-              <span className="text-green-600">In Your City</span>
+              <span className="bg-linear-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
+                In Your City
+              </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto opacity-0 animate-fade-in-up animation-delay-200">
               {siteConfig.tagline}. Experience the difference with professional
-              chauffeurs and a premium fleet.
+              chauffeurs and a premium fleet of luxury vehicles.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300">
+              <Link href="/booking">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto gap-2 bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-600/30 transition-all hover:shadow-green-500/40 hover:scale-105"
+                >
+                  <Calendar className="h-5 w-5" /> Book Now
+                </Button>
+              </Link>
               <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full sm:w-auto gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 shadow-lg transition-all hover:scale-105"
                 >
                   <Phone className="h-5 w-5" /> Call Now
                 </Button>
@@ -80,72 +121,113 @@ export default function Home() {
               >
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 bg-green-500 hover:bg-green-600 text-white"
+                  className="w-full sm:w-auto gap-2 bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/30 transition-all hover:shadow-emerald-400/40 hover:scale-105"
                 >
                   <MessageSquare className="h-5 w-5" /> WhatsApp
                 </Button>
               </a>
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto gap-2 border-green-600 text-green-600 hover:bg-green-50"
-                >
-                  Request a Quote
-                </Button>
-              </Link>
+            </div>
+
+            {/* Quick Booking Widget */}
+            <div className="opacity-0 animate-fade-in-up animation-delay-350 mt-8">
+              <div className="glass-dark rounded-2xl p-6 max-w-3xl mx-auto">
+                <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                  <div className="space-y-2">
+                    <label className="text-xs text-white/70 font-medium">
+                      Rental Type
+                    </label>
+                    <select className="w-full h-11 px-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                      <option value="daily" className="text-gray-900">
+                        Daily Rental
+                      </option>
+                      <option value="weekly" className="text-gray-900">
+                        Weekly Rental
+                      </option>
+                      <option value="monthly" className="text-gray-900">
+                        Monthly Rental
+                      </option>
+                      <option value="airport" className="text-gray-900">
+                        Airport Transfer
+                      </option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs text-white/70 font-medium">
+                      Pickup Date
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full h-11 px-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      min={new Date().toISOString().split("T")[0]}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs text-white/70 font-medium">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Pickup location"
+                      className="w-full h-11 px-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <Link href="/booking" className="w-full">
+                    <Button
+                      type="button"
+                      size="lg"
+                      className="w-full h-11 bg-green-600 hover:bg-green-500 text-white font-semibold"
+                    >
+                      Get Quote
+                    </Button>
+                  </Link>
+                </form>
+              </div>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="pt-8 opacity-0 animate-fade-in-up animation-delay-400">
+              <div className="glass-dark rounded-2xl px-8 py-6 inline-flex flex-wrap justify-center gap-8 md:gap-12">
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    {siteConfig.experience}+
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-400">
+                    Years Experience
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    50+
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-400">
+                    Premium Vehicles
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    24/7
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-400">
+                    Support Available
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    100%
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-400">
+                    Satisfaction
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {/* Background decoration */}
-        <div className="absolute inset-0 -z-10 opacity-30">
-          <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-green-200 to-transparent rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-green-200 to-transparent rounded-full blur-3xl" />
-        </div>
-      </section>
 
-      {/* Trust Indicators - Green */}
-      <section className="py-12 border-y border-green-100 bg-green-600 text-white">
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="p-3 rounded-full bg-white/20">
-                <Clock className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">
-                  {siteConfig.experience}+ Years
-                </h3>
-                <p className="text-sm opacity-80">Experience</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="p-3 rounded-full bg-white/20">
-                <Briefcase className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Corporate Focus</h3>
-                <p className="text-sm opacity-80">Embassy & Business</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="p-3 rounded-full bg-white/20">
-                <Shield className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Professional</h3>
-                <p className="text-sm opacity-80">Trained Chauffeurs</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="p-3 rounded-full bg-white/20">
-                <Phone className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">24/7 Support</h3>
-                <p className="text-sm opacity-80">Always Available</p>
-              </div>
-            </div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in animation-delay-500">
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-bounce" />
           </div>
         </div>
       </section>
@@ -293,7 +375,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center p-8">
+              <div className="aspect-square rounded-2xl bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center p-8">
                 <div className="text-center">
                   <p className="text-xl md:text-2xl font-heading font-bold text-green-800 italic">
                     &ldquo;{siteConfig.philosophy}&rdquo;
@@ -301,6 +383,64 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Latest Articles */}
+      <section className="py-20 bg-white">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-700">
+              Latest Articles
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Stay informed with our latest tips, guides, and updates from the
+              car rental industry.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {sampleBlogPosts.slice(0, 3).map((post) => (
+              <Link key={post.id} href={`/blog/${post.slug}`}>
+                <Card className="h-full hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
+                  <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center">
+                    <span className="text-4xl">📰</span>
+                  </div>
+                  <CardHeader>
+                    <div className="text-xs text-gray-500 mb-2">
+                      {new Date(post.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </div>
+                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
+                      {post.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="line-clamp-2">
+                      {post.excerpt}
+                    </CardDescription>
+                    <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Read More <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/blog">
+              <Button
+                variant="outline"
+                className="gap-2 border-green-600 text-green-600 hover:bg-green-50"
+              >
+                View All Articles <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

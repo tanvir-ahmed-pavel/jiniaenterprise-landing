@@ -89,6 +89,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://jiniaenterprise.com",
   },
+  icons: {
+    icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: "/favicon.png",
+  },
 };
 
 // JSON-LD Schema
@@ -187,7 +191,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <LocalBusinessSchema />
       </head>
@@ -197,6 +201,7 @@ export default function RootLayout({
           inter.variable,
           outfit.variable
         )}
+        suppressHydrationWarning
       >
         <Navbar />
         <main className="flex-1">{children}</main>

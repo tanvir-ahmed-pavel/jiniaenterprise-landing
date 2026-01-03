@@ -94,6 +94,101 @@ export interface Database {
           created_at?: string;
         };
       };
+      blog_posts: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          excerpt: string;
+          content: string;
+          cover_image: string | null;
+          author: string;
+          is_published: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          excerpt?: string;
+          content?: string;
+          cover_image?: string | null;
+          author?: string;
+          is_published?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          slug?: string;
+          excerpt?: string;
+          content?: string;
+          cover_image?: string | null;
+          author?: string;
+          is_published?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      bookings: {
+        Row: {
+          id: string;
+          name: string;
+          phone: string;
+          email: string;
+          vehicle_id: string | null;
+          vehicle_name: string | null;
+          rental_type: string;
+          pickup_date: string;
+          return_date: string | null;
+          pickup_location: string | null;
+          message: string | null;
+          status: "new" | "contacted" | "confirmed" | "completed" | "cancelled";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          phone: string;
+          email: string;
+          vehicle_id?: string | null;
+          vehicle_name?: string | null;
+          rental_type?: string;
+          pickup_date: string;
+          return_date?: string | null;
+          pickup_location?: string | null;
+          message?: string | null;
+          status?:
+            | "new"
+            | "contacted"
+            | "confirmed"
+            | "completed"
+            | "cancelled";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          phone?: string;
+          email?: string;
+          vehicle_id?: string | null;
+          vehicle_name?: string | null;
+          rental_type?: string;
+          pickup_date?: string;
+          return_date?: string | null;
+          pickup_location?: string | null;
+          message?: string | null;
+          status?:
+            | "new"
+            | "contacted"
+            | "confirmed"
+            | "completed"
+            | "cancelled";
+          created_at?: string;
+        };
+      };
     };
   };
 }
