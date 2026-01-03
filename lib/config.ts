@@ -246,6 +246,7 @@ export const sampleVehicles = [
     slug: "hyundai-h1",
     category: "Economy" as const,
     seats: 9,
+    engine_cc: 2497,
     features: [
       "Air Conditioning",
       "Comfortable Seats",
@@ -257,6 +258,9 @@ export const sampleVehicles = [
       "A spacious 9-seater van perfect for group travel, airport transfers, and corporate transportation. Reliable and comfortable for city and outstation trips.",
     is_active: true,
     image_url: "/vehicles/hyundai-h1.jpg",
+    images: ["/vehicles/hyundai-h1.jpg"],
+    starting_price: 4500,
+    price_label: "per day",
   },
   {
     id: "2",
@@ -264,6 +268,7 @@ export const sampleVehicles = [
     slug: "hyundai-h1-new",
     category: "Luxury" as const,
     seats: 9,
+    engine_cc: 2497,
     features: [
       "Premium Interior",
       "Air Conditioning",
@@ -275,6 +280,9 @@ export const sampleVehicles = [
       "The latest model Hyundai H1 with premium features. First-hand vehicle maintained in excellent condition.",
     is_active: true,
     image_url: "/vehicles/hyundai-h1-new.jpg",
+    images: ["/vehicles/hyundai-h1-new.jpg"],
+    starting_price: 6000,
+    price_label: "per day",
   },
   {
     id: "3",
@@ -282,6 +290,7 @@ export const sampleVehicles = [
     slug: "toyota-alphard",
     category: "Luxury" as const,
     seats: 7,
+    engine_cc: 2494,
     features: [
       "Executive Seats",
       "Premium Interior",
@@ -294,6 +303,9 @@ export const sampleVehicles = [
       "The ultimate luxury MPV for VIP transport. First-class comfort with captain seats and premium amenities.",
     is_active: true,
     image_url: "/vehicles/toyota-alphard.jpg",
+    images: ["/vehicles/toyota-alphard.jpg"],
+    starting_price: 12000,
+    price_label: "per day",
   },
   {
     id: "4",
@@ -301,6 +313,7 @@ export const sampleVehicles = [
     slug: "toyota-allion",
     category: "Economy" as const,
     seats: 5,
+    engine_cc: 1797,
     features: [
       "Air Conditioning",
       "Bluetooth Audio",
@@ -312,6 +325,9 @@ export const sampleVehicles = [
       "A reliable and fuel-efficient sedan perfect for daily commuting and business travel.",
     is_active: true,
     image_url: "/vehicles/toyota-allion.jpg",
+    images: ["/vehicles/toyota-allion.jpg"],
+    starting_price: 3500,
+    price_label: "per day",
   },
   {
     id: "5",

@@ -1,21 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/lib/supabase/client";
 import {
-  ArrowLeft,
-  Phone,
-  Mail,
-  MapPin,
   Calendar,
+  Clock,
+  Mail,
+  Phone,
+  MapPin,
   Car,
   CheckCircle,
   XCircle,
-  Clock,
+  MessageSquare,
+  Loader2,
+  Trash2,
 } from "lucide-react";
 
 interface Booking {
@@ -23,305 +24,352 @@ interface Booking {
   name: string;
   phone: string;
   email: string;
-  vehicle_name: string | null;
+  vehicle_id?: string | null;
+  vehicle_name?: string | null;
   rental_type: string;
   pickup_date: string;
-  return_date?: string;
-  pickup_location: string | null;
-  message?: string;
-  status: string;
+  return_date?: string | null;
+  pickup_location?: string | null;
+  message?: string | null;
+  status: "new" | "contacted" | "confirmed" | "completed" | "cancelled";
   created_at: string;
 }
 
 export default function BookingsManagementPage() {
-  const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-
-  // Sample bookings for demo
-  const sampleBookings: Booking[] = [
-    {
-      id: "1",
-      name: "Ahmed Rahman",
-      phone: "+880171234567",
-      email: "ahmed@example.com",
-      vehicle_name: "Toyota Corolla",
-      rental_type: "daily",
-      pickup_date: "2026-01-05",
-      return_date: "2026-01-07",
-      pickup_location: "Gulshan-2",
-      message: "Need an early morning pickup around 6 AM",
-      status: "new",
-      created_at: "2026-01-03T10:00:00Z",
-    },
-    {
-      id: "2",
-      name: "Sarah Khan",
-      phone: "+880181234567",
-      email: "sarah@corporate.com",
-      vehicle_name: "Toyota Alphard",
-      rental_type: "corporate",
-      pickup_date: "2026-01-10",
-      pickup_location: "Banani DOHS",
-      message: "Monthly contract for executive transport",
-      status: "contacted",
-      created_at: "2026-01-02T14:30:00Z",
-    },
-    {
-      id: "3",
-      name: "Embassy of Thailand",
-      phone: "+880191234567",
-      email: "transport@thai-embassy.bd",
-      vehicle_name: null,
-      rental_type: "monthly",
-      pickup_date: "2026-01-15",
-      pickup_location: "Baridhara Diplomatic Zone",
-      status: "confirmed",
-      created_at: "2026-01-01T09:15:00Z",
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-    }
-    setBookings(sampleBookings);
-  }, [router]);
+    fetchBookings();
+  }, []);
 
-  const updateStatus = (id: string, newStatus: string) => {
-    setBookings(
-      bookings.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-    );
-    if (selectedBooking?.id === id) {
-      setSelectedBooking({ ...selectedBooking, status: newStatus });
+  const fetchBookings = async () => {
+    setIsLoading(true);
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching bookings:", error);
+    } else {
+      setBookings((data as Booking[]) || []);
     }
-    // TODO: Update in Supabase
-    console.log(`Booking ${id} status updated to: ${newStatus}`);
+    setIsLoading(false);
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<
-      string,
-      "default" | "secondary" | "success" | "destructive"
-    > = {
-      new: "default",
-      contacted: "secondary",
-      confirmed: "success",
-      completed: "success",
-      cancelled: "destructive",
-    };
+  const updateStatus = async (id: string, newStatus: Booking["status"]) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status: newStatus } as never)
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update status");
+    } else {
+      setBookings(
+        bookings.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+      );
+      if (selectedBooking?.id === id) {
+        setSelectedBooking({ ...selectedBooking, status: newStatus });
+      }
+    }
+  };
+
+  const deleteBooking = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this booking?")) return;
+
+    const supabase = createClient();
+    const { error } = await supabase.from("bookings").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting booking:", error);
+      alert("Failed to delete booking");
+    } else {
+      setBookings(bookings.filter((b) => b.id !== id));
+      if (selectedBooking?.id === id) {
+        setSelectedBooking(null);
+      }
+    }
+  };
+
+  const getStatusColor = (
+    status: string
+  ): "default" | "secondary" | "success" | "destructive" => {
+    switch (status) {
+      case "new":
+        return "default";
+      case "contacted":
+        return "secondary";
+      case "confirmed":
+        return "success";
+      case "completed":
+        return "success";
+      case "cancelled":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
+
+  const filteredBookings =
+    statusFilter === "all"
+      ? bookings
+      : bookings.filter((b) => b.status === statusFilter);
+
+  if (isLoading) {
     return (
-      <Badge variant={variants[status] || "secondary"}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
+      <div className="p-6 flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <header className="bg-primary text-primary-foreground py-4">
-        <div className="container flex items-center gap-4">
-          <Link href="/admin/dashboard">
-            <Button variant="secondary" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold">Booking Management</h1>
-            <p className="text-sm opacity-80">
-              View and manage booking requests
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Booking Management</h1>
+        <p className="text-muted-foreground">
+          View and manage customer booking requests
+        </p>
+      </div>
 
-      <div className="container py-8">
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Bookings List */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">All Bookings</h2>
-              <div className="flex gap-2">
-                <Badge variant="default">
-                  {bookings.filter((b) => b.status === "new").length} New
-                </Badge>
-                <Badge variant="success">
-                  {bookings.filter((b) => b.status === "confirmed").length}{" "}
-                  Confirmed
-                </Badge>
-              </div>
-            </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        {["all", "new", "contacted", "confirmed", "completed", "cancelled"].map(
+          (status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`p-4 rounded-lg border text-left transition-colors ${
+                statusFilter === status
+                  ? "bg-green-50 border-green-500"
+                  : "bg-white hover:bg-gray-50"
+              }`}
+            >
+              <p className="text-2xl font-bold">
+                {status === "all"
+                  ? bookings.length
+                  : bookings.filter((b) => b.status === status).length}
+              </p>
+              <p className="text-sm text-muted-foreground capitalize">
+                {status === "all" ? "All Bookings" : status}
+              </p>
+            </button>
+          )
+        )}
+      </div>
 
-            {bookings.map((booking) => (
-              <Card
-                key={booking.id}
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  selectedBooking?.id === booking.id
-                    ? "ring-2 ring-primary"
-                    : ""
-                }`}
-                onClick={() => setSelectedBooking(booking)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{booking.name}</span>
-                        {getStatusBadge(booking.status)}
-                      </div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-4">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {booking.pickup_date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Car className="h-3 w-3" />
-                          {booking.vehicle_name || "Any vehicle"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(booking.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Booking Details */}
-          <div className="lg:col-span-1">
-            {selectedBooking ? (
-              <Card className="sticky top-4">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    Booking Details
-                    {getStatusBadge(selectedBooking.status)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-lg">
-                        {selectedBooking.name}
-                      </span>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <a
-                          href={`tel:${selectedBooking.phone}`}
-                          className="text-primary hover:underline"
-                        >
-                          {selectedBooking.phone}
-                        </a>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <a
-                          href={`mailto:${selectedBooking.email}`}
-                          className="text-primary hover:underline"
-                        >
-                          {selectedBooking.email}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-t pt-4 space-y-3">
-                    <h4 className="font-medium">Booking Info</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Car className="h-4 w-4 text-muted-foreground" />
-                        {selectedBooking.vehicle_name ||
-                          "Any available vehicle"}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        {selectedBooking.pickup_date}
-                        {selectedBooking.return_date &&
-                          ` → ${selectedBooking.return_date}`}
-                      </div>
-                      {selectedBooking.pickup_location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                          {selectedBooking.pickup_location}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Bookings List */}
+        <div className="lg:col-span-2">
+          {filteredBookings.length > 0 ? (
+            <Card>
+              <CardContent className="p-0">
+                <div className="divide-y">
+                  {filteredBookings.map((booking) => (
+                    <div
+                      key={booking.id}
+                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                        selectedBooking?.id === booking.id ? "bg-green-50" : ""
+                      }`}
+                      onClick={() => setSelectedBooking(booking)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold">{booking.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {booking.vehicle_name || "No vehicle specified"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(booking.pickup_date).toLocaleDateString()}
+                          </div>
                         </div>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        {selectedBooking.rental_type.charAt(0).toUpperCase() +
-                          selectedBooking.rental_type.slice(1)}{" "}
-                        rental
+                        <div className="text-right">
+                          <Badge variant={getStatusColor(booking.status)}>
+                            {booking.status}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(booking.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="p-12 text-center">
+              <Calendar className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Bookings Found</h3>
+              <p className="text-muted-foreground">
+                {statusFilter === "all"
+                  ? "No booking requests yet"
+                  : `No ${statusFilter} bookings`}
+              </p>
+            </Card>
+          )}
+        </div>
 
-                  {selectedBooking.message && (
-                    <div className="border-t pt-4">
-                      <h4 className="font-medium mb-2">Notes</h4>
-                      <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
-                        {selectedBooking.message}
-                      </p>
+        {/* Booking Details */}
+        <div>
+          {selectedBooking ? (
+            <Card className="sticky top-6">
+              <CardHeader>
+                <CardTitle>Booking Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-lg">
+                    {selectedBooking.name}
+                  </h3>
+                  <Badge
+                    variant={getStatusColor(selectedBooking.status)}
+                    className="mt-1"
+                  >
+                    {selectedBooking.status}
+                  </Badge>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`tel:${selectedBooking.phone}`}
+                      className="text-green-600 hover:underline"
+                    >
+                      {selectedBooking.phone}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`mailto:${selectedBooking.email}`}
+                      className="text-green-600 hover:underline"
+                    >
+                      {selectedBooking.email}
+                    </a>
+                  </div>
+                  {selectedBooking.vehicle_name && (
+                    <div className="flex items-center gap-2">
+                      <Car className="h-4 w-4 text-muted-foreground" />
+                      <span>{selectedBooking.vehicle_name}</span>
                     </div>
                   )}
-
-                  <div className="border-t pt-4 space-y-2">
-                    <h4 className="font-medium">Update Status</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          updateStatus(selectedBooking.id, "contacted")
-                        }
-                        disabled={selectedBooking.status === "contacted"}
-                      >
-                        <Phone className="h-4 w-4 mr-1" /> Contacted
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() =>
-                          updateStatus(selectedBooking.id, "confirmed")
-                        }
-                        disabled={selectedBooking.status === "confirmed"}
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" /> Confirm
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          updateStatus(selectedBooking.id, "completed")
-                        }
-                      >
-                        Complete
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 border-red-200 hover:bg-red-50"
-                        onClick={() =>
-                          updateStatus(selectedBooking.id, "cancelled")
-                        }
-                      >
-                        <XCircle className="h-4 w-4 mr-1" /> Cancel
-                      </Button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {new Date(
+                        selectedBooking.pickup_date
+                      ).toLocaleDateString()}
+                      {selectedBooking.return_date &&
+                        ` - ${new Date(
+                          selectedBooking.return_date
+                        ).toLocaleDateString()}`}
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                  <p>Select a booking to view details</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                  {selectedBooking.pickup_location && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span>{selectedBooking.pickup_location}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="capitalize">
+                      {selectedBooking.rental_type} rental
+                    </span>
+                  </div>
+                </div>
+
+                {selectedBooking.message && (
+                  <div className="pt-2">
+                    <div className="flex items-center gap-2 text-sm font-medium mb-1">
+                      <MessageSquare className="h-4 w-4" />
+                      Message
+                    </div>
+                    <p className="text-sm text-muted-foreground bg-gray-50 p-3 rounded">
+                      {selectedBooking.message}
+                    </p>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="pt-4 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        updateStatus(selectedBooking.id, "contacted")
+                      }
+                      disabled={selectedBooking.status === "contacted"}
+                    >
+                      Mark Contacted
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() =>
+                        updateStatus(selectedBooking.id, "confirmed")
+                      }
+                      disabled={selectedBooking.status === "confirmed"}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Confirm
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        updateStatus(selectedBooking.id, "completed")
+                      }
+                      disabled={selectedBooking.status === "completed"}
+                    >
+                      Complete
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:bg-red-50"
+                      onClick={() =>
+                        updateStatus(selectedBooking.id, "cancelled")
+                      }
+                      disabled={selectedBooking.status === "cancelled"}
+                    >
+                      <XCircle className="h-4 w-4 mr-1" />
+                      Cancel
+                    </Button>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-red-600 hover:bg-red-50"
+                    onClick={() => deleteBooking(selectedBooking.id)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete Booking
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="p-8 text-center">
+              <p className="text-muted-foreground">
+                Select a booking to view details
+              </p>
+            </Card>
+          )}
         </div>
       </div>
     </div>

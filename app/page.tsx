@@ -13,9 +13,8 @@ import {
   services,
   whyChooseUs,
   corporateClients,
-  sampleVehicles,
-  sampleBlogPosts,
 } from "@/lib/config";
+import { createClient } from "@/lib/supabase/server";
 import {
   CheckCircle,
   Clock,
@@ -41,8 +40,59 @@ const iconMap: { [key: string]: React.ElementType } = {
   shield: Shield,
 };
 
-export default function Home() {
-  const featuredVehicles = sampleVehicles.slice(0, 6);
+interface Vehicle {
+  id: string;
+  name: string;
+  slug: string;
+  category: "Economy" | "Luxury" | "Bus";
+  seats: number;
+  engine_cc?: number | null;
+  features?: string[];
+  rental_types?: string[];
+  description?: string;
+  images?: string[];
+  image_url?: string | null;
+  starting_price?: number | null;
+  price_label?: string;
+  is_active: boolean;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  cover_image: string | null;
+  author: string;
+  is_published: boolean;
+  created_at: string;
+}
+
+async function getFeaturedVehicles(): Promise<Vehicle[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("vehicles")
+    .select("*")
+    .eq("is_active", true)
+    .limit(6);
+  return (data as Vehicle[]) || [];
+}
+
+async function getLatestBlogPosts(): Promise<BlogPost[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(3);
+  return (data as BlogPost[]) || [];
+}
+
+export default async function Home() {
+  const featuredVehicles = await getFeaturedVehicles();
+  const latestBlogPosts = await getLatestBlogPosts();
 
   return (
     <div className="flex flex-col">
@@ -98,7 +148,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300">
-              <Link href="/booking">
+              <Link href="/vehicles">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto gap-2 bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-600/30 transition-all hover:shadow-green-500/40 hover:scale-105"
@@ -171,7 +221,7 @@ export default function Home() {
                       className="w-full h-11 px-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
-                  <Link href="/booking" className="w-full">
+                  <Link href="/vehicles" className="w-full">
                     <Button
                       type="button"
                       size="lg"
@@ -284,33 +334,35 @@ export default function Home() {
       </section>
 
       {/* Featured Vehicles */}
-      <section className="py-20 bg-green-50">
-        <div className="container space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-700">
-              Featured Vehicles
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse our selection of well-maintained vehicles for every
-              occasion.
-            </p>
-          </div>
+      {featuredVehicles.length > 0 && (
+        <section className="py-20 bg-green-50">
+          <div className="container space-y-12">
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-700">
+                Featured Vehicles
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Browse our selection of well-maintained vehicles for every
+                occasion.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredVehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
-            ))}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredVehicles.map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle as any} />
+              ))}
+            </div>
 
-          <div className="text-center">
-            <Link href="/vehicles">
-              <Button className="gap-2 bg-green-600 hover:bg-green-700 text-white">
-                View All Vehicles <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="text-center">
+              <Link href="/vehicles">
+                <Button className="gap-2 bg-green-600 hover:bg-green-700 text-white">
+                  View All Vehicles <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Corporate Clients */}
       <section className="py-20 bg-white">
@@ -388,62 +440,72 @@ export default function Home() {
       </section>
 
       {/* Latest Articles */}
-      <section className="py-20 bg-white">
-        <div className="container space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-700">
-              Latest Articles
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Stay informed with our latest tips, guides, and updates from the
-              car rental industry.
-            </p>
-          </div>
+      {latestBlogPosts.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container space-y-12">
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-700">
+                Latest Articles
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Stay informed with our latest tips, guides, and updates from the
+                car rental industry.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {sampleBlogPosts.slice(0, 3).map((post) => (
-              <Link key={post.id} href={`/blog/${post.slug}`}>
-                <Card className="h-full hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
-                  <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center">
-                    <span className="text-4xl">📰</span>
-                  </div>
-                  <CardHeader>
-                    <div className="text-xs text-gray-500 mb-2">
-                      {new Date(post.created_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {latestBlogPosts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <Card className="h-full hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
+                    <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
+                      {post.cover_image ? (
+                        <img
+                          src={post.cover_image}
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-4xl">📰</span>
+                      )}
                     </div>
-                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
-                      {post.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="line-clamp-2">
-                      {post.excerpt}
-                    </CardDescription>
-                    <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Read More <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </CardContent>
-                </Card>
+                    <CardHeader>
+                      <div className="text-xs text-gray-500 mb-2">
+                        {new Date(post.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
+                      <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
+                        {post.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="line-clamp-2">
+                        {post.excerpt}
+                      </CardDescription>
+                      <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Read More <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Link href="/blog">
+                <Button
+                  variant="outline"
+                  className="gap-2 border-green-600 text-green-600 hover:bg-green-50"
+                >
+                  View All Articles <ArrowRight className="h-4 w-4" />
+                </Button>
               </Link>
-            ))}
+            </div>
           </div>
-
-          <div className="text-center">
-            <Link href="/blog">
-              <Button
-                variant="outline"
-                className="gap-2 border-green-600 text-green-600 hover:bg-green-50"
-              >
-                View All Articles <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA Section - Green */}
       <section className="py-20 bg-green-700 text-white">

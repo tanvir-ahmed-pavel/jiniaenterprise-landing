@@ -14,7 +14,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { sampleVehicles } from "@/lib/config";
+import { Vehicle } from "@/lib/supabase/admin-service";
 import {
   Loader2,
   CheckCircle,
@@ -43,9 +43,13 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface BookingFormProps {
   preselectedVehicle?: string;
+  vehicles?: Vehicle[];
 }
 
-export function BookingForm({ preselectedVehicle }: BookingFormProps) {
+export function BookingForm({
+  preselectedVehicle,
+  vehicles = [],
+}: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -78,7 +82,7 @@ export function BookingForm({ preselectedVehicle }: BookingFormProps) {
     try {
       // Get vehicle name if selected
       const vehicle = data.vehicle_id
-        ? sampleVehicles.find((v) => v.id === data.vehicle_id)
+        ? vehicles.find((v) => v.id === data.vehicle_id)
         : null;
 
       const response = await fetch("/api/bookings", {
@@ -232,7 +236,7 @@ export function BookingForm({ preselectedVehicle }: BookingFormProps) {
                   {...register("vehicle_id")}
                 >
                   <option value="">Any available vehicle</option>
-                  {sampleVehicles.map((vehicle) => (
+                  {vehicles.map((vehicle) => (
                     <option key={vehicle.id} value={vehicle.id}>
                       {vehicle.name} ({vehicle.seats} seats)
                     </option>

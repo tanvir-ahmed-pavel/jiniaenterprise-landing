@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,52 +26,67 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log the booking for now
-    // In production, this would save to Supabase
-    console.log("New booking received:", {
+    const bookingData = {
       name,
       phone,
       email,
-      vehicle_id,
-      vehicle_name,
+      vehicle_id: vehicle_id || null, // Ensure ID is valid UUID if provided, handled by client
+      vehicle_name: vehicle_name || null,
       rental_type: rental_type || "daily",
       pickup_date,
-      return_date,
-      pickup_location,
-      message,
+      return_date: return_date || null,
+      pickup_location: pickup_location || null,
+      message: message || null,
       status: "new",
-      created_at: new Date().toISOString(),
-    });
+    };
 
-    // TODO: Uncomment when Supabase `bookings` table is created
-    /*
-    const supabase = await createClient();
-    const { data, error } = await supabase.from("bookings").insert([
-      {
-        name,
-        phone,
-        email,
-        vehicle_id: vehicle_id || null,
-        vehicle_name: vehicle_name || null,
-        rental_type: rental_type || "daily",
-        pickup_date,
-        return_date: return_date || null,
-        pickup_location: pickup_location || null,
-        message: message || null,
-        status: "new",
-      },
-    ]).select();
+    const supabase = (await createClient()) as any;
+    // Use 'as never' or explicit type if inference fails
+    const { data, error } = await supabase
+      .from("bookings")
+      .insert([bookingData as any])
+      .select()
+      .single();
 
     if (error) {
       console.error("Supabase error:", error);
       throw error;
     }
-    */
+
+    // Send Email Notification (if configured)
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey) {
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(resendApiKey);
+
+        await resend.emails.send({
+          from: "noreply@jiniaenterprise.com",
+          to: ["admin@jiniaenterprise.com"], // TODO: Make configurable via env
+          subject: `New Booking Request: ${name}`,
+          html: `
+            <h1>New Booking Request</h1>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Vehicle:</strong> ${vehicle_name || "Not selected"}</p>
+            <p><strong>Date:</strong> ${pickup_date}</p>
+            <p><strong>Type:</strong> ${rental_type}</p>
+            <br />
+            <a href="${
+              process.env.NEXT_PUBLIC_SITE_URL
+            }/admin/bookings">View in Dashboard</a>
+          `,
+        });
+      } catch (emailError) {
+        console.error("Failed to send email:", emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     return NextResponse.json({
       success: true,
       message: "Booking request received. Our team will contact you shortly.",
-      id: `booking-${Date.now()}`,
+      id: data.id,
     });
   } catch (error) {
     console.error("Booking error:", error);
@@ -82,33 +98,18 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  // Sample bookings for demo
-  const sampleBookings = [
-    {
-      id: "1",
-      name: "Ahmed Rahman",
-      phone: "+880171234567",
-      email: "ahmed@example.com",
-      vehicle_name: "Toyota Corolla",
-      rental_type: "daily",
-      pickup_date: "2026-01-05",
-      pickup_location: "Gulshan",
-      status: "new",
-      created_at: "2026-01-03T10:00:00Z",
-    },
-    {
-      id: "2",
-      name: "Sarah Khan",
-      phone: "+880181234567",
-      email: "sarah@example.com",
-      vehicle_name: "Toyota Alphard",
-      rental_type: "corporate",
-      pickup_date: "2026-01-10",
-      pickup_location: "Banani",
-      status: "contacted",
-      created_at: "2026-01-02T14:30:00Z",
-    },
-  ];
+  // Return empty or fetch from Supabase if needed (though admin page uses direct fetch)
+  // Maintaining this endpoint for compatibility or simpler testing
+  const supabase = await createClient();
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
 
-  return NextResponse.json({ bookings: sampleBookings });
+  if (error) {
+    return NextResponse.json({ bookings: [] });
+  }
+
+  return NextResponse.json({ bookings });
 }

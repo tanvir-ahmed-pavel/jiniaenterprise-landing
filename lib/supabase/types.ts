@@ -16,12 +16,16 @@ export interface Database {
           slug: string;
           category: "Economy" | "Luxury" | "Bus";
           seats: number;
+          engine_cc: number | null;
           features: string[];
           rental_types: string[];
           description: string;
+          images: string[];
+          starting_price: number | null;
+          price_label: string;
           is_active: boolean;
           created_at: string;
-          image_url: string | null; // Primary image mostly
+          image_url: string | null;
         };
         Insert: {
           id?: string;
@@ -29,9 +33,13 @@ export interface Database {
           slug: string;
           category: "Economy" | "Luxury" | "Bus";
           seats: number;
+          engine_cc?: number | null;
           features?: string[];
           rental_types?: string[];
           description?: string;
+          images?: string[];
+          starting_price?: number | null;
+          price_label?: string;
           is_active?: boolean;
           created_at?: string;
           image_url?: string | null;
@@ -42,9 +50,13 @@ export interface Database {
           slug?: string;
           category?: "Economy" | "Luxury" | "Bus";
           seats?: number;
+          engine_cc?: number | null;
           features?: string[];
           rental_types?: string[];
           description?: string;
+          images?: string[];
+          starting_price?: number | null;
+          price_label?: string;
           is_active?: boolean;
           created_at?: string;
           image_url?: string | null;

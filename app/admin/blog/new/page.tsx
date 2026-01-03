@@ -14,6 +14,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { blogService } from "@/lib/supabase/admin-service";
 
 export default function AddBlogPostPage() {
   const router = useRouter();
@@ -40,11 +41,16 @@ export default function AddBlogPostPage() {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const title = formData.get("title") as string;
+    const manualSlug = formData.get("slug") as string;
+
+    // Ensure slug is unique-ish by adding timestamp if identical?
+    // Supabase will error if collision on unique constraint.
+    const slug = manualSlug || generateSlug(title);
+
     const blogData = {
-      title: formData.get("title") as string,
-      slug:
-        (formData.get("slug") as string) ||
-        generateSlug(formData.get("title") as string),
+      title: title,
+      slug: slug,
       excerpt: formData.get("excerpt") as string,
       content: content,
       cover_image: (formData.get("cover_image") as string) || null,
@@ -52,22 +58,25 @@ export default function AddBlogPostPage() {
       is_published: formData.get("is_published") === "on",
     };
 
-    // TODO: Save to Supabase
-    console.log("Blog post data to save:", blogData);
-
-    // Simulate save
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    alert("Blog post saved! (Note: Database integration pending)");
-    router.push("/admin/dashboard");
-    setIsLoading(false);
+    try {
+      await blogService.create(blogData);
+      alert("Blog post created successfully!");
+      router.push("/admin/blog"); // Redirect to blog list
+    } catch (error) {
+      console.error("Failed to create blog post:", error);
+      alert(
+        "Failed to create blog post. Please try again (maybe slug collision?)."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-muted/20">
       <header className="bg-primary text-primary-foreground py-4">
         <div className="container flex items-center gap-4">
-          <Link href="/admin/dashboard">
+          <Link href="/admin/blog">
             <Button variant="secondary" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
             </Button>
@@ -192,7 +201,7 @@ Regular paragraph text.
                     "Publish Post"
                   )}
                 </Button>
-                <Link href="/admin/dashboard">
+                <Link href="/admin/blog">
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>

@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { sampleBlogPosts } from "@/lib/config";
+import { createClient } from "@/lib/supabase/server";
 import { Calendar, Clock, ArrowRight, User } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -17,8 +17,37 @@ export const metadata: Metadata = {
     "Stay updated with the latest car rental tips, industry news, and travel guides from Jinia Enterprise - your trusted car rental partner in Dhaka.",
 };
 
-export default function BlogPage() {
-  const publishedPosts = sampleBlogPosts.filter((post) => post.is_published);
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  cover_image: string | null;
+  author: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching blog posts:", error);
+    return [];
+  }
+
+  return (data as BlogPost[]) || [];
+}
+
+export default async function BlogPage() {
+  const publishedPosts = await getBlogPosts();
   const featuredPost = publishedPosts[0];
   const otherPosts = publishedPosts.slice(1);
 
@@ -54,96 +83,127 @@ export default function BlogPage() {
       </section>
 
       <div className="container py-12 md:py-16">
-        {/* Featured Post */}
-        {featuredPost && (
-          <section className="mb-16">
-            <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
-              Featured Article
-            </h2>
-            <Link href={`/blog/${featuredPost.slug}`}>
-              <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-green-100">
-                <div className="grid md:grid-cols-2 gap-0">
-                  {/* Image Placeholder */}
-                  <div className="aspect-video md:aspect-auto bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center min-h-[300px]">
-                    <div className="text-green-600/50 text-6xl font-heading font-bold">
-                      📰
-                    </div>
-                  </div>
-                  <div className="p-8 flex flex-col justify-center">
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {formatDate(featuredPost.created_at)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {getReadingTime(featuredPost.content)} min read
-                      </span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 group-hover:text-green-600 transition-colors mb-4">
-                      {featuredPost.title}
-                    </h3>
-                    <p className="text-gray-600 mb-6">{featuredPost.excerpt}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm text-gray-500">
-                        <User className="h-4 w-4" />
-                        {featuredPost.author}
-                      </span>
-                      <span className="text-green-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Read More <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+        {publishedPosts.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg mb-4">
+              No blog posts available yet. Check back soon for updates!
+            </p>
+            <Link href="/">
+              <Button variant="outline">Back to Home</Button>
             </Link>
-          </section>
-        )}
-
-        {/* Other Posts Grid */}
-        {otherPosts.length > 0 && (
-          <section>
-            <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
-              Latest Articles
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {otherPosts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
-                  <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
-                    {/* Image Placeholder */}
-                    <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center">
-                      <div className="text-green-500/40 text-4xl font-heading font-bold">
-                        📄
+          </div>
+        ) : (
+          <>
+            {/* Featured Post */}
+            {featuredPost && (
+              <section className="mb-16">
+                <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
+                  Featured Article
+                </h2>
+                <Link href={`/blog/${featuredPost.slug}`}>
+                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-green-100">
+                    <div className="grid md:grid-cols-2 gap-0">
+                      {/* Image */}
+                      <div className="aspect-video md:aspect-auto bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center min-h-[300px] overflow-hidden">
+                        {featuredPost.cover_image ? (
+                          <img
+                            src={featuredPost.cover_image}
+                            alt={featuredPost.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="text-green-600/50 text-6xl font-heading font-bold">
+                            📰
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-8 flex flex-col justify-center">
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            {formatDate(featuredPost.created_at)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {getReadingTime(featuredPost.content)} min read
+                          </span>
+                        </div>
+                        <h3 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 group-hover:text-green-600 transition-colors mb-4">
+                          {featuredPost.title}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                          {featuredPost.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-2 text-sm text-gray-500">
+                            <User className="h-4 w-4" />
+                            {featuredPost.author}
+                          </span>
+                          <span className="text-green-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Read More <ArrowRight className="h-4 w-4" />
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <CardHeader>
-                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-2">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(post.created_at)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {getReadingTime(post.content)} min
-                        </span>
-                      </div>
-                      <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
-                        {post.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="line-clamp-3">
-                        {post.excerpt}
-                      </CardDescription>
-                      <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Read More <ArrowRight className="h-4 w-4" />
-                      </div>
-                    </CardContent>
                   </Card>
                 </Link>
-              ))}
-            </div>
-          </section>
+              </section>
+            )}
+
+            {/* Other Posts Grid */}
+            {otherPosts.length > 0 && (
+              <section>
+                <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
+                  Latest Articles
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {otherPosts.map((post) => (
+                    <Link key={post.id} href={`/blog/${post.slug}`}>
+                      <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
+                        {/* Image */}
+                        <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
+                          {post.cover_image ? (
+                            <img
+                              src={post.cover_image}
+                              alt={post.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="text-green-500/40 text-4xl font-heading font-bold">
+                              📄
+                            </div>
+                          )}
+                        </div>
+                        <CardHeader>
+                          <div className="flex items-center gap-4 text-xs text-gray-500 mb-2">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(post.created_at)}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {getReadingTime(post.content)} min
+                            </span>
+                          </div>
+                          <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
+                            {post.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <CardDescription className="line-clamp-3">
+                            {post.excerpt}
+                          </CardDescription>
+                          <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Read More <ArrowRight className="h-4 w-4" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
 
         {/* CTA Section */}

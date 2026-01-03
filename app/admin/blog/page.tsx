@@ -1,31 +1,94 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { sampleBlogPosts } from "@/lib/config";
-import { Plus, Pencil, Trash2, FileText, Eye, EyeOff } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  FileText,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  author: string;
+  is_published: boolean;
+  created_at: string;
+}
 
 export default function BlogListPage() {
-  const [posts, setPosts] = useState(sampleBlogPosts);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleDelete = (slug: string) => {
-    if (confirm("Are you sure you want to delete this post?")) {
-      setPosts(posts.filter((p) => p.slug !== slug));
-      // TODO: Delete from Supabase
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    setIsLoading(true);
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching posts:", error);
+    } else {
+      setPosts((data as BlogPost[]) || []);
+    }
+    setIsLoading(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    const supabase = createClient();
+    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post");
+    } else {
+      setPosts(posts.filter((p) => p.id !== id));
     }
   };
 
-  const togglePublish = (slug: string) => {
-    setPosts(
-      posts.map((p) =>
-        p.slug === slug ? { ...p, is_published: !p.is_published } : p
-      )
-    );
-    // TODO: Update in Supabase
+  const togglePublish = async (id: string, currentStatus: boolean) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("blog_posts")
+      .update({ is_published: !currentStatus } as never)
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error toggling publish:", error);
+    } else {
+      setPosts(
+        posts.map((p) =>
+          p.id === id ? { ...p, is_published: !currentStatus } : p
+        )
+      );
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
@@ -65,7 +128,7 @@ export default function BlogListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {posts.filter((p) => p.is_published !== false).length}
+                  {posts.filter((p) => p.is_published).length}
                 </p>
                 <p className="text-sm text-muted-foreground">Published</p>
               </div>
@@ -80,7 +143,7 @@ export default function BlogListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {posts.filter((p) => p.is_published === false).length}
+                  {posts.filter((p) => !p.is_published).length}
                 </p>
                 <p className="text-sm text-muted-foreground">Drafts</p>
               </div>
@@ -90,77 +153,79 @@ export default function BlogListPage() {
       </div>
 
       {/* Posts Table */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="text-left py-3 px-4 font-medium">Title</th>
-                  <th className="text-left py-3 px-4 font-medium">Author</th>
-                  <th className="text-left py-3 px-4 font-medium">Date</th>
-                  <th className="text-left py-3 px-4 font-medium">Status</th>
-                  <th className="text-right py-3 px-4 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {posts.map((post) => (
-                  <tr key={post.slug} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4">
-                      <div>
-                        <p className="font-medium">{post.title}</p>
-                        <p className="text-sm text-muted-foreground truncate max-w-md">
-                          {post.excerpt}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm">{post.author}</td>
-                    <td className="py-3 px-4 text-sm">
-                      {new Date(post.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={
-                          post.is_published !== false ? "success" : "secondary"
-                        }
-                        className="cursor-pointer"
-                        onClick={() => togglePublish(post.slug)}
-                      >
-                        {post.is_published !== false ? "Published" : "Draft"}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex gap-2 justify-end">
-                        <Link href={`/blog/${post.slug}`} target="_blank">
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/blog/${post.slug}/edit`}>
-                          <Button variant="outline" size="sm">
-                            <Pencil className="h-3 w-3" />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 hover:bg-red-50"
-                          onClick={() => handleDelete(post.slug)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </td>
+      {posts.length > 0 ? (
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="text-left py-3 px-4 font-medium">Title</th>
+                    <th className="text-left py-3 px-4 font-medium">Author</th>
+                    <th className="text-left py-3 px-4 font-medium">Date</th>
+                    <th className="text-left py-3 px-4 font-medium">Status</th>
+                    <th className="text-right py-3 px-4 font-medium">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {posts.length === 0 && (
-        <Card className="p-12 text-center mt-4">
+                </thead>
+                <tbody>
+                  {posts.map((post) => (
+                    <tr key={post.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">
+                        <div>
+                          <p className="font-medium">{post.title}</p>
+                          <p className="text-sm text-muted-foreground truncate max-w-md">
+                            {post.excerpt}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-sm">{post.author}</td>
+                      <td className="py-3 px-4 text-sm">
+                        {new Date(post.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          variant={post.is_published ? "success" : "secondary"}
+                          className="cursor-pointer"
+                          onClick={() =>
+                            togglePublish(post.id, post.is_published)
+                          }
+                        >
+                          {post.is_published ? "Published" : "Draft"}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex gap-2 justify-end">
+                          <Link href={`/blog/${post.slug}`} target="_blank">
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </Link>
+                          <Link href={`/admin/blog/${post.id}/edit`}>
+                            <Button variant="outline" size="sm">
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 hover:bg-red-50"
+                            onClick={() => handleDelete(post.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="p-12 text-center">
           <FileText className="h-16 w-16 mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold mb-2">No Blog Posts Yet</h3>
           <p className="text-muted-foreground mb-4">

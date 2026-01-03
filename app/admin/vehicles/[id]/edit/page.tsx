@@ -7,28 +7,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { sampleVehicles } from "@/lib/config";
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
+import { vehicleService, Vehicle } from "@/lib/supabase/admin-service";
 
 export default function EditVehiclePage() {
   const router = useRouter();
   const params = useParams();
-  const slug = params.id as string;
+  const id = params.id as string;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [vehicle, setVehicle] = useState<(typeof sampleVehicles)[0] | null>(
-    null
-  );
+  const [isFetching, setIsFetching] = useState(true);
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [features, setFeatures] = useState<string[]>([]);
 
   useEffect(() => {
-    // Find vehicle by slug
-    const found = sampleVehicles.find((v) => v.slug === slug);
-    if (found) {
-      setVehicle(found);
-      setFeatures(found.features || [""]);
+    const auth = localStorage.getItem("admin_auth");
+    if (auth !== "true") {
+      router.push("/admin");
+      return;
     }
-  }, [slug]);
+
+    const loadVehicle = async () => {
+      if (!id) return;
+      const data = await vehicleService.getById(id);
+      if (data) {
+        setVehicle(data);
+        setFeatures(data.features || [""]);
+      }
+      setIsFetching(false);
+    };
+
+    loadVehicle();
+  }, [id, router]);
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);
@@ -49,27 +59,48 @@ export default function EditVehiclePage() {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const imageUrl = (formData.get("image_url") as string) || null;
+
     const vehicleData = {
       name: formData.get("name") as string,
-      category: formData.get("category") as string,
+      category: formData.get("category") as "Economy" | "Luxury" | "Bus",
       seats: parseInt(formData.get("seats") as string),
+      engine_cc: formData.get("engine_cc")
+        ? parseInt(formData.get("engine_cc") as string)
+        : null,
+      starting_price: formData.get("starting_price")
+        ? parseFloat(formData.get("starting_price") as string)
+        : null,
+      price_label: (formData.get("price_label") as string) || "per day",
       description: formData.get("description") as string,
       features: features.filter((f) => f.trim() !== ""),
       rental_types: (formData.get("rental_types") as string)
         .split(",")
         .map((t) => t.trim()),
       is_active: formData.get("is_active") === "on",
+      image_url: imageUrl,
+      images: imageUrl ? [imageUrl] : [],
     };
 
-    // TODO: Update in Supabase
-    console.log("Vehicle data to update:", vehicleData);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    alert("Vehicle updated! (Note: Database integration pending)");
-    router.push("/admin/vehicles");
-    setIsLoading(false);
+    try {
+      await vehicleService.update(id, vehicleData);
+      alert("Vehicle updated successfully!");
+      router.push("/admin/vehicles");
+    } catch (error) {
+      console.error("Failed to update vehicle:", error);
+      alert("Failed to update vehicle. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!vehicle) {
     return (
@@ -99,7 +130,7 @@ export default function EditVehiclePage() {
         </div>
       </div>
 
-      <Card className="max-w-2xl">
+      <Card className="max-w-3xl">
         <CardHeader>
           <CardTitle>Vehicle Details</CardTitle>
         </CardHeader>
@@ -131,7 +162,7 @@ export default function EditVehiclePage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="seats">Number of Seats *</Label>
                 <Input
@@ -145,11 +176,45 @@ export default function EditVehiclePage() {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="engine_cc">Engine CC</Label>
+                <Input
+                  id="engine_cc"
+                  name="engine_cc"
+                  type="number"
+                  defaultValue={vehicle.engine_cc || ""}
+                  placeholder="e.g. 1500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="starting_price">Starting Price (BDT)</Label>
+                <Input
+                  id="starting_price"
+                  name="starting_price"
+                  type="number"
+                  defaultValue={vehicle.starting_price || ""}
+                  placeholder="e.g. 3000"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="rental_types">Rental Types</Label>
                 <Input
                   id="rental_types"
                   name="rental_types"
                   defaultValue={vehicle.rental_types?.join(", ")}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Comma-separated values
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price_label">Price Label</Label>
+                <Input
+                  id="price_label"
+                  name="price_label"
+                  defaultValue={vehicle.price_label || "per day"}
                 />
               </div>
             </div>
@@ -160,9 +225,22 @@ export default function EditVehiclePage() {
                 id="description"
                 name="description"
                 rows={3}
-                defaultValue={vehicle.description}
+                defaultValue={vehicle.description || ""}
                 className="w-full px-3 py-2 rounded-md border border-input bg-background resize-none"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image_url">Image URL</Label>
+              <Input
+                id="image_url"
+                name="image_url"
+                defaultValue={vehicle.image_url || ""}
+                placeholder="/vehicles/vehicle-name.jpg or https://..."
+              />
+              <p className="text-xs text-muted-foreground">
+                Path to vehicle image (URL or local path)
+              </p>
             </div>
 
             <div className="space-y-2">

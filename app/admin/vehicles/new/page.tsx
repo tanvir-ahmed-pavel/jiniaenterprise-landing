@@ -14,6 +14,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
+import { vehicleService } from "@/lib/supabase/admin-service";
 
 export default function AddVehiclePage() {
   const router = useRouter();
@@ -46,39 +47,56 @@ export default function AddVehiclePage() {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const imageUrl = (formData.get("image_url") as string) || null;
+
+    // Create base slug from name
+    const rawName = formData.get("name") as string;
+    const baseSlug = rawName
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+    // Add random suffix to ensure uniqueness
+    const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
+
     const vehicleData = {
-      name: formData.get("name") as string,
-      slug: (formData.get("name") as string)
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, ""),
-      category: formData.get("category") as string,
+      name: rawName,
+      slug: slug,
+      category: formData.get("category") as "Economy" | "Luxury" | "Bus",
       seats: parseInt(formData.get("seats") as string),
+      engine_cc: formData.get("engine_cc")
+        ? parseInt(formData.get("engine_cc") as string)
+        : null,
+      starting_price: formData.get("starting_price")
+        ? parseFloat(formData.get("starting_price") as string)
+        : null,
+      price_label: (formData.get("price_label") as string) || "per day",
       description: formData.get("description") as string,
       features: features.filter((f) => f.trim() !== ""),
       rental_types: (formData.get("rental_types") as string)
         .split(",")
         .map((t) => t.trim()),
       is_active: formData.get("is_active") === "on",
-      image_url: (formData.get("image_url") as string) || null,
+      image_url: imageUrl,
+      images: imageUrl ? [imageUrl] : [],
     };
 
-    // TODO: Save to Supabase
-    console.log("Vehicle data to save:", vehicleData);
-
-    // Simulate save
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    alert("Vehicle saved! (Note: Database integration pending)");
-    router.push("/admin/dashboard");
-    setIsLoading(false);
+    try {
+      await vehicleService.create(vehicleData);
+      alert("Vehicle created successfully!");
+      router.push("/admin/vehicles"); // Redirect to vehicles list
+    } catch (error) {
+      console.error("Failed to create vehicle:", error);
+      alert("Failed to create vehicle. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-muted/20">
       <header className="bg-primary text-primary-foreground py-4">
         <div className="container flex items-center gap-4">
-          <Link href="/admin/dashboard">
+          <Link href="/admin/vehicles">
             <Button variant="secondary" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
             </Button>
@@ -91,7 +109,7 @@ export default function AddVehiclePage() {
       </header>
 
       <div className="container py-8">
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle>Vehicle Details</CardTitle>
             <CardDescription>
@@ -125,7 +143,7 @@ export default function AddVehiclePage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="seats">Number of Seats *</Label>
                   <Input
@@ -139,16 +157,46 @@ export default function AddVehiclePage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="engine_cc">Engine CC</Label>
+                  <Input
+                    id="engine_cc"
+                    name="engine_cc"
+                    type="number"
+                    placeholder="e.g. 1500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="starting_price">Starting Price (BDT)</Label>
+                  <Input
+                    id="starting_price"
+                    name="starting_price"
+                    type="number"
+                    placeholder="e.g. 3000"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="rental_types">Rental Types</Label>
                   <Input
                     id="rental_types"
                     name="rental_types"
                     placeholder="Daily, Weekly, Monthly"
-                    defaultValue="Daily, Weekly, Monthly"
+                    defaultValue="Daily, Weekly"
                   />
                   <p className="text-xs text-muted-foreground">
                     Comma-separated values
                   </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="price_label">Price Label</Label>
+                  <Input
+                    id="price_label"
+                    name="price_label"
+                    placeholder="e.g. per day"
+                    defaultValue="per day"
+                  />
                 </div>
               </div>
 
@@ -168,10 +216,10 @@ export default function AddVehiclePage() {
                 <Input
                   id="image_url"
                   name="image_url"
-                  placeholder="/vehicles/vehicle-name.jpg"
+                  placeholder="/vehicles/vehicle-name.jpg or https://..."
                 />
                 <p className="text-xs text-muted-foreground">
-                  Path to vehicle image in public folder
+                  Path to vehicle image (URL or local path)
                 </p>
               </div>
 
@@ -235,7 +283,7 @@ export default function AddVehiclePage() {
                     "Save Vehicle"
                   )}
                 </Button>
-                <Link href="/admin/dashboard">
+                <Link href="/admin/vehicles">
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>

@@ -7,25 +7,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { sampleBlogPosts } from "@/lib/config";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { blogService, BlogPost } from "@/lib/supabase/admin-service";
 
 export default function EditBlogPostPage() {
   const router = useRouter();
   const params = useParams();
-  const slug = params.id as string;
+  const id = params.id as string;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [post, setPost] = useState<(typeof sampleBlogPosts)[0] | null>(null);
+  const [isFetching, setIsFetching] = useState(true);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    const found = sampleBlogPosts.find((p) => p.slug === slug);
-    if (found) {
-      setPost(found);
-      setContent(found.content || "");
+    const auth = localStorage.getItem("admin_auth");
+    if (auth !== "true") {
+      router.push("/admin");
+      return;
     }
-  }, [slug]);
+
+    const loadPost = async () => {
+      if (!id) return;
+      const data = await blogService.getById(id);
+      if (data) {
+        setPost(data);
+        setContent(data.content || "");
+      }
+      setIsFetching(false);
+    };
+
+    loadPost();
+  }, [id, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,19 +50,30 @@ export default function EditBlogPostPage() {
       slug: formData.get("slug") as string,
       excerpt: formData.get("excerpt") as string,
       content: content,
+      cover_image: (formData.get("cover_image") as string) || null,
       author: formData.get("author") as string,
       is_published: formData.get("is_published") === "on",
     };
 
-    // TODO: Update in Supabase
-    console.log("Blog post data to update:", postData);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    alert("Post updated! (Note: Database integration pending)");
-    router.push("/admin/blog");
-    setIsLoading(false);
+    try {
+      await blogService.update(id, postData);
+      alert("Post updated successfully!");
+      router.push("/admin/blog");
+    } catch (error) {
+      console.error("Failed to update post:", error);
+      alert("Failed to update post. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -112,7 +136,7 @@ export default function EditBlogPostPage() {
                 id="excerpt"
                 name="excerpt"
                 rows={2}
-                defaultValue={post.excerpt}
+                defaultValue={post.excerpt || ""}
                 className="w-full px-3 py-2 rounded-md border border-input bg-background resize-none"
                 required
               />
@@ -130,12 +154,22 @@ export default function EditBlogPostPage() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="cover_image">Cover Image URL</Label>
+              <Input
+                id="cover_image"
+                name="cover_image"
+                defaultValue={post.cover_image || ""}
+                placeholder="/images/blog/post-cover.jpg"
+              />
+            </div>
+
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="is_published"
                 name="is_published"
-                defaultChecked={post.is_published !== false}
+                defaultChecked={post.is_published}
                 className="h-4 w-4"
               />
               <Label htmlFor="is_published">Published</Label>

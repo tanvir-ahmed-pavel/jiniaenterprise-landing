@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { sampleBlogPosts } from "@/lib/config";
+import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { Calendar, Clock, ArrowLeft, User, Share2 } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -9,17 +10,75 @@ interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  cover_image: string | null;
+  author: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Fetch blog post by slug
+async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as BlogPost;
+}
+
+// Fetch recent posts for sidebar
+async function getRecentPosts(excludeSlug: string): Promise<BlogPost[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .neq("slug", excludeSlug)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  if (error) {
+    return [];
+  }
+
+  return (data as BlogPost[]) || [];
+}
+
 export async function generateStaticParams() {
-  return sampleBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  const supabase = createStaticClient();
+
+  if (!supabase) return [];
+
+  const { data: posts } = await supabase
+    .from("blog_posts")
+    .select("slug")
+    .eq("is_published", true);
+
+  return (
+    (posts as unknown as { slug: string }[])?.map((post) => ({
+      slug: post.slug,
+    })) || []
+  );
 }
 
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = sampleBlogPosts.find((p) => p.slug === slug);
+  const post = await getBlogPost(slug);
 
   if (!post) {
     return {
@@ -36,17 +95,20 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.created_at,
       authors: [post.author],
+      images: post.cover_image ? [post.cover_image] : [],
     },
   };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = sampleBlogPosts.find((p) => p.slug === slug);
+  const post = await getBlogPost(slug);
 
   if (!post) {
     notFound();
   }
+
+  const relatedPosts = await getRecentPosts(slug);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -62,15 +124,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return Math.ceil(words / wordsPerMinute);
   };
 
-  // Get related posts (excluding current)
-  const relatedPosts = sampleBlogPosts
-    .filter((p) => p.id !== post.id && p.is_published)
-    .slice(0, 2);
-
   // Simple markdown-like rendering for content
   const renderContent = (content: string) => {
     const lines = content.split("\n");
     return lines.map((line, index) => {
+      // Headers
       if (line.startsWith("## ")) {
         return (
           <h2
@@ -81,9 +139,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </h2>
         );
       }
+      if (line.startsWith("### ")) {
+        return (
+          <h3
+            key={index}
+            className="text-xl font-heading font-bold text-gray-800 mt-6 mb-3"
+          >
+            {line.replace("### ", "")}
+          </h3>
+        );
+      }
+      // Lists
+      if (line.startsWith("- ")) {
+        return (
+          <li key={index} className="ml-4 list-disc text-gray-700 mb-2">
+            {line.replace("- ", "")}
+          </li>
+        );
+      }
+      // Empty lines
       if (line.trim() === "") {
         return <br key={index} />;
       }
+      // Paragraphs
       return (
         <p key={index} className="text-gray-700 leading-relaxed mb-4">
           {line}
@@ -140,9 +218,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="grid lg:grid-cols-4 gap-12">
             {/* Main Content */}
             <article className="lg:col-span-3">
-              {/* Featured Image Placeholder */}
-              <div className="aspect-video rounded-xl bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center mb-10">
-                <div className="text-green-500/40 text-6xl">📰</div>
+              {/* Featured Image */}
+              <div className="aspect-video rounded-xl bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center mb-10 overflow-hidden">
+                {post.cover_image ? (
+                  <img
+                    src={post.cover_image}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-green-500/40 text-6xl">📰</div>
+                )}
               </div>
 
               {/* Article Content */}

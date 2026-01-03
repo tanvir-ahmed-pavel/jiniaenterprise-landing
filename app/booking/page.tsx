@@ -10,7 +10,17 @@ export const metadata: Metadata = {
     "Book your car rental with Jinia Enterprise. Choose from our premium fleet of vehicles for daily, weekly, or monthly rentals in Dhaka.",
 };
 
-export default function BookingPage() {
+import { createClient } from "@/lib/supabase/server";
+// ... imports
+
+export default async function BookingPage() {
+  const supabase = await createClient();
+  const { data: vehicles } = await supabase
+    .from("vehicles")
+    .select("*")
+    .eq("is_active", true)
+    .order("name");
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -34,7 +44,7 @@ export default function BookingPage() {
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Booking Form */}
             <div className="lg:col-span-2">
-              <BookingForm />
+              <BookingForm vehicles={vehicles || []} />
             </div>
 
             {/* Sidebar */}

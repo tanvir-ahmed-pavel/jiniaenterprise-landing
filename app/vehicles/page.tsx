@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
-import { sampleVehicles } from "@/lib/config";
+import { createClient } from "@/lib/supabase/server";
 import { Phone, MessageSquare } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -11,8 +11,41 @@ export const metadata: Metadata = {
     "Browse our fleet of well-maintained vehicles including sedans, SUVs, vans, and buses for daily, weekly, and monthly rental in Dhaka.",
 };
 
-export default function VehiclesPage() {
-  // Group vehicles by category
+interface Vehicle {
+  id: string;
+  name: string;
+  slug: string;
+  category: "Economy" | "Luxury" | "Bus";
+  seats: number;
+  engine_cc?: number | null;
+  features?: string[];
+  rental_types: string[];
+  description?: string;
+  images?: string[];
+  image_url?: string | null;
+  starting_price?: number | null;
+  price_label?: string;
+  is_active: boolean;
+}
+
+async function getVehicles(): Promise<Vehicle[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("vehicles")
+    .select("*")
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    console.error("Error fetching vehicles:", error);
+    return [];
+  }
+
+  return (data as Vehicle[]) || [];
+}
+
+export default async function VehiclesPage() {
+  const vehicles = await getVehicles();
   const categories = ["All", "Economy", "Luxury", "Bus"] as const;
 
   return (
@@ -42,11 +75,19 @@ export default function VehiclesPage() {
         </div>
 
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {sampleVehicles.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} />
-          ))}
-        </div>
+        {vehicles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {vehicles.map((vehicle) => (
+              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 mb-16">
+            <p className="text-gray-500 text-lg">
+              No vehicles available at the moment. Please check back later.
+            </p>
+          </div>
+        )}
 
         {/* CTA Section */}
         <div className="bg-green-600 text-white rounded-2xl p-8 md:p-12 text-center">
