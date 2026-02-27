@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,6 @@ export default function AddVehiclePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [features, setFeatures] = useState<string[]>([""]);
-
-  useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-    }
-  }, [router]);
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);

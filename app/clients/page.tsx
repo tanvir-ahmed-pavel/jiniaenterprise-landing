@@ -10,19 +10,45 @@ export const metadata: Metadata = {
 };
 
 export default function ClientsPage() {
-  // Group clients by type
   const embassies = corporateClients.filter((c) => c.type === "Embassy");
   const organizations = corporateClients.filter(
-    (c) => c.type === "International Organization"
+    (c) => c.type === "International Organization",
   );
   const corporates = corporateClients.filter((c) => c.type === "Corporate");
+
+  const sections = [
+    {
+      title: "Embassies & Diplomatic Missions",
+      icon: Globe,
+      items: embassies,
+      iconBg: "rgba(74, 222, 128, 0.12)",
+      iconColor: "text-green-600",
+      iconShadow: "0 0 15px rgba(74, 222, 128, 0.1)",
+    },
+    {
+      title: "International Organizations",
+      icon: Building2,
+      items: organizations,
+      iconBg: "rgba(59, 130, 246, 0.12)",
+      iconColor: "text-blue-600",
+      iconShadow: "0 0 15px rgba(59, 130, 246, 0.1)",
+    },
+    {
+      title: "Corporate Clients",
+      icon: Building2,
+      items: corporates,
+      iconBg: "rgba(245, 158, 11, 0.12)",
+      iconColor: "text-amber-600",
+      iconShadow: "0 0 15px rgba(245, 158, 11, 0.1)",
+    },
+  ];
 
   return (
     <div className="py-12">
       <div className="container">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl font-heading font-bold text-green-700">
+          <h1 className="text-4xl font-heading font-bold text-green-800">
             Our Valued Clients
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -31,90 +57,51 @@ export default function ClientsPage() {
           </p>
         </div>
 
-        {/* Embassies */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <Globe className="h-6 w-6 text-green-600" />
-            <h2 className="text-2xl font-heading font-bold text-green-700">
-              Embassies & Diplomatic Missions
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {embassies.map((client) => (
-              <Card
-                key={client.name}
-                className="hover:shadow-md transition-shadow border-green-100 hover:border-green-300"
+        {/* Client Sections */}
+        {sections.map((section) => (
+          <div key={section.title} className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{
+                  background: section.iconBg,
+                  boxShadow: section.iconShadow,
+                }}
               >
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                    <Globe className="h-6 w-6 text-green-600" />
-                  </div>
-                  <span className="font-medium text-sm text-gray-700">
-                    {client.name}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
+                <section.icon className={`h-5 w-5 ${section.iconColor}`} />
+              </div>
+              <h2 className="text-2xl font-heading font-bold text-green-800">
+                {section.title}
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {section.items.map((client) => (
+                <Card key={client.name}>
+                  <CardContent className="p-5 flex items-center gap-4">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                      style={{
+                        background: section.iconBg,
+                        boxShadow: section.iconShadow,
+                      }}
+                    >
+                      <section.icon
+                        className={`h-5 w-5 ${section.iconColor}`}
+                      />
+                    </div>
+                    <span className="font-medium text-sm text-gray-700">
+                      {client.name}
+                    </span>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
 
-        {/* International Organizations */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <Building2 className="h-6 w-6 text-green-600" />
-            <h2 className="text-2xl font-heading font-bold text-green-700">
-              International Organizations
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {organizations.map((client) => (
-              <Card
-                key={client.name}
-                className="hover:shadow-md transition-shadow border-green-100 hover:border-green-300"
-              >
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <Building2 className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <span className="font-medium text-sm text-gray-700">
-                    {client.name}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Corporates */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <Building2 className="h-6 w-6 text-green-600" />
-            <h2 className="text-2xl font-heading font-bold text-green-700">
-              Corporate Clients
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {corporates.map((client) => (
-              <Card
-                key={client.name}
-                className="hover:shadow-md transition-shadow border-green-100 hover:border-green-300"
-              >
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                    <Building2 className="h-6 w-6 text-amber-600" />
-                  </div>
-                  <span className="font-medium text-sm text-gray-700">
-                    {client.name}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center bg-green-50 rounded-2xl p-8 md:p-12 space-y-4 border border-green-100">
-          <h2 className="text-2xl font-heading font-bold text-green-700">
+        {/* CTA — Glass Glow */}
+        <div className="text-center glass-glow rounded-2xl p-8 md:p-12 space-y-4">
+          <h2 className="text-2xl font-heading font-bold text-green-800">
             Join Our Growing List of Satisfied Clients
           </h2>
           <p className="text-gray-600 max-w-xl mx-auto">

@@ -45,7 +45,7 @@ export default function ServicesPage() {
       <div className="container">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl font-heading font-bold text-green-700">
+          <h1 className="text-4xl font-heading font-bold text-green-800">
             Our Services
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -54,17 +54,14 @@ export default function ServicesPage() {
           </p>
         </div>
 
-        {/* Services Grid */}
+        {/* Services Grid — Glass Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {services.map((service) => {
             const IconComponent = iconMap[service.icon] || Car;
             return (
-              <Card
-                key={service.id}
-                className="hover:shadow-lg transition-shadow border-green-100 hover:border-green-300"
-              >
+              <Card key={service.id}>
                 <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-xl icon-glow flex items-center justify-center mb-4">
                     <IconComponent className="h-6 w-6 text-green-600" />
                   </div>
                   <CardTitle className="text-lg text-green-800">
@@ -81,115 +78,124 @@ export default function ServicesPage() {
           })}
         </div>
 
-        {/* Group & Corporate Transportation - Green */}
-        <div className="bg-green-600 text-white rounded-2xl p-8 md:p-12 mb-16">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        {/* Group & Corporate — Dark Glass */}
+        <div
+          className="rounded-2xl p-8 md:p-12 mb-16 relative overflow-hidden"
+          style={{
+            background: "rgba(10, 25, 18, 0.85)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1px solid rgba(74, 222, 128, 0.12)",
+            boxShadow:
+              "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
+          }}
+        >
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-green-500/8 rounded-full blur-[100px]" />
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
             <div className="space-y-6">
-              <h2 className="text-2xl md:text-3xl font-heading font-bold">
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
                 Group & Corporate Transportation
               </h2>
-              <p className="opacity-90">
+              <p className="text-white/70">
                 Jinia Enterprise provides customized group transportation
                 solutions, combining experienced drivers with a modern fleet of
                 buses for safe and hassle-free trips.
               </p>
               <ul className="space-y-3">
                 {groupTransportOptions.map((option, idx) => (
-                  <li key={idx} className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 shrink-0" />
+                  <li
+                    key={idx}
+                    className="flex items-center gap-3 text-white/90"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(74,222,128,0.2)]">
+                      <CheckCircle className="h-3 w-3 text-green-400" />
+                    </div>
                     <span>{option}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="space-y-6">
-              <div className="bg-white/10 rounded-xl p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Diversity</h3>
-                <ul className="space-y-2 opacity-90">
-                  <li>• Wide range of vehicles from economy to luxury</li>
-                  <li>• Most competitive rates</li>
-                  <li>• Suitable for business and family use</li>
-                </ul>
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Solutions</h3>
-                <ul className="space-y-2 opacity-90">
-                  <li>• Daily, weekly, monthly rentals</li>
-                  <li>• Long-term leasing</li>
-                  <li>• Chauffeur services</li>
-                  <li>• Pick-up and drop-off</li>
-                  <li>• 24-hour emergency assistance</li>
-                </ul>
-              </div>
+              {["Diversity", "Solutions"].map((title) => (
+                <div
+                  key={title}
+                  className="rounded-xl p-6 space-y-4"
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <h3 className="text-xl font-semibold text-white">{title}</h3>
+                  <ul className="space-y-2 text-white/70">
+                    {title === "Diversity" ? (
+                      <>
+                        <li>• Wide range of vehicles from economy to luxury</li>
+                        <li>• Most competitive rates</li>
+                        <li>• Suitable for business and family use</li>
+                      </>
+                    ) : (
+                      <>
+                        <li>• Daily, weekly, monthly rentals</li>
+                        <li>• Long-term leasing</li>
+                        <li>• Chauffeur services</li>
+                        <li>• Pick-up and drop-off</li>
+                        <li>• 24-hour emergency assistance</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Additional Features */}
-        <div className="bg-green-50 rounded-2xl p-8 md:p-12 mb-16">
-          <h2 className="text-2xl font-heading font-bold mb-8 text-center text-green-700">
+        {/* Additional Features — Glass Section */}
+        <div className="section-glass rounded-2xl p-8 md:p-12 mb-16">
+          <h2 className="text-2xl font-heading font-bold mb-8 text-center text-green-800">
             Why Our Services Stand Out
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-white">
-                <Shield className="h-5 w-5 text-green-600" />
+            {[
+              {
+                icon: Shield,
+                title: "First-Hand Vehicles",
+                text: "All vehicles are first-hand and maintained in excellent condition.",
+              },
+              {
+                icon: Clock,
+                title: "Quick Response",
+                text: "Ability to respond quickly to client needs.",
+              },
+              {
+                icon: MapPin,
+                title: "All Bangladesh",
+                text: "Explore Dhaka and the entire country with our fleet.",
+              },
+              {
+                icon: Phone,
+                title: "Experienced Staff",
+                text: "Helpful and experienced staff at all times.",
+              },
+            ].map(({ icon: Icon, title, text }) => (
+              <div key={title} className="flex items-start gap-4">
+                <div className="p-2.5 rounded-xl icon-glow shrink-0">
+                  <Icon className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1 text-gray-800">{title}</h3>
+                  <p className="text-sm text-gray-600">{text}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold mb-1 text-gray-800">
-                  First-Hand Vehicles
-                </h3>
-                <p className="text-sm text-gray-600">
-                  All vehicles are first-hand and maintained in excellent
-                  condition.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-white">
-                <Clock className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1 text-gray-800">
-                  Quick Response
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Ability to respond quickly to client needs.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-white">
-                <MapPin className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1 text-gray-800">
-                  All Bangladesh
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Explore Dhaka and the entire country with our fleet.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-white">
-                <Phone className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1 text-gray-800">
-                  Experienced Staff
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Helpful and experienced staff at all times.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* CTA */}
         <div className="text-center space-y-6">
-          <h2 className="text-2xl font-heading font-bold text-green-700">
+          <h2 className="text-2xl font-heading font-bold text-green-800">
             Ready to Get Started?
           </h2>
           <p className="text-gray-600 max-w-xl mx-auto italic">
@@ -198,19 +204,10 @@ export default function ServicesPage() {
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/contact">
-              <Button
-                size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                Contact Us
-              </Button>
+              <Button size="lg">Contact Us</Button>
             </Link>
             <Link href="/vehicles">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-green-600 text-green-600 hover:bg-green-50"
-              >
+              <Button size="lg" variant="outline">
                 View Fleet
               </Button>
             </Link>

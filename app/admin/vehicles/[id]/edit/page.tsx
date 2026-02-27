@@ -21,12 +21,6 @@ export default function EditVehiclePage() {
   const [features, setFeatures] = useState<string[]>([]);
 
   useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-      return;
-    }
-
     const loadVehicle = async () => {
       if (!id) return;
       const data = await vehicleService.getById(id);
@@ -38,7 +32,7 @@ export default function EditVehiclePage() {
     };
 
     loadVehicle();
-  }, [id, router]);
+  }, [id]);
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);

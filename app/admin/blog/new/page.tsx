@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,6 @@ export default function AddBlogPostPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
-
-  useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-    }
-  }, [router]);
 
   const generateSlug = (title: string) => {
     return title
@@ -65,7 +58,7 @@ export default function AddBlogPostPage() {
     } catch (error) {
       console.error("Failed to create blog post:", error);
       alert(
-        "Failed to create blog post. Please try again (maybe slug collision?)."
+        "Failed to create blog post. Please try again (maybe slug collision?).",
       );
     } finally {
       setIsLoading(false);

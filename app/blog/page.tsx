@@ -67,8 +67,8 @@ export default async function BlogPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-linear-to-br from-green-50 via-white to-green-50 py-16 md:py-24">
+      {/* Hero Section — Glass Gradient */}
+      <section className="py-16 md:py-24 section-glass">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center space-y-4">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-green-800">
@@ -85,34 +85,35 @@ export default async function BlogPage() {
       <div className="container py-12 md:py-16">
         {publishedPosts.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-lg mb-4">
-              No blog posts available yet. Check back soon for updates!
-            </p>
-            <Link href="/">
-              <Button variant="outline">Back to Home</Button>
-            </Link>
+            <div className="glass rounded-2xl p-12 max-w-md mx-auto">
+              <p className="text-gray-500 text-lg mb-4">
+                No blog posts available yet. Check back soon for updates!
+              </p>
+              <Link href="/">
+                <Button variant="outline">Back to Home</Button>
+              </Link>
+            </div>
           </div>
         ) : (
           <>
-            {/* Featured Post */}
+            {/* Featured Post — Glass Card */}
             {featuredPost && (
               <section className="mb-16">
                 <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
                   Featured Article
                 </h2>
                 <Link href={`/blog/${featuredPost.slug}`}>
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-green-100">
+                  <Card className="overflow-hidden group">
                     <div className="grid md:grid-cols-2 gap-0">
-                      {/* Image */}
-                      <div className="aspect-video md:aspect-auto bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center min-h-[300px] overflow-hidden">
+                      <div className="aspect-video md:aspect-auto bg-gradient-to-br from-green-100/50 to-green-200/50 flex items-center justify-center min-h-[300px] overflow-hidden">
                         {featuredPost.cover_image ? (
                           <img
                             src={featuredPost.cover_image}
                             alt={featuredPost.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="text-green-600/50 text-6xl font-heading font-bold">
+                          <div className="text-green-600/30 text-6xl font-heading font-bold">
                             📰
                           </div>
                         )}
@@ -128,7 +129,7 @@ export default async function BlogPage() {
                             {getReadingTime(featuredPost.content)} min read
                           </span>
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 group-hover:text-green-600 transition-colors mb-4">
+                        <h3 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300 mb-4">
                           {featuredPost.title}
                         </h3>
                         <p className="text-gray-600 mb-6">
@@ -139,7 +140,7 @@ export default async function BlogPage() {
                             <User className="h-4 w-4" />
                             {featuredPost.author}
                           </span>
-                          <span className="text-green-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                          <span className="text-green-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
                             Read More <ArrowRight className="h-4 w-4" />
                           </span>
                         </div>
@@ -150,7 +151,7 @@ export default async function BlogPage() {
               </section>
             )}
 
-            {/* Other Posts Grid */}
+            {/* Other Posts Grid — Glass Cards */}
             {otherPosts.length > 0 && (
               <section>
                 <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-6">
@@ -159,17 +160,16 @@ export default async function BlogPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {otherPosts.map((post) => (
                     <Link key={post.id} href={`/blog/${post.slug}`}>
-                      <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group border-green-100 hover:border-green-300">
-                        {/* Image */}
-                        <div className="aspect-video bg-linear-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
+                      <Card className="h-full overflow-hidden group">
+                        <div className="aspect-video bg-gradient-to-br from-green-50/50 to-green-100/50 flex items-center justify-center overflow-hidden">
                           {post.cover_image ? (
                             <img
                               src={post.cover_image}
                               alt={post.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="text-green-500/40 text-4xl font-heading font-bold">
+                            <div className="text-green-500/30 text-4xl font-heading font-bold">
                               📄
                             </div>
                           )}
@@ -185,7 +185,7 @@ export default async function BlogPage() {
                               {getReadingTime(post.content)} min
                             </span>
                           </div>
-                          <CardTitle className="text-lg group-hover:text-green-600 transition-colors line-clamp-2">
+                          <CardTitle className="text-lg group-hover:text-green-600 transition-colors duration-300 line-clamp-2">
                             {post.title}
                           </CardTitle>
                         </CardHeader>
@@ -193,7 +193,7 @@ export default async function BlogPage() {
                           <CardDescription className="line-clamp-3">
                             {post.excerpt}
                           </CardDescription>
-                          <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                          <div className="mt-4 text-green-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
                             Read More <ArrowRight className="h-4 w-4" />
                           </div>
                         </CardContent>
@@ -206,8 +206,8 @@ export default async function BlogPage() {
           </>
         )}
 
-        {/* CTA Section */}
-        <section className="mt-16 text-center py-12 bg-green-50 rounded-2xl">
+        {/* CTA — Glass Section */}
+        <section className="mt-16 text-center py-12 glass-glow rounded-2xl">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-green-800 mb-4">
             Need a Vehicle for Your Next Trip?
           </h2>
@@ -217,17 +217,12 @@ export default async function BlogPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/vehicles">
-              <Button className="bg-green-600 hover:bg-green-700 text-white gap-2">
+              <Button className="gap-2">
                 View Our Fleet <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/contact">
-              <Button
-                variant="outline"
-                className="border-green-600 text-green-600 hover:bg-green-50"
-              >
-                Contact Us
-              </Button>
+              <Button variant="outline">Contact Us</Button>
             </Link>
           </div>
         </section>

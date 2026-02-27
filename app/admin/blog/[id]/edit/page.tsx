@@ -21,12 +21,6 @@ export default function EditBlogPostPage() {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-      return;
-    }
-
     const loadPost = async () => {
       if (!id) return;
       const data = await blogService.getById(id);
@@ -38,7 +32,7 @@ export default function EditBlogPostPage() {
     };
 
     loadPost();
-  }, [id, router]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,19 +39,9 @@ interface Booking {
 }
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("vehicles");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const router = useRouter();
-
-  useEffect(() => {
-    const auth = localStorage.getItem("admin_auth");
-    if (auth !== "true") {
-      router.push("/admin");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [router]);
 
   // Sample bookings for demo
   const sampleBookings: Booking[] = [
@@ -92,23 +83,16 @@ export default function AdminDashboard() {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_auth");
-    router.push("/admin");
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/admin/login");
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   const displayBookings = bookings.length > 0 ? bookings : sampleBookings;
 
   const getStatusColor = (
-    status: string
+    status: string,
   ): "default" | "secondary" | "success" | "outline" | "destructive" => {
     switch (status) {
       case "new":
@@ -379,8 +363,8 @@ export default function AdminDashboard() {
                               {booking.status === "new"
                                 ? "Contact"
                                 : booking.status === "contacted"
-                                ? "Confirm"
-                                : "View"}
+                                  ? "Confirm"
+                                  : "View"}
                             </Button>
                           </div>
                         </td>

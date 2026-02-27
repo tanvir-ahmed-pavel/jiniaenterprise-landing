@@ -21,7 +21,7 @@ const outfit = Outfit({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#1a365d",
+  themeColor: "#0a1912",
 };
 
 export const metadata: Metadata = {
@@ -197,14 +197,28 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased flex flex-col",
+          "min-h-screen bg-background font-sans antialiased flex flex-col relative",
           inter.variable,
-          outfit.variable
+          outfit.variable,
         )}
         suppressHydrationWarning
       >
+        {/* Animated Liquid Glass Background Mesh */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[hsl(var(--background))]">
+          {/* Primary green blob */}
+          <div className="absolute top-[-10%] -left-[5%] w-[500px] h-[500px] bg-green-400/50 rounded-full filter blur-[100px] animate-blob"></div>
+          {/* Emerald accent blob */}
+          <div className="absolute top-[10%] -right-[5%] w-[450px] h-[450px] bg-emerald-400/40 rounded-full filter blur-[100px] animate-blob-reverse animation-delay-2000"></div>
+          {/* Teal bottom blob */}
+          <div className="absolute -bottom-[10%] left-[15%] w-[500px] h-[500px] bg-teal-400/40 rounded-full filter blur-[100px] animate-blob animation-delay-4000"></div>
+          {/* Cyan center blob */}
+          <div className="absolute top-[40%] left-[40%] w-[350px] h-[350px] bg-cyan-300/40 rounded-full filter blur-[120px] animate-blob-reverse animation-delay-3000"></div>
+          {/* Lime accent blob */}
+          <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-lime-300/40 rounded-full filter blur-[100px] animate-blob animation-delay-5000"></div>
+        </div>
+
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 relative z-0">{children}</main>
         <Footer />
       </body>
     </html>

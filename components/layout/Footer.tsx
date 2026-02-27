@@ -1,11 +1,20 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Phone, Mail, MapPin, MessageSquare } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
 export function Footer() {
   return (
-    <footer className="border-t border-primary/10 bg-gradient-to-b from-white to-primary/5">
+    <footer
+      className="relative z-10 mt-20"
+      style={{
+        background: "rgba(10, 25, 18, 0.85)",
+        backdropFilter: "blur(32px) saturate(1.5)",
+        WebkitBackdropFilter: "blur(32px) saturate(1.5)",
+        borderTop: "1px solid rgba(74, 222, 128, 0.15)",
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+        color: "white",
+      }}
+    >
       <div className="container py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & Info */}
@@ -14,10 +23,10 @@ export function Footer() {
               <img
                 src="/images/logo.png"
                 alt="Jinia Enterprise"
-                className="h-12 w-auto"
+                className="h-12 w-auto brightness-150"
               />
             </Link>
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-gray-400 leading-relaxed">
               {siteConfig.tagline}. Over {siteConfig.experience} years serving
               corporate clients, embassies, and individuals with a focus on
               customer satisfaction.
@@ -27,14 +36,24 @@ export function Footer() {
                 href={`https://wa.me/${siteConfig.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all duration-300 hover:-translate-y-0.5"
+                style={{
+                  background: "rgba(74, 222, 128, 0.2)",
+                  border: "1px solid rgba(74, 222, 128, 0.2)",
+                  boxShadow: "0 0 15px rgba(74, 222, 128, 0.1)",
+                }}
                 aria-label="WhatsApp"
               >
                 <MessageSquare className="h-5 w-5" />
               </a>
               <a
                 href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
-                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all duration-300 hover:-translate-y-0.5"
+                style={{
+                  background: "rgba(74, 222, 128, 0.2)",
+                  border: "1px solid rgba(74, 222, 128, 0.2)",
+                  boxShadow: "0 0 15px rgba(74, 222, 128, 0.1)",
+                }}
                 aria-label="Call"
               >
                 <Phone className="h-5 w-5" />
@@ -44,14 +63,14 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-primary/80">
+            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-green-400/80">
               Company
             </h4>
-            <ul className="space-y-2 text-sm text-gray-600">
+            <ul className="space-y-2 text-sm text-gray-400">
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-primary transition-colors hover:translate-x-1 inline-block"
+                  className="hover:text-green-400 transition-colors duration-300 inline-flex items-center gap-1 hover:gap-2"
                 >
                   About Us
                 </Link>
@@ -59,7 +78,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-green-400 transition-colors duration-300"
                 >
                   Our Services
                 </Link>
@@ -67,7 +86,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/vehicles"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-green-400 transition-colors duration-300"
                 >
                   Vehicle Fleet
                 </Link>
@@ -75,7 +94,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/clients"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-green-400 transition-colors duration-300"
                 >
                   Our Clients
                 </Link>
@@ -83,7 +102,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-green-400 transition-colors duration-300"
                 >
                   Contact Us
                 </Link>
@@ -93,10 +112,10 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-primary/80">
+            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-green-400/80">
               Services
             </h4>
-            <ul className="space-y-2 text-sm text-gray-600">
+            <ul className="space-y-2 text-sm text-gray-400">
               <li>Daily & Weekly Rental</li>
               <li>Monthly & Long-term Leasing</li>
               <li>Corporate Transport</li>
@@ -108,12 +127,12 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-primary/80">
+            <h4 className="font-semibold mb-4 text-sm uppercase tracking-widest text-green-400/80">
               Contact
             </h4>
-            <ul className="space-y-3 text-sm text-gray-600">
+            <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-secondary" />
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-amber-400/80" />
                 <span>
                   40/2 Unicorn Plaza, Level #2, Office #9&10
                   <br />
@@ -123,33 +142,33 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 shrink-0 text-secondary" />
+                <Phone className="h-4 w-4 shrink-0 text-amber-400/80" />
                 <div className="flex flex-col">
                   <a
                     href="tel:+8801716633445"
-                    className="hover:text-primary transition-colors font-medium"
+                    className="hover:text-green-400 transition-colors duration-300 font-medium"
                   >
                     +88 01716 633445
                   </a>
                   <a
                     href="tel:+8801976633445"
-                    className="hover:text-primary transition-colors"
+                    className="hover:text-green-400 transition-colors duration-300"
                   >
                     +88 01976 633445
                   </a>
                   <a
                     href="tel:+88029899500"
-                    className="hover:text-primary transition-colors"
+                    className="hover:text-green-400 transition-colors duration-300"
                   >
                     +88 02 989 9500
                   </a>
                 </div>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 shrink-0 text-secondary" />
+                <Mail className="h-4 w-4 shrink-0 text-amber-400/80" />
                 <a
                   href="mailto:jiniaenterprise.com@gmail.com"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-green-400 transition-colors duration-300"
                 >
                   jiniaenterprise.com@gmail.com
                 </a>
@@ -158,12 +177,15 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-primary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+        <div
+          className="mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500"
+          style={{ borderTop: "1px solid rgba(74, 222, 128, 0.1)" }}
+        >
           <p>
             &copy; {new Date().getFullYear()} Jinia Enterprise. All rights
             reserved.
           </p>
-          <p className="italic text-primary/80 font-medium">
+          <p className="italic text-green-400/60 font-medium">
             &ldquo;{siteConfig.philosophy}&rdquo;
           </p>
         </div>

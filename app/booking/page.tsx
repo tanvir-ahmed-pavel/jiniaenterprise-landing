@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 };
 
 import { createClient } from "@/lib/supabase/server";
-// ... imports
 
 export default async function BookingPage() {
   const supabase = await createClient();
@@ -23,8 +22,8 @@ export default async function BookingPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-linear-to-br from-green-50 via-white to-green-50 py-16 md:py-20">
+      {/* Hero Section — Glass */}
+      <section className="py-16 md:py-20 section-glass">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center space-y-4">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-green-800">
@@ -47,10 +46,10 @@ export default async function BookingPage() {
               <BookingForm vehicles={vehicles || []} />
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar — Glass Panels */}
             <div className="space-y-6">
-              {/* Quick Contact */}
-              <div className="bg-green-50 rounded-xl p-6 border border-green-100">
+              {/* Quick Contact — Glass */}
+              <div className="glass-glow rounded-xl p-6">
                 <h3 className="text-lg font-heading font-bold text-green-800 mb-4">
                   Need Immediate Help?
                 </h3>
@@ -61,9 +60,16 @@ export default async function BookingPage() {
                 <div className="space-y-3">
                   <a
                     href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
-                    className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-green-100 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+                    style={{
+                      background: "rgba(255,255,255,0.5)",
+                      border: "1px solid rgba(255,255,255,0.3)",
+                    }}
                   >
-                    <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(74,222,128,0.15)]"
+                      style={{ background: "rgba(22,163,74,0.85)" }}
+                    >
                       <Phone className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -79,9 +85,16 @@ export default async function BookingPage() {
                     href={`https://wa.me/${siteConfig.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-green-100 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+                    style={{
+                      background: "rgba(255,255,255,0.5)",
+                      border: "1px solid rgba(255,255,255,0.3)",
+                    }}
                   >
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      style={{ background: "rgba(16,185,129,0.85)" }}
+                    >
                       <MessageSquare className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -94,14 +107,16 @@ export default async function BookingPage() {
                 </div>
               </div>
 
-              {/* Office Info */}
-              <div className="bg-gray-50 rounded-xl p-6">
+              {/* Office Info — Glass */}
+              <div className="glass rounded-xl p-6">
                 <h3 className="text-lg font-heading font-bold text-gray-900 mb-4">
                   Visit Our Office
                 </h3>
                 <div className="space-y-4 text-sm">
                   <div className="flex gap-3">
-                    <MapPin className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                    <div className="w-8 h-8 rounded-lg icon-glow flex items-center justify-center shrink-0">
+                      <MapPin className="h-4 w-4 text-green-600" />
+                    </div>
                     <div className="text-gray-600">
                       {siteConfig.address.line1}
                       <br />
@@ -111,7 +126,9 @@ export default async function BookingPage() {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <Clock className="h-5 w-5 text-green-600 shrink-0" />
+                    <div className="w-8 h-8 rounded-lg icon-glow flex items-center justify-center shrink-0">
+                      <Clock className="h-4 w-4 text-green-600" />
+                    </div>
                     <div className="text-gray-600">
                       Sat - Thu: 9:00 AM - 8:00 PM
                       <br />
@@ -121,36 +138,25 @@ export default async function BookingPage() {
                 </div>
               </div>
 
-              {/* Why Book With Us */}
-              <div className="bg-white rounded-xl p-6 border border-gray-100">
+              {/* Why Book With Us — Glass */}
+              <div className="glass rounded-xl p-6">
                 <h3 className="text-lg font-heading font-bold text-gray-900 mb-4">
                   Why Book With Us?
                 </h3>
                 <ul className="space-y-3 text-sm text-gray-600">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    Premium, well-maintained vehicles
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    Professional, trained chauffeurs
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    Flexible rental options
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    24/7 customer support
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    Competitive, transparent pricing
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
-                    10+ years of trusted service
-                  </li>
+                  {[
+                    "Premium, well-maintained vehicles",
+                    "Professional, trained chauffeurs",
+                    "Flexible rental options",
+                    "24/7 customer support",
+                    "Competitive, transparent pricing",
+                    "10+ years of trusted service",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="text-green-500 font-bold mt-0.5">✓</span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
