@@ -7,9 +7,7 @@ export function Footer() {
     <footer
       className="relative z-10 mt-20"
       style={{
-        background: "rgba(10, 25, 18, 0.85)",
-        backdropFilter: "blur(32px) saturate(1.5)",
-        WebkitBackdropFilter: "blur(32px) saturate(1.5)",
+        background: "rgba(10, 25, 18, 0.95)",
         borderTop: "1px solid rgba(74, 222, 128, 0.15)",
         boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.05)",
         color: "white",

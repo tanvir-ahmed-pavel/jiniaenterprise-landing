@@ -96,17 +96,13 @@ export default async function VehiclesPage() {
         <div
           className="rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
           style={{
-            background: "rgba(10, 25, 18, 0.85)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
+            background: "rgba(10, 25, 18, 0.92)",
             border: "1px solid rgba(74, 222, 128, 0.12)",
             boxShadow:
               "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
           }}
         >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-green-500/8 rounded-full blur-[100px]" />
-          </div>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4 text-white">
               Can&apos;t Find What You&apos;re Looking For?

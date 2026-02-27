@@ -107,7 +107,7 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
 
       <CardContent className="space-y-2 pb-2">
         {/* Seats & Engine */}
-        <div className="flex items-center gap-4 text-gray-600">
+        <div className="flex flex-wrap items-center gap-4 text-gray-600">
           <div className="flex items-center gap-1.5">
             <div className="w-6 h-6 rounded-lg icon-glow flex items-center justify-center">
               <Users className="h-3.5 w-3.5 text-green-600" />

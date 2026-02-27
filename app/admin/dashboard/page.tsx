@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Car,
   MessageSquare,
-  LogOut,
   Plus,
   Eye,
   Edit,
@@ -19,77 +16,47 @@ import {
   Phone,
   Mail,
   MapPin,
+  Loader2,
 } from "lucide-react";
-import { sampleVehicles, sampleBlogPosts } from "@/lib/config";
 import { Badge } from "@/components/ui/badge";
+import {
+  vehicleService,
+  blogService,
+  bookingService,
+  type Vehicle,
+  type BlogPost,
+  type Booking,
+} from "@/lib/supabase/admin-service";
 
 type TabType = "vehicles" | "bookings" | "blog";
 
-interface Booking {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  vehicle_name: string | null;
-  rental_type: string;
-  pickup_date: string;
-  pickup_location: string | null;
-  status: string;
-  created_at: string;
-}
-
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("vehicles");
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-  // Sample bookings for demo
-  const sampleBookings: Booking[] = [
-    {
-      id: "1",
-      name: "Ahmed Rahman",
-      phone: "+880171234567",
-      email: "ahmed@example.com",
-      vehicle_name: "Toyota Corolla",
-      rental_type: "daily",
-      pickup_date: "2026-01-05",
-      pickup_location: "Gulshan",
-      status: "new",
-      created_at: "2026-01-03T10:00:00Z",
-    },
-    {
-      id: "2",
-      name: "Sarah Khan",
-      phone: "+880181234567",
-      email: "sarah@example.com",
-      vehicle_name: "Toyota Alphard",
-      rental_type: "corporate",
-      pickup_date: "2026-01-10",
-      pickup_location: "Banani",
-      status: "contacted",
-      created_at: "2026-01-02T14:30:00Z",
-    },
-    {
-      id: "3",
-      name: "Embassy of Thailand",
-      phone: "+880191234567",
-      email: "transport@thai-embassy.bd",
-      vehicle_name: null,
-      rental_type: "monthly",
-      pickup_date: "2026-01-15",
-      pickup_location: "Baridhara",
-      status: "confirmed",
-      created_at: "2026-01-01T09:15:00Z",
-    },
-  ];
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-  };
-
-  const displayBookings = bookings.length > 0 ? bookings : sampleBookings;
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [vehicleData, blogData, bookingData] = await Promise.all([
+          vehicleService.getAll(),
+          blogService.getAll(),
+          bookingService.getAll(),
+        ]);
+        setVehicles(vehicleData);
+        setBlogPosts(blogData);
+        setBookings(bookingData);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const getStatusColor = (
     status: string,
@@ -110,130 +77,124 @@ export default function AdminDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-muted/20">
-      {/* Admin Header */}
-      <header className="bg-primary text-primary-foreground py-4">
-        <div className="container flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
-            <p className="text-sm opacity-80">Jinia Enterprise Management</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/" target="_blank">
-              <Button variant="secondary" size="sm">
-                View Site
+    <div>
+      {/* Page Title */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Jinia Enterprise Management
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Vehicles
+            </CardTitle>
+            <Car className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{vehicles.length}</div>
+            <p className="text-xs text-muted-foreground">Active in fleet</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">New Bookings</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {bookings.filter((b) => b.status === "new").length}
+            </div>
+            <p className="text-xs text-muted-foreground">Awaiting response</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{blogPosts.length}</div>
+            <p className="text-xs text-muted-foreground">Published articles</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Confirmed</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {bookings.filter((b) => b.status === "confirmed").length}
+            </div>
+            <p className="text-xs text-muted-foreground">Active rentals</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Button
+          variant={activeTab === "vehicles" ? "default" : "outline"}
+          onClick={() => setActiveTab("vehicles")}
+          className="gap-2"
+        >
+          <Car className="h-4 w-4" /> Vehicles
+        </Button>
+        <Button
+          variant={activeTab === "bookings" ? "default" : "outline"}
+          onClick={() => setActiveTab("bookings")}
+          className="gap-2"
+        >
+          <Calendar className="h-4 w-4" /> Bookings
+          {bookings.filter((b) => b.status === "new").length > 0 && (
+            <Badge variant="destructive" className="ml-1">
+              {bookings.filter((b) => b.status === "new").length}
+            </Badge>
+          )}
+        </Button>
+        <Button
+          variant={activeTab === "blog" ? "default" : "outline"}
+          onClick={() => setActiveTab("blog")}
+          className="gap-2"
+        >
+          <FileText className="h-4 w-4" /> Blog Posts
+        </Button>
+      </div>
+
+      {/* Vehicles Tab */}
+      {activeTab === "vehicles" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Vehicle Fleet</CardTitle>
+            <Link href="/admin/vehicles/new">
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" /> Add Vehicle
               </Button>
             </Link>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleLogout}
-              className="gap-2"
-            >
-              <LogOut className="h-4 w-4" /> Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Vehicles
-              </CardTitle>
-              <Car className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{sampleVehicles.length}</div>
-              <p className="text-xs text-muted-foreground">Active in fleet</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                New Bookings
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {displayBookings.filter((b) => b.status === "new").length}
-              </div>
-              <p className="text-xs text-muted-foreground">Awaiting response</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{sampleBlogPosts.length}</div>
-              <p className="text-xs text-muted-foreground">
-                Published articles
+          </CardHeader>
+          <CardContent>
+            {vehicles.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No vehicles found. Add your first vehicle to get started.
               </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Confirmed</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {displayBookings.filter((b) => b.status === "confirmed").length}
-              </div>
-              <p className="text-xs text-muted-foreground">Active rentals</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button
-            variant={activeTab === "vehicles" ? "default" : "outline"}
-            onClick={() => setActiveTab("vehicles")}
-            className="gap-2"
-          >
-            <Car className="h-4 w-4" /> Vehicles
-          </Button>
-          <Button
-            variant={activeTab === "bookings" ? "default" : "outline"}
-            onClick={() => setActiveTab("bookings")}
-            className="gap-2"
-          >
-            <Calendar className="h-4 w-4" /> Bookings
-            {displayBookings.filter((b) => b.status === "new").length > 0 && (
-              <Badge variant="destructive" className="ml-1">
-                {displayBookings.filter((b) => b.status === "new").length}
-              </Badge>
-            )}
-          </Button>
-          <Button
-            variant={activeTab === "blog" ? "default" : "outline"}
-            onClick={() => setActiveTab("blog")}
-            className="gap-2"
-          >
-            <FileText className="h-4 w-4" /> Blog Posts
-          </Button>
-        </div>
-
-        {/* Vehicles Tab */}
-        {activeTab === "vehicles" && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Vehicle Fleet</CardTitle>
-              <Link href="/admin/vehicles/new">
-                <Button size="sm" className="gap-2">
-                  <Plus className="h-4 w-4" /> Add Vehicle
-                </Button>
-              </Link>
-            </CardHeader>
-            <CardContent>
+            ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -246,7 +207,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sampleVehicles.map((vehicle) => (
+                    {vehicles.map((vehicle) => (
                       <tr
                         key={vehicle.id}
                         className="border-b hover:bg-muted/50"
@@ -269,9 +230,14 @@ export default function AdminDashboard() {
                         </td>
                         <td className="py-3 px-2 text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                            <Link
+                              href={`/vehicles/${vehicle.slug}`}
+                              target="_blank"
+                            >
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </Link>
                             <Button variant="ghost" size="sm">
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -289,17 +255,23 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Bookings Tab */}
-        {activeTab === "bookings" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Booking Requests</CardTitle>
-            </CardHeader>
-            <CardContent>
+      {/* Bookings Tab */}
+      {activeTab === "bookings" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Booking Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {bookings.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No bookings yet.
+              </p>
+            ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -314,7 +286,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {displayBookings.map((booking) => (
+                    {bookings.map((booking) => (
                       <tr
                         key={booking.id}
                         className="border-b hover:bg-muted/50"
@@ -373,22 +345,28 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Blog Tab */}
-        {activeTab === "blog" && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Blog Posts</CardTitle>
-              <Link href="/admin/blog/new">
-                <Button size="sm" className="gap-2">
-                  <Plus className="h-4 w-4" /> New Post
-                </Button>
-              </Link>
-            </CardHeader>
-            <CardContent>
+      {/* Blog Tab */}
+      {activeTab === "blog" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Blog Posts</CardTitle>
+            <Link href="/admin/blog/new">
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" /> New Post
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {blogPosts.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No blog posts found. Create your first post.
+              </p>
+            ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -401,7 +379,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sampleBlogPosts.map((post) => (
+                    {blogPosts.map((post) => (
                       <tr key={post.id} className="border-b hover:bg-muted/50">
                         <td className="py-3 px-2">
                           <div className="font-medium line-clamp-1 max-w-xs">
@@ -448,21 +426,10 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Note */}
-        <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-800">
-            <strong>Admin Panel Ready!</strong> This panel now includes
-            Vehicles, Bookings, and Blog management. Configure your Supabase
-            credentials in{" "}
-            <code className="bg-green-100 px-1 rounded">.env.local</code> to
-            connect to your database.
-          </p>
-        </div>
-      </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

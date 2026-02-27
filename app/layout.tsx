@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/lib/config";
 
 const inter = Inter({
@@ -203,23 +204,21 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
-        {/* Animated Liquid Glass Background Mesh */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[hsl(var(--background))]">
-          {/* Primary green blob */}
-          <div className="absolute top-[-10%] -left-[5%] w-[500px] h-[500px] bg-green-400/50 rounded-full filter blur-[100px] animate-blob"></div>
-          {/* Emerald accent blob */}
-          <div className="absolute top-[10%] -right-[5%] w-[450px] h-[450px] bg-emerald-400/40 rounded-full filter blur-[100px] animate-blob-reverse animation-delay-2000"></div>
-          {/* Teal bottom blob */}
-          <div className="absolute -bottom-[10%] left-[15%] w-[500px] h-[500px] bg-teal-400/40 rounded-full filter blur-[100px] animate-blob animation-delay-4000"></div>
-          {/* Cyan center blob */}
-          <div className="absolute top-[40%] left-[40%] w-[350px] h-[350px] bg-cyan-300/40 rounded-full filter blur-[120px] animate-blob-reverse animation-delay-3000"></div>
-          {/* Lime accent blob */}
-          <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-lime-300/40 rounded-full filter blur-[100px] animate-blob animation-delay-5000"></div>
-        </div>
-
-        <Navbar />
-        <main className="flex-1 relative z-0">{children}</main>
-        <Footer />
+        <SiteShell
+          navbar={<Navbar />}
+          footer={<Footer />}
+          background={
+            <div
+              className="fixed inset-0 pointer-events-none -z-10"
+              style={{
+                background:
+                  "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(167,243,208,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 30%, rgba(153,246,228,0.2) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 80%, rgba(167,243,208,0.15) 0%, transparent 50%), hsl(145, 20%, 96%)",
+              }}
+            />
+          }
+        >
+          {children}
+        </SiteShell>
       </body>
     </html>
   );

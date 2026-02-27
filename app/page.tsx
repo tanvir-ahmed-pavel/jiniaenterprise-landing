@@ -96,69 +96,53 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* ════════ HERO SECTION ════════ */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* ════════ HERO SECTION — IMMERSIVE ════════ */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/hero-bg.png')" }}
         />
 
-        {/* Dark Glass Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 backdrop-blur-[2px]" />
-
-        {/* Animated Glow Orbs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-[100px] animate-blob" />
-          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-emerald-400/10 rounded-full blur-[100px] animate-blob-reverse animation-delay-2000" />
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-amber-400/5 rounded-full blur-[80px] animate-blob animation-delay-4000" />
-        </div>
+        {/* Cinematic Gradient Overlay */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/30 to-black/80" />
 
         {/* Content */}
-        <div className="container relative z-10 py-20">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Badge */}
+        <div className="container relative z-10 py-16 md:py-20 lg:py-28">
+          <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
+            {/* Experience Badge */}
             <div className="opacity-0 animate-fade-in-up">
-              <span
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white/90 border border-white/15 backdrop-blur-md"
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  boxShadow:
-                    "0 0 20px rgba(74,222,128,0.1), inset 0 1px 0 rgba(255,255,255,0.1)",
-                }}
-              >
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
+              <span className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-medium tracking-wide text-white/95 bg-white/10 border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.15)]">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
                 {siteConfig.experience}+ Years of Excellence
               </span>
             </div>
 
-            {/* Main Heading */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold tracking-tight opacity-0 animate-fade-in-up animation-delay-100">
-              <span className="bg-gradient-to-r from-green-400 via-emerald-300 to-green-400 bg-clip-text text-transparent">
+            {/* Main Heading — Cinematic */}
+            <h1 className="opacity-0 animate-fade-in-up animation-delay-100">
+              <span className="block text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-tighter leading-[0.9] bg-linear-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(74,222,128,0.3)]">
                 THE BEST
               </span>
-              <br />
-              <span className="text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                Car Rental Service
+              <span className="block text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-tighter leading-[0.9] text-white mt-1 md:mt-2 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                Car Rental
               </span>
-              <br />
-              <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
-                In Your City
+              <span className="block text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-tight bg-linear-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent mt-1 md:mt-2">
+                Service In Your City
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-300/90 max-w-2xl mx-auto opacity-0 animate-fade-in-up animation-delay-200">
-              {siteConfig.tagline}. Experience the difference with professional
-              chauffeurs and a premium fleet of luxury vehicles.
+            <p className="text-base sm:text-lg md:text-xl text-white/75 max-w-2xl mx-auto font-light leading-relaxed opacity-0 animate-fade-in-up animation-delay-200">
+              {siteConfig.tagline}. Premium fleet, professional chauffeurs, and
+              an experience you won&apos;t forget.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300">
+            {/* CTA Buttons — Liquid Glass */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300">
               <Link href="/vehicles">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 bg-green-500/90 hover:bg-green-400/95 text-white border border-green-400/30 shadow-[0_4px_30px_rgba(74,222,128,0.3)] hover:shadow-[0_6px_40px_rgba(74,222,128,0.4)] backdrop-blur-sm"
+                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base bg-green-500/85 hover:bg-green-400/95 text-white border border-green-400/30 shadow-[0_8px_40px_rgba(74,222,128,0.35)] hover:shadow-[0_12px_50px_rgba(74,222,128,0.5)] transition-all duration-500 hover:-translate-y-1"
                 >
                   <Calendar className="h-5 w-5" /> Book Now
                 </Button>
@@ -166,7 +150,7 @@ export default async function Home() {
               <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_30px_rgba(0,0,0,0.15)]"
+                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:-translate-y-1 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
                 >
                   <Phone className="h-5 w-5" /> Call Now
                 </Button>
@@ -178,31 +162,22 @@ export default async function Home() {
               >
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2 bg-emerald-500/80 hover:bg-emerald-400/90 text-white border border-emerald-400/30 shadow-[0_4px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_40px_rgba(16,185,129,0.4)] backdrop-blur-sm"
+                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base bg-emerald-500/75 hover:bg-emerald-400/90 text-white border border-emerald-400/25 shadow-[0_8px_40px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_50px_rgba(16,185,129,0.45)] transition-all duration-500 hover:-translate-y-1"
                 >
                   <MessageSquare className="h-5 w-5" /> WhatsApp
                 </Button>
               </a>
             </div>
 
-            {/* Quick Booking Widget — Dark Glass */}
-            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-8">
-              <div
-                className="rounded-2xl p-6 max-w-3xl mx-auto border border-white/10"
-                style={{
-                  background: "rgba(10, 25, 18, 0.6)",
-                  backdropFilter: "blur(24px)",
-                  WebkitBackdropFilter: "blur(24px)",
-                  boxShadow:
-                    "0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 30px rgba(74,222,128,0.05)",
-                }}
-              >
+            {/* Quick Booking Widget — Floating Liquid Glass */}
+            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-10 md:mt-12">
+              <div className="rounded-3xl p-5 md:p-6 max-w-3xl mx-auto bg-white/8 border border-white/15 shadow-[0_16px_60px_rgba(0,0,0,0.25)]">
                 <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                   <div className="space-y-2">
-                    <label className="text-xs text-white/60 font-medium tracking-wide">
+                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
                       Rental Type
                     </label>
-                    <select className="w-full h-11 px-3 rounded-xl bg-white/8 border border-white/15 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 transition-all backdrop-blur-sm">
+                    <select className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all">
                       <option value="daily" className="text-gray-900">
                         Daily Rental
                       </option>
@@ -218,30 +193,30 @@ export default async function Home() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs text-white/60 font-medium tracking-wide">
+                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
                       Pickup Date
                     </label>
                     <input
                       type="date"
-                      className="w-full h-11 px-3 rounded-xl bg-white/8 border border-white/15 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 transition-all backdrop-blur-sm"
+                      className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all"
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs text-white/60 font-medium tracking-wide">
+                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
                       Location
                     </label>
                     <input
                       type="text"
                       placeholder="Pickup location"
-                      className="w-full h-11 px-3 rounded-xl bg-white/8 border border-white/15 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 transition-all backdrop-blur-sm"
+                      className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white placeholder:text-white/35 text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all"
                     />
                   </div>
                   <Link href="/vehicles" className="w-full">
                     <Button
                       type="button"
                       size="lg"
-                      className="w-full h-11 bg-green-500/90 hover:bg-green-400 text-white font-semibold border border-green-400/30 shadow-[0_0_20px_rgba(74,222,128,0.2)]"
+                      className="w-full h-12 bg-green-500/85 hover:bg-green-400 text-white font-semibold border border-green-400/25 shadow-[0_0_30px_rgba(74,222,128,0.25)] rounded-2xl"
                     >
                       Get Quote
                     </Button>
@@ -250,18 +225,9 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Trust Badges — Glass */}
-            <div className="pt-8 opacity-0 animate-fade-in-up animation-delay-500">
-              <div
-                className="rounded-2xl px-8 py-6 inline-flex flex-wrap justify-center gap-8 md:gap-12 border border-white/10"
-                style={{
-                  background: "rgba(10, 25, 18, 0.5)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  boxShadow:
-                    "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
-                }}
-              >
+            {/* Trust Badges — Floating Glass */}
+            <div className="pt-6 md:pt-10 opacity-0 animate-fade-in-up animation-delay-500 w-full max-w-4xl mx-auto">
+              <div className="rounded-2xl p-5 md:px-8 w-full grid grid-cols-2 md:grid-cols-4 gap-6 bg-white/6 border border-white/12 shadow-[0_8px_40px_rgba(0,0,0,0.15)]">
                 {[
                   {
                     value: `${siteConfig.experience}+`,
@@ -272,10 +238,10 @@ export default async function Home() {
                   { value: "100%", label: "Satisfaction" },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white drop-shadow-[0_0_10px_rgba(74,222,128,0.2)]">
+                    <div className="text-2xl md:text-3xl font-bold text-white drop-shadow-[0_0_15px_rgba(74,222,128,0.25)]">
                       {stat.value}
                     </div>
-                    <div className="text-xs md:text-sm text-gray-400">
+                    <div className="text-xs md:text-sm text-white/50 mt-0.5">
                       {stat.label}
                     </div>
                   </div>
@@ -286,15 +252,15 @@ export default async function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in animation-delay-500">
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center backdrop-blur-sm">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-bounce" />
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in animation-delay-500">
+          <div className="w-6 h-10 border-2 border-white/15 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/40 rounded-full mt-2 animate-bounce" />
           </div>
         </div>
       </section>
 
       {/* ════════ SERVICES ════════ */}
-      <section className="py-20 relative">
+      <section className="py-16 md:py-24 relative">
         <div className="container space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
@@ -340,7 +306,7 @@ export default async function Home() {
 
       {/* ════════ FEATURED VEHICLES ════════ */}
       {featuredVehicles.length > 0 && (
-        <section className="py-20 section-glass">
+        <section className="py-16 md:py-24 section-glass">
           <div className="container space-y-12">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
@@ -369,31 +335,76 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ════════ CORPORATE CLIENTS ════════ */}
-      <section className="py-20">
-        <div className="container text-center space-y-10">
-          <div className="space-y-4">
-            <h2 className="text-3xl font-heading font-bold text-green-800">
-              Trusted by Leading Organizations
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              We are proud to serve embassies, international organizations, and
-              major corporations.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            {corporateClients.map((client) => (
+      {/* ════════ CORPORATE CLIENTS — Marquee ════════ */}
+      <section className="py-16 md:py-24 overflow-hidden">
+        <div className="container text-center space-y-4 mb-10">
+          <p className="text-green-600/80 text-sm font-medium tracking-widest uppercase">
+            Trusted Partners
+          </p>
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+            Serving Leading Organizations
+          </h2>
+          <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base">
+            Embassies, global NGOs, and top corporations choose us for reliable,
+            premium transportation.
+          </p>
+        </div>
+
+        {/* Marquee Row 1 — scrolls left */}
+        <div className="relative mb-4">
+          <div className="flex animate-marquee gap-4 w-max">
+            {[...corporateClients, ...corporateClients].map((client, i) => (
               <div
-                key={client.name}
-                className="px-5 py-3 rounded-xl text-sm font-medium text-green-800 backdrop-blur-md border border-white/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(74,222,128,0.1)]"
-                style={{ background: "rgba(255,255,255,0.4)" }}
+                key={`r1-${i}`}
+                className="glass glass-hover rounded-xl px-6 py-3 text-sm font-medium text-green-800 whitespace-nowrap flex items-center gap-2 shrink-0"
               >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    client.type === "Embassy"
+                      ? "bg-green-500"
+                      : client.type === "International Organization"
+                        ? "bg-blue-500"
+                        : "bg-amber-500"
+                  }`}
+                />
                 {client.name}
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Marquee Row 2 — scrolls right */}
+        <div className="relative">
+          <div className="flex animate-marquee-reverse gap-4 w-max">
+            {[
+              ...corporateClients.slice().reverse(),
+              ...corporateClients.slice().reverse(),
+            ].map((client, i) => (
+              <div
+                key={`r2-${i}`}
+                className="glass glass-hover rounded-xl px-6 py-3 text-sm font-medium text-green-800 whitespace-nowrap flex items-center gap-2 shrink-0"
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    client.type === "Embassy"
+                      ? "bg-green-500"
+                      : client.type === "International Organization"
+                        ? "bg-blue-500"
+                        : "bg-amber-500"
+                  }`}
+                />
+                {client.name}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center mt-10">
           <Link href="/clients">
-            <Button variant="link" className="gap-2 text-green-600">
+            <Button
+              variant="outline"
+              className="gap-2 text-green-700 border-green-200 hover:bg-green-50"
+            >
               View All Clients <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -401,7 +412,7 @@ export default async function Home() {
       </section>
 
       {/* ════════ WHY CHOOSE US ════════ */}
-      <section className="py-20 section-glass">
+      <section className="py-16 md:py-24 section-glass">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
@@ -446,7 +457,7 @@ export default async function Home() {
 
       {/* ════════ LATEST ARTICLES ════════ */}
       {latestBlogPosts.length > 0 && (
-        <section className="py-20">
+        <section className="py-16 md:py-24">
           <div className="container space-y-12">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
@@ -510,7 +521,7 @@ export default async function Home() {
       )}
 
       {/* ════════ CTA SECTION ════════ */}
-      <section className="py-20 section-glass-dark relative overflow-hidden">
+      <section className="py-16 md:py-24 section-glass-dark relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/8 rounded-full blur-[100px]" />

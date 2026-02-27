@@ -34,12 +34,13 @@ export default function AboutPage() {
         <div
           className="rounded-2xl p-8 md:p-12 text-center mb-16 relative overflow-hidden"
           style={{
-            background: "rgba(10, 25, 18, 0.8)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1px solid rgba(74, 222, 128, 0.15)",
+            background: "rgba(10, 12, 15, 0.88)",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            borderLeft: "1px solid rgba(255,255,255,0.06)",
+            borderBottom: "1px solid rgba(0,0,0,0.3)",
+            borderRight: "1px solid rgba(0,0,0,0.3)",
             boxShadow:
-              "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
+              "0 16px 48px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -117,8 +118,7 @@ export default function AboutPage() {
                   <div
                     className="w-24 h-24 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(74,222,128,0.2)]"
                     style={{
-                      background: "rgba(22,163,74,0.85)",
-                      backdropFilter: "blur(8px)",
+                      background: "rgba(22,163,74,0.9)",
                     }}
                   >
                     <User className="h-12 w-12 text-white" />
@@ -220,11 +220,13 @@ export default function AboutPage() {
         <div
           className="rounded-2xl p-8 md:p-12 mb-16 relative overflow-hidden"
           style={{
-            background: "rgba(10, 25, 18, 0.85)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1px solid rgba(74, 222, 128, 0.12)",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.2)",
+            background: "rgba(10, 12, 15, 0.88)",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            borderLeft: "1px solid rgba(255,255,255,0.06)",
+            borderBottom: "1px solid rgba(0,0,0,0.3)",
+            borderRight: "1px solid rgba(0,0,0,0.3)",
+            boxShadow:
+              "0 16px 48px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
           }}
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

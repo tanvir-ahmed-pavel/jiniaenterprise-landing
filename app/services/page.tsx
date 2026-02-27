@@ -82,17 +82,13 @@ export default function ServicesPage() {
         <div
           className="rounded-2xl p-8 md:p-12 mb-16 relative overflow-hidden"
           style={{
-            background: "rgba(10, 25, 18, 0.85)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
+            background: "rgba(10, 25, 18, 0.92)",
             border: "1px solid rgba(74, 222, 128, 0.12)",
             boxShadow:
               "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
           }}
         >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-green-500/8 rounded-full blur-[100px]" />
-          </div>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
           <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
             <div className="space-y-6">
               <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
@@ -123,9 +119,8 @@ export default function ServicesPage() {
                   key={title}
                   className="rounded-xl p-6 space-y-4"
                   style={{
-                    background: "rgba(255,255,255,0.06)",
+                    background: "rgba(255,255,255,0.08)",
                     border: "1px solid rgba(255,255,255,0.08)",
-                    backdropFilter: "blur(8px)",
                   }}
                 >
                   <h3 className="text-xl font-semibold text-white">{title}</h3>
