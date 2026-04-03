@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 interface AdminAuthWrapperProps {
+
   children: React.ReactNode;
 }
 
