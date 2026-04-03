@@ -86,23 +86,20 @@ export default function AddVehiclePage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <header className="bg-primary text-primary-foreground py-4">
-        <div className="container flex items-center gap-4">
-          <Link href="/admin/vehicles">
-            <Button variant="secondary" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold">Add New Vehicle</h1>
-            <p className="text-sm opacity-80">Add a vehicle to your fleet</p>
-          </div>
+    <div>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/admin/vehicles">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold">Add New Vehicle</h1>
+          <p className="text-muted-foreground">Add a vehicle to your fleet</p>
         </div>
-      </header>
+      </div>
 
-      <div className="container py-8">
-        <Card className="max-w-3xl mx-auto">
+      <Card className="max-w-3xl">
           <CardHeader>
             <CardTitle>Vehicle Details</CardTitle>
             <CardDescription>
@@ -285,7 +282,6 @@ export default function AddVehiclePage() {
             </form>
           </CardContent>
         </Card>
-      </div>
     </div>
   );
 }

@@ -196,14 +196,14 @@ export default function AdminDashboard() {
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[600px]">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-2">Vehicle</th>
-                      <th className="text-left py-3 px-2">Category</th>
-                      <th className="text-left py-3 px-2">Seats</th>
-                      <th className="text-left py-3 px-2">Status</th>
-                      <th className="text-right py-3 px-2">Actions</th>
+                      <th className="text-left py-3 px-2 font-semibold">Vehicle</th>
+                      <th className="text-left py-3 px-2 font-semibold">Category</th>
+                      <th className="text-left py-3 px-2 font-semibold">Seats</th>
+                      <th className="text-left py-3 px-2 font-semibold">Status</th>
+                      <th className="text-right py-3 px-2 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -273,16 +273,16 @@ export default function AdminDashboard() {
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[800px]">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-2">Customer</th>
-                      <th className="text-left py-3 px-2">Contact</th>
-                      <th className="text-left py-3 px-2">Vehicle</th>
-                      <th className="text-left py-3 px-2">Type</th>
-                      <th className="text-left py-3 px-2">Pickup</th>
-                      <th className="text-left py-3 px-2">Status</th>
-                      <th className="text-right py-3 px-2">Actions</th>
+                      <th className="text-left py-3 px-2 font-semibold">Customer</th>
+                      <th className="text-left py-3 px-2 font-semibold">Contact</th>
+                      <th className="text-left py-3 px-2 font-semibold">Vehicle</th>
+                      <th className="text-left py-3 px-2 font-semibold">Type</th>
+                      <th className="text-left py-3 px-2 font-semibold">Pickup</th>
+                      <th className="text-left py-3 px-2 font-semibold">Status</th>
+                      <th className="text-right py-3 px-2 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -368,14 +368,14 @@ export default function AdminDashboard() {
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[600px]">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-2">Title</th>
-                      <th className="text-left py-3 px-2">Author</th>
-                      <th className="text-left py-3 px-2">Date</th>
-                      <th className="text-left py-3 px-2">Status</th>
-                      <th className="text-right py-3 px-2">Actions</th>
+                      <th className="text-left py-3 px-2 font-semibold">Title</th>
+                      <th className="text-left py-3 px-2 font-semibold">Author</th>
+                      <th className="text-left py-3 px-2 font-semibold">Date</th>
+                      <th className="text-left py-3 px-2 font-semibold">Status</th>
+                      <th className="text-right py-3 px-2 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>

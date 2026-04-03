@@ -25,8 +25,11 @@ export function Navbar() {
 
   // Close mobile menu on route change
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsOpen(false);
+    }
+  }, [pathname, isOpen]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -48,7 +51,7 @@ export function Navbar() {
     >
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-3">
           <img
             src="/images/logo.png"
             alt="Jinia Enterprise"
@@ -56,6 +59,11 @@ export function Navbar() {
               isTransparent ? "drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" : ""
             }`}
           />
+          <span className={`text-lg sm:text-xl font-bold tracking-tight whitespace-nowrap transition-colors duration-300 ${
+            isTransparent ? "text-white" : "text-gray-900"
+          }`}>
+            JINIA ENTERPRISE
+          </span>
         </Link>
 
         {/* Desktop Nav */}

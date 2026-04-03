@@ -17,7 +17,6 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import {
   CheckCircle,
-  Clock,
   Briefcase,
   Shield,
   Phone,
@@ -111,28 +110,28 @@ export default async function Home() {
         <div className="container relative z-10 py-16 md:py-20 lg:py-28">
           <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
             {/* Experience Badge */}
-            <div className="opacity-0 animate-fade-in-up">
-              <span className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-medium tracking-wide text-white/95 bg-white/10 border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.15)]">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
-                {siteConfig.experience}+ Years of Excellence
+            <div className="opacity-0 animate-fade-in-up mb-6 sm:mb-8 md:mb-10">
+              <span className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium tracking-wide text-white/95 bg-white/10 border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.15)]">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(74,222,128,0.8)] shrink-0" />
+                <span>{siteConfig.experience}+ Years of Excellence</span>
               </span>
             </div>
 
             {/* Main Heading — Cinematic */}
-            <h1 className="opacity-0 animate-fade-in-up animation-delay-100">
-              <span className="block text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-tighter leading-[0.9] bg-linear-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(74,222,128,0.3)]">
-                THE BEST
+            <h1 className="opacity-0 animate-fade-in-up animation-delay-100 flex flex-col items-center justify-center">
+              <span className="block text-[3.5rem] sm:text-6xl md:text-8xl lg:text-[7rem] font-heading font-black tracking-tighter leading-none sm:leading-[0.9] bg-linear-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(74,222,128,0.3)] text-center w-full uppercase">
+                JINIA
               </span>
-              <span className="block text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-tighter leading-[0.9] text-white mt-1 md:mt-2 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-                Car Rental
+              <span className="block text-5xl sm:text-[4rem] md:text-[5rem] lg:text-[6rem] font-heading font-black tracking-tighter leading-none sm:leading-[0.9] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] text-center w-full uppercase mt-1">
+                ENTERPRISE
               </span>
-              <span className="block text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-tight bg-linear-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent mt-1 md:mt-2">
-                Service In Your City
+              <span className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold tracking-tight sm:tracking-widest leading-snug sm:leading-tight bg-linear-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent mt-4 sm:mt-6 text-center w-full">
+                Best Car Rental Service In Your City
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg md:text-xl text-white/75 max-w-2xl mx-auto font-light leading-relaxed opacity-0 animate-fade-in-up animation-delay-200">
+            <p className="text-sm sm:text-base md:text-xl text-white/80 max-w-2xl mx-auto font-light leading-relaxed opacity-0 animate-fade-in-up animation-delay-200 mt-4 sm:mt-6 px-4 sm:px-0">
               {siteConfig.tagline}. Premium fleet, professional chauffeurs, and
               an experience you won&apos;t forget.
             </p>
@@ -170,14 +169,14 @@ export default async function Home() {
             </div>
 
             {/* Quick Booking Widget — Floating Liquid Glass */}
-            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-10 md:mt-12">
-              <div className="rounded-3xl p-5 md:p-6 max-w-3xl mx-auto bg-white/8 border border-white/15 shadow-[0_16px_60px_rgba(0,0,0,0.25)]">
-                <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                  <div className="space-y-2">
-                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
+            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-8 sm:mt-10 md:mt-12 px-2 sm:px-0">
+              <div className="rounded-3xl p-5 md:p-6 max-w-3xl mx-auto bg-white/10 backdrop-blur-md sm:bg-white/8 border border-white/20 sm:border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.4)] sm:shadow-[0_16px_60px_rgba(0,0,0,0.25)]">
+                <form className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-4 items-start md:items-end text-left">
+                  <div className="space-y-2 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
                       Rental Type
                     </label>
-                    <select className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all">
+                    <select className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50 appearance-none">
                       <option value="daily" className="text-gray-900">
                         Daily Rental
                       </option>
@@ -192,56 +191,58 @@ export default async function Home() {
                       </option>
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
+                  <div className="space-y-2 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
                       Pickup Date
                     </label>
                     <input
                       type="date"
-                      className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all"
+                      className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50 scheme-dark"
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-xs text-white/55 font-medium tracking-widest uppercase">
+                  <div className="space-y-2 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
                       Location
                     </label>
                     <input
                       type="text"
                       placeholder="Pickup location"
-                      className="w-full h-12 px-4 rounded-2xl bg-white/6 border border-white/12 text-white placeholder:text-white/35 text-sm focus:outline-none focus:ring-2 focus:ring-green-400/30 transition-all"
+                      className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50"
                     />
                   </div>
-                  <Link href="/vehicles" className="w-full">
-                    <Button
-                      type="button"
-                      size="lg"
-                      className="w-full h-12 bg-green-500/85 hover:bg-green-400 text-white font-semibold border border-green-400/25 shadow-[0_0_30px_rgba(74,222,128,0.25)] rounded-2xl"
-                    >
-                      Get Quote
-                    </Button>
-                  </Link>
+                  <div className="w-full mt-2 sm:mt-0 pt-1 md:pt-0">
+                    <Link href="/vehicles" className="w-full block">
+                      <Button
+                        type="button"
+                        size="lg"
+                        className="w-full h-12 bg-green-500/90 sm:bg-green-500/85 hover:bg-green-400 text-white font-bold tracking-wide border border-green-400/40 sm:border-green-400/25 shadow-[0_0_20px_rgba(74,222,128,0.3)] sm:shadow-[0_0_30px_rgba(74,222,128,0.25)] rounded-2xl"
+                      >
+                        Get Quote
+                      </Button>
+                    </Link>
+                  </div>
                 </form>
               </div>
             </div>
 
             {/* Trust Badges — Floating Glass */}
-            <div className="pt-6 md:pt-10 opacity-0 animate-fade-in-up animation-delay-500 w-full max-w-4xl mx-auto">
-              <div className="rounded-2xl p-5 md:px-8 w-full grid grid-cols-2 md:grid-cols-4 gap-6 bg-white/6 border border-white/12 shadow-[0_8px_40px_rgba(0,0,0,0.15)]">
+            <div className="pt-8 sm:pt-10 opacity-0 animate-fade-in-up animation-delay-500 w-full max-w-4xl mx-auto px-2 sm:px-0">
+              <div className="rounded-3xl p-4 sm:p-5 md:px-8 w-full grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 bg-white/10 backdrop-blur-sm sm:bg-white/6 border border-white/15 sm:border-white/12 shadow-[0_8px_40px_rgba(0,0,0,0.2)] sm:shadow-[0_8px_40px_rgba(0,0,0,0.15)]">
                 {[
                   {
                     value: `${siteConfig.experience}+`,
-                    label: "Years Experience",
+                    label: "Years Exp",
                   },
-                  { value: "50+", label: "Premium Vehicles" },
-                  { value: "24/7", label: "Support Available" },
+                  { value: "50+", label: "Vehicles" },
+                  { value: "24/7", label: "Support" },
                   { value: "100%", label: "Satisfaction" },
                 ].map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white drop-shadow-[0_0_15px_rgba(74,222,128,0.25)]">
+                  <div key={stat.label} className="text-center flex flex-col justify-center">
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-[0_0_15px_rgba(74,222,128,0.3)]">
                       {stat.value}
                     </div>
-                    <div className="text-xs md:text-sm text-white/50 mt-0.5">
+                    <div className="text-[10px] sm:text-xs md:text-sm text-white/70 mt-1 font-semibold uppercase tracking-wider">
                       {stat.label}
                     </div>
                   </div>
@@ -260,10 +261,10 @@ export default async function Home() {
       </section>
 
       {/* ════════ SERVICES ════════ */}
-      <section className="py-16 md:py-24 relative">
-        <div className="container space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+      <section className="py-12 sm:py-16 md:py-24 relative">
+        <div className="container space-y-8 sm:space-y-12">
+          <div className="text-center space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-green-800">
               Our Services
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -306,10 +307,10 @@ export default async function Home() {
 
       {/* ════════ FEATURED VEHICLES ════════ */}
       {featuredVehicles.length > 0 && (
-        <section className="py-16 md:py-24 section-glass">
-          <div className="container space-y-12">
-            <div className="text-center space-y-4">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+        <section className="py-12 sm:py-16 md:py-24 section-glass">
+          <div className="container space-y-8 sm:space-y-12">
+            <div className="text-center space-y-3 sm:space-y-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-green-800">
                 Featured Vehicles
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -320,7 +321,7 @@ export default async function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredVehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle as any} />
+                <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))}
             </div>
 
@@ -336,15 +337,15 @@ export default async function Home() {
       )}
 
       {/* ════════ CORPORATE CLIENTS — Marquee ════════ */}
-      <section className="py-16 md:py-24 overflow-hidden">
-        <div className="container text-center space-y-4 mb-10">
-          <p className="text-green-600/80 text-sm font-medium tracking-widest uppercase">
+      <section className="py-12 sm:py-16 md:py-24 overflow-hidden">
+        <div className="container text-center space-y-3 sm:space-y-4 mb-8 sm:mb-10 px-4">
+          <p className="text-green-600/80 text-xs sm:text-sm font-medium tracking-widest uppercase">
             Trusted Partners
           </p>
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-green-800">
             Serving Leading Organizations
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base">
+          <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
             Embassies, global NGOs, and top corporations choose us for reliable,
             premium transportation.
           </p>
@@ -412,11 +413,11 @@ export default async function Home() {
       </section>
 
       {/* ════════ WHY CHOOSE US ════════ */}
-      <section className="py-16 md:py-24 section-glass">
+      <section className="py-12 sm:py-16 md:py-24 section-glass">
         <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 items-center">
+            <div className="space-y-6 sm:space-y-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-green-800">
                 Why Choose Jinia Enterprise?
               </h2>
               <div className="space-y-6">
@@ -457,10 +458,10 @@ export default async function Home() {
 
       {/* ════════ LATEST ARTICLES ════════ */}
       {latestBlogPosts.length > 0 && (
-        <section className="py-16 md:py-24">
-          <div className="container space-y-12">
-            <div className="text-center space-y-4">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-green-800">
+        <section className="py-12 sm:py-16 md:py-24">
+          <div className="container space-y-8 sm:space-y-12">
+            <div className="text-center space-y-3 sm:space-y-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-green-800">
                 Latest Articles
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -473,7 +474,7 @@ export default async function Home() {
               {latestBlogPosts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
                   <Card className="h-full group">
-                    <div className="aspect-video bg-gradient-to-br from-green-50/50 to-green-100/50 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-video bg-linear-to-br from-green-50/50 to-green-100/50 flex items-center justify-center overflow-hidden">
                       {post.cover_image ? (
                         <img
                           src={post.cover_image}
@@ -521,14 +522,14 @@ export default async function Home() {
       )}
 
       {/* ════════ CTA SECTION ════════ */}
-      <section className="py-16 md:py-24 section-glass-dark relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 section-glass-dark relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/8 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-green-500/8 rounded-full blur-[60px] sm:blur-[100px]" />
         </div>
 
-        <div className="container text-center space-y-8 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-white">
+        <div className="container text-center space-y-6 sm:space-y-8 relative z-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-white px-2">
             &ldquo;For your next car rental, try Jinia — you will come
             back&rdquo;
           </h2>

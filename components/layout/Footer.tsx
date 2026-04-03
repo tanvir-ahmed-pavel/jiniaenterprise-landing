@@ -13,16 +13,19 @@ export function Footer() {
         color: "white",
       }}
     >
-      <div className="container py-10 md:py-16">
+      <div className="container py-8 sm:py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & Info */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-3">
               <img
                 src="/images/logo.png"
                 alt="Jinia Enterprise"
                 className="h-12 w-auto brightness-150"
               />
+              <span className="text-xl font-bold tracking-tight text-white whitespace-nowrap">
+                JINIA ENTERPRISE
+              </span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
               {siteConfig.tagline}. Over {siteConfig.experience} years serving

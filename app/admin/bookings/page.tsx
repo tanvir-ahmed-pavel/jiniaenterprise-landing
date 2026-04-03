@@ -41,11 +41,7 @@ export default function BookingsManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
+  async function fetchBookings() {
     setIsLoading(true);
     const supabase = createClient();
     const { data, error } = await supabase
@@ -59,7 +55,12 @@ export default function BookingsManagementPage() {
       setBookings((data as Booking[]) || []);
     }
     setIsLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchBookings();
+  }, []);
 
   const updateStatus = async (id: string, newStatus: Booking["status"]) => {
     const supabase = createClient();
@@ -131,7 +132,7 @@ export default function BookingsManagementPage() {
   }
 
   return (
-    <div className="p-6">
+    <div>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Booking Management</h1>

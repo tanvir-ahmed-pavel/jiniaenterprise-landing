@@ -71,7 +71,7 @@ export default function EditBlogPostPage() {
 
   if (!post) {
     return (
-      <div className="p-6">
+      <div>
         <div className="text-center py-12">
           <p className="text-muted-foreground">Post not found</p>
           <Link href="/admin/blog">
@@ -83,7 +83,7 @@ export default function EditBlogPostPage() {
   }
 
   return (
-    <div className="p-6">
+    <div>
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/blog">

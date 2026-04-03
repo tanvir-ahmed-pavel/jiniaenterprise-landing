@@ -98,7 +98,7 @@ export default function EditVehiclePage() {
 
   if (!vehicle) {
     return (
-      <div className="p-6">
+      <div>
         <div className="text-center py-12">
           <p className="text-muted-foreground">Vehicle not found</p>
           <Link href="/admin/vehicles">
@@ -110,7 +110,7 @@ export default function EditVehiclePage() {
   }
 
   return (
-    <div className="p-6">
+    <div>
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/vehicles">

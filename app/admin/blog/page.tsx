@@ -30,11 +30,7 @@ export default function BlogListPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
+  async function fetchPosts() {
     setIsLoading(true);
     const supabase = createClient();
     const { data, error } = await supabase
@@ -48,7 +44,12 @@ export default function BlogListPage() {
       setPosts((data as BlogPost[]) || []);
     }
     setIsLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchPosts();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this post?")) return;
@@ -91,7 +92,7 @@ export default function BlogListPage() {
   }
 
   return (
-    <div className="p-6">
+    <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

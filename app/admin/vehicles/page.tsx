@@ -26,11 +26,7 @@ export default function VehiclesListPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchVehicles();
-  }, []);
-
-  const fetchVehicles = async () => {
+  async function fetchVehicles() {
     setIsLoading(true);
     const supabase = createClient();
     const { data, error } = await supabase
@@ -44,7 +40,12 @@ export default function VehiclesListPage() {
       setVehicles((data as Vehicle[]) || []);
     }
     setIsLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchVehicles();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this vehicle?")) return;
@@ -82,7 +83,7 @@ export default function VehiclesListPage() {
   }
 
   return (
-    <div className="p-6">
+    <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

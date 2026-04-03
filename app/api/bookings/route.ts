@@ -40,11 +40,11 @@ export async function POST(request: NextRequest) {
       status: "new",
     };
 
-    const supabase = (await createClient()) as any;
+    const supabase = await createClient();
     // Use 'as never' or explicit type if inference fails
     const { data, error } = await supabase
       .from("bookings")
-      .insert([bookingData as any])
+      .insert([bookingData] as never)
       .select()
       .single();
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Booking request received. Our team will contact you shortly.",
-      id: data.id,
+      id: (data as unknown as { id: string }).id,
     });
   } catch (error) {
     console.error("Booking error:", error);

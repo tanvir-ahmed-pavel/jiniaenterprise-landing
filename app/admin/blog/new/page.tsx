@@ -66,23 +66,20 @@ export default function AddBlogPostPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <header className="bg-primary text-primary-foreground py-4">
-        <div className="container flex items-center gap-4">
-          <Link href="/admin/blog">
-            <Button variant="secondary" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold">Create Blog Post</h1>
-            <p className="text-sm opacity-80">Write a new article</p>
-          </div>
+    <div>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/admin/blog">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold">Create Blog Post</h1>
+          <p className="text-muted-foreground">Write a new article</p>
         </div>
-      </header>
+      </div>
 
-      <div className="container py-8">
-        <Card className="max-w-3xl mx-auto">
+      <Card className="max-w-3xl">
           <CardHeader>
             <CardTitle>Blog Post Details</CardTitle>
             <CardDescription>
@@ -203,7 +200,6 @@ Regular paragraph text.
             </form>
           </CardContent>
         </Card>
-      </div>
     </div>
   );
 }

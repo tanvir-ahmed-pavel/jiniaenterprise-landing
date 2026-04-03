@@ -8,10 +8,10 @@ interface AdminAuthWrapperProps {
 }
 
 export function AdminAuthWrapper({ children }: AdminAuthWrapperProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(pathname !== "/admin");
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -27,12 +27,13 @@ export function AdminAuthWrapper({ children }: AdminAuthWrapperProps) {
 
     // Skip auth check on login page
     if (pathname === "/admin") {
-      setIsLoading(false);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (isLoading) setIsLoading(false);
       return;
     }
 
     checkAuth();
-  }, [router, pathname]);
+  }, [router, pathname, isLoading]);
 
   if (isLoading) {
     return (

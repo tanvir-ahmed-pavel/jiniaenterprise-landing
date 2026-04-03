@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { siteConfig } from "@/lib/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { InquiryForm } from "@/components/forms/InquiryForm";

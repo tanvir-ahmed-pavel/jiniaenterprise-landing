@@ -1,7 +1,6 @@
 import { BookingForm } from "@/components/forms/BookingForm";
 import { siteConfig } from "@/lib/config";
 import { Phone, MessageSquare, MapPin, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

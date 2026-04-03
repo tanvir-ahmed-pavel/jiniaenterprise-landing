@@ -41,16 +41,16 @@ export default function AdminLoginPage() {
       // Successful login
       router.push("/admin/dashboard");
       router.refresh(); // Refresh to update server-side auth state/middleware
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12">
-      <div className="w-full max-w-md mx-4 space-y-8 relative z-10">
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-2 sm:px-0">
+      <div className="w-full max-w-md mx-auto space-y-8 relative z-10">
         <div className="mx-auto text-center">
           <img
             src="/images/logo.png"
