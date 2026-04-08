@@ -60,9 +60,10 @@ export async function POST(request: NextRequest) {
         const { Resend } = await import("resend");
         const resend = new Resend(resendApiKey);
         const adminEmail = process.env.ADMIN_EMAIL || "admin@jiniaenterprise.com";
+        const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@jiniaenterprise.com";
 
         await resend.emails.send({
-          from: "noreply@jiniaenterprise.com",
+          from: fromEmail,
           to: [adminEmail],
           subject: `New Booking Request: ${name}`,
           html: `
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
 
         // Send confirmation email to the customer
         await resend.emails.send({
-          from: "noreply@jiniaenterprise.com",
+          from: fromEmail,
           to: [email],
           subject: `Booking Request Received - Jinia Enterprise`,
           html: `

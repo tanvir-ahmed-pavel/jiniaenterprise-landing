@@ -62,10 +62,11 @@ export async function POST(request: Request) {
         const { Resend } = await import("resend");
         const resend = new Resend(resendApiKey);
         const adminEmail = process.env.ADMIN_EMAIL || "admin@jiniaenterprise.com";
+        const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@jiniaenterprise.com";
 
         // Notify Admin
         await resend.emails.send({
-          from: "noreply@jiniaenterprise.com",
+          from: fromEmail,
           to: [adminEmail],
           subject: `New Quotation/Inquiry Request: ${name}`,
           html: `
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
 
         // Notify Customer
         await resend.emails.send({
-          from: "noreply@jiniaenterprise.com",
+          from: fromEmail,
           to: [email],
           subject: `Quotation Request Received - Jinia Enterprise`,
           html: `
