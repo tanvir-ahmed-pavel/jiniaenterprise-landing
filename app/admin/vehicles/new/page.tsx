@@ -85,6 +85,8 @@ export default function AddVehiclePage() {
         .split(",")
         .map((t) => t.trim()),
       is_active: formData.get("is_active") === "on",
+      is_featured: formData.get("is_featured") === "on",
+      sort_order: parseInt(formData.get("sort_order") as string) || 0,
       image_url: imageUrl,
       images: filteredImages,
     };
@@ -300,15 +302,41 @@ export default function AddVehiclePage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  name="is_active"
-                  defaultChecked
-                  className="h-4 w-4"
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    name="is_active"
+                    defaultChecked
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="is_active">Active (visible on website)</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_featured"
+                    name="is_featured"
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="is_featured">⭐ Featured (show on homepage)</Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sort_order">Display Position</Label>
+                <Input
+                  id="sort_order"
+                  name="sort_order"
+                  type="number"
+                  min="1"
+                  defaultValue="9999"
+                  placeholder="e.g. 1"
                 />
-                <Label htmlFor="is_active">Active (visible on website)</Label>
+                <p className="text-xs text-muted-foreground">
+                  <strong>1 = appears first</strong> on the website. Lower numbers come first. Leave at 9999 to add at the end.
+                </p>
               </div>
 
               <div className="flex gap-4">

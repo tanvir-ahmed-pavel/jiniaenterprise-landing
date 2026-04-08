@@ -15,7 +15,7 @@ interface Vehicle {
   id: string;
   name: string;
   slug: string;
-  category: "Economy" | "Luxury" | "Bus";
+  category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
   features?: string[];
@@ -26,6 +26,8 @@ interface Vehicle {
   starting_price?: number | null;
   price_label?: string;
   is_active: boolean;
+  sort_order: number;
+  is_featured: boolean;
 }
 
 async function getVehicles(): Promise<Vehicle[]> {
@@ -34,11 +36,22 @@ async function getVehicles(): Promise<Vehicle[]> {
     .from("vehicles")
     .select("*")
     .eq("is_active", true)
-    .order("name");
+    .order("sort_order", { ascending: true });
 
   if (error) {
-    console.error("Error fetching vehicles:", error);
-    return [];
+    // Fallback: sort_order column may not exist yet in the database.
+    // Run: ALTER TABLE vehicles ADD COLUMN sort_order INTEGER DEFAULT 0;
+    const { data: fallbackData, error: fallbackError } = await supabase
+      .from("vehicles")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: true });
+
+    if (fallbackError) {
+      console.error("Error fetching vehicles:", fallbackError);
+      return [];
+    }
+    return (fallbackData as Vehicle[]) || [];
   }
 
   return (data as Vehicle[]) || [];
@@ -46,7 +59,7 @@ async function getVehicles(): Promise<Vehicle[]> {
 
 export default async function VehiclesPage() {
   const vehicles = await getVehicles();
-  const categories = ["All", "Economy", "Luxury", "Bus"] as const;
+  const categories = ["All", "Economy", "Standard", "Premium", "SUV", "Microbus", "Bus"] as const;
 
   return (
     <div className="py-12">

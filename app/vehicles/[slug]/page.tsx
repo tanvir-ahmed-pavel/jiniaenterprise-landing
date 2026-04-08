@@ -27,7 +27,7 @@ interface Vehicle {
   id: string;
   name: string;
   slug: string;
-  category: "Economy" | "Luxury" | "Bus";
+  category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
   features?: string[];
@@ -38,6 +38,8 @@ interface Vehicle {
   starting_price?: number | null;
   price_label?: string;
   is_active: boolean;
+  sort_order: number;
+  is_featured: boolean;
 }
 
 // Fetch vehicle data from Supabase
@@ -102,8 +104,11 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
 
   const categoryColors = {
     Economy: "bg-green-500",
-    Luxury: "bg-amber-500",
-    Bus: "bg-blue-500",
+    Standard: "bg-blue-500",
+    Premium: "bg-amber-500",
+    SUV: "bg-purple-500",
+    Microbus: "bg-teal-500",
+    Bus: "bg-indigo-500",
   };
 
 
@@ -124,7 +129,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
           {/* Left: Vehicle Info */}
           <div className="space-y-6">
             {/* Image Gallery */}
-            <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-gray-100">
+            <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-gray-100">
               <ImageCarousel
                 images={
                   vehicle.images && vehicle.images.length > 0

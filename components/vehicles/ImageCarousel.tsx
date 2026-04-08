@@ -27,7 +27,7 @@ export function ImageCarousel({ images, vehicleName }: ImageCarouselProps) {
       <img
         src={validImages[0]}
         alt={vehicleName}
-        className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-in-out"
+        className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out"
       />
     );
   }
@@ -45,7 +45,7 @@ export function ImageCarousel({ images, vehicleName }: ImageCarouselProps) {
   };
 
   return (
-    <div className="relative w-full h-full group">
+    <div className="relative w-full h-full group/carousel">
       {/* Images container */}
       <div className="w-full h-full relative overflow-hidden">
         {validImages.map((src, index) => (
@@ -53,7 +53,7 @@ export function ImageCarousel({ images, vehicleName }: ImageCarouselProps) {
             key={index}
             src={src}
             alt={`${vehicleName} - Image ${index + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-in-out ${
+            className={`absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-[transform,opacity] duration-500 ease-out ${
               index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           />
@@ -63,7 +63,7 @@ export function ImageCarousel({ images, vehicleName }: ImageCarouselProps) {
       {/* Navigation Arrows */}
       <button
         onClick={handlePrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/50 hover:bg-white/90 text-gray-800 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/50 hover:bg-white/90 text-gray-800 backdrop-blur-sm opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 shadow-md"
         aria-label="Previous image"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -71,7 +71,7 @@ export function ImageCarousel({ images, vehicleName }: ImageCarouselProps) {
 
       <button
         onClick={handleNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/50 hover:bg-white/90 text-gray-800 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/50 hover:bg-white/90 text-gray-800 backdrop-blur-sm opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 shadow-md"
         aria-label="Next image"
       >
         <ChevronRight className="h-6 w-6" />

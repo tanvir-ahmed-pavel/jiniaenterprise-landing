@@ -34,7 +34,7 @@ export const vehicleService = {
     const { data, error } = await supabase
       .from("vehicles")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("sort_order", { ascending: true });
 
     if (error) {
       console.error("Error fetching vehicles:", error);
@@ -50,7 +50,7 @@ export const vehicleService = {
       .from("vehicles")
       .select("*")
       .eq("is_active", true)
-      .order("name");
+      .order("sort_order", { ascending: true });
 
     if (error) {
       console.error("Error fetching active vehicles:", error);

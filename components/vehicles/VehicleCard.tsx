@@ -14,7 +14,7 @@ interface Vehicle {
   id: string;
   name: string;
   slug: string;
-  category: "Economy" | "Luxury" | "Bus";
+  category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
   rental_types?: string[];
@@ -23,6 +23,8 @@ interface Vehicle {
   starting_price?: number | null;
   price_label?: string;
   description?: string;
+  sort_order: number;
+  is_featured: boolean;
 }
 
 interface VehicleCardProps {
@@ -51,14 +53,14 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
   const displayImage = vehicle.images?.[0] || vehicle.image_url;
 
   return (
-    <Link href={`/vehicles/${vehicle.slug}`} className="block h-full group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-xl">
+    <Link href={`/vehicles/${vehicle.slug}`} className="block h-full group/card focus:outline-none focus:ring-2 focus:ring-green-500 rounded-xl">
       <Card className="overflow-hidden h-full cursor-pointer hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
       {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-green-50/50 to-green-100/50 overflow-hidden">
+      <div className="relative h-48 bg-linear-to-br from-green-50/50 to-green-100/50 overflow-hidden">
         {displayImage ? (
           <ImageCarousel images={vehicle.images || (vehicle.image_url ? [vehicle.image_url] : [])} vehicleName={vehicle.name} />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+          <div className="absolute inset-0 flex items-center justify-center group-hover/card:scale-105 transition-transform duration-500">
             <span className="text-green-400/60 text-lg font-medium">
               {vehicle.name}
             </span>
@@ -66,10 +68,10 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
         )}
 
         {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 z-10" />
 
         {/* Category Badge */}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-3 left-3 z-12">
           <span
             className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md border ${
               categoryStyles[vehicle.category]
@@ -81,7 +83,7 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
 
         {/* Price Badge */}
         {vehicle.starting_price && (
-          <div className="absolute bottom-3 right-3">
+          <div className="absolute bottom-3 right-3 z-12">
             <div
               className="px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/30 shadow-lg"
               style={{ background: "rgba(255, 255, 255, 0.7)" }}
@@ -99,7 +101,7 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
       </div>
 
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-bold text-green-800 group-hover:text-green-600 transition-colors duration-300">
+        <CardTitle className="text-lg font-bold text-green-800 group-hover/card:text-green-600 transition-colors duration-300">
           {vehicle.name}
         </CardTitle>
       </CardHeader>
@@ -135,9 +137,9 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button variant="outline" className="w-full gap-2 pointer-events-none group-hover:bg-green-50 group-hover:text-green-700 group-hover:border-green-200">
+        <Button variant="outline" className="w-full gap-2 pointer-events-none group-hover/card:bg-green-50 group-hover/card:text-green-700 group-hover/card:border-green-200">
           View Details{" "}
-          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+          <ArrowRight className="h-4 w-4 group-hover/card:translate-x-1 transition-transform duration-300" />
         </Button>
       </CardFooter>
     </Card>

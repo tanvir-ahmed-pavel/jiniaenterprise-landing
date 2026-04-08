@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS vehicles (
   rental_types TEXT[] DEFAULT ARRAY['Daily', 'Weekly', 'Monthly'],
   description TEXT,
   is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  is_featured BOOLEAN DEFAULT false,
   image_url VARCHAR(500),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
-import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy, Star, Eye, EyeOff, Hash } from "lucide-react";
 
 interface Vehicle {
   id: string;
   name: string;
   slug: string;
-  category: "Economy" | "Luxury" | "Bus";
+  category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
   rental_types?: string[];
@@ -20,6 +20,8 @@ interface Vehicle {
   images?: string[];
   starting_price?: number | null;
   is_active: boolean;
+  sort_order: number;
+  is_featured: boolean;
 }
 
 export default function VehiclesListPage() {
@@ -32,7 +34,7 @@ export default function VehiclesListPage() {
     const { data, error } = await supabase
       .from("vehicles")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("sort_order", { ascending: true });
 
     if (error) {
       console.error("Error fetching vehicles:", error);
@@ -111,14 +113,63 @@ export default function VehiclesListPage() {
     setIsLoading(false);
   };
 
+  const handleToggleFeatured = async (vehicle: Vehicle) => {
+    const supabase = createClient();
+    const newValue = !vehicle.is_featured;
+    const { error } = await supabase
+      .from("vehicles")
+      .update({ is_featured: newValue } as never)
+      .eq("id", vehicle.id);
+    if (!error) {
+      setVehicles(vehicles.map((v) =>
+        v.id === vehicle.id ? { ...v, is_featured: newValue } : v
+      ));
+    }
+  };
+
+  const handleToggleActive = async (vehicle: Vehicle) => {
+    const supabase = createClient();
+    const newValue = !vehicle.is_active;
+    const { error } = await supabase
+      .from("vehicles")
+      .update({ is_active: newValue } as never)
+      .eq("id", vehicle.id);
+    if (!error) {
+      setVehicles(vehicles.map((v) =>
+        v.id === vehicle.id ? { ...v, is_active: newValue } : v
+      ));
+    }
+  };
+
+  const handleUpdatePosition = async (vehicle: Vehicle, newPosition: number) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("vehicles")
+      .update({ sort_order: newPosition } as never)
+      .eq("id", vehicle.id);
+    if (!error) {
+      setVehicles(
+        vehicles
+          .map((v) => (v.id === vehicle.id ? { ...v, sort_order: newPosition } : v))
+          .sort((a, b) => a.sort_order - b.sort_order)
+      );
+    }
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "Luxury":
+      case "Premium":
         return "bg-amber-500";
       case "Economy":
         return "bg-green-500";
-      case "Bus":
+      case "Standard":
         return "bg-blue-500";
+      case "SUV":
+        return "bg-purple-500";
+      case "Microbus":
+        return "bg-teal-500";
+      case "Bus":
+        return "bg-indigo-500";
       default:
         return "bg-gray-500";
     }
@@ -166,13 +217,13 @@ export default function VehiclesListPage() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-amber-100 rounded-lg">
-                <Car className="h-6 w-6 text-amber-600" />
+                <Star className="h-6 w-6 text-amber-600" />
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => v.category === "Luxury").length}
+                  {vehicles.filter((v) => v.is_featured).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Luxury</p>
+                <p className="text-sm text-muted-foreground">Featured</p>
               </div>
             </div>
           </CardContent>
@@ -185,9 +236,9 @@ export default function VehiclesListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => v.category === "Economy").length}
+                  {vehicles.filter((v) => v.is_active).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Economy</p>
+                <p className="text-sm text-muted-foreground">Active</p>
               </div>
             </div>
           </CardContent>
@@ -200,9 +251,9 @@ export default function VehiclesListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => v.category === "Bus").length}
+                  {vehicles.filter((v) => !v.is_active).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Buses</p>
+                <p className="text-sm text-muted-foreground">Inactive</p>
               </div>
             </div>
           </CardContent>
@@ -238,15 +289,77 @@ export default function VehiclesListPage() {
                     Inactive
                   </Badge>
                 )}
+                {vehicle.is_featured && (
+                  <Badge className="absolute bottom-2 left-2 bg-amber-500 gap-1">
+                    <Star className="h-3 w-3" /> Featured
+                  </Badge>
+                )}
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-lg">{vehicle.name}</h3>
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-semibold text-lg truncate">{vehicle.name}</h3>
+                </div>
                 <p className="text-sm text-muted-foreground mb-3">
                   {vehicle.seats} seats
                   {vehicle.engine_cc && ` • ${vehicle.engine_cc} CC`}
                   {vehicle.starting_price &&
                     ` • ৳${vehicle.starting_price.toLocaleString()}/day`}
                 </p>
+
+                {/* Quick Edit Row */}
+                <div className="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                  {/* Featured Toggle */}
+                  <button
+                    onClick={() => handleToggleFeatured(vehicle)}
+                    title={vehicle.is_featured ? "Remove from Featured" : "Mark as Featured"}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                      vehicle.is_featured
+                        ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                    }`}
+                  >
+                    <Star className={`h-3 w-3 ${vehicle.is_featured ? "fill-amber-500 text-amber-500" : ""}`} />
+                    Featured
+                  </button>
+
+                  {/* Active Toggle */}
+                  <button
+                    onClick={() => handleToggleActive(vehicle)}
+                    title={vehicle.is_active ? "Deactivate" : "Activate"}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                      vehicle.is_active
+                        ? "bg-green-100 text-green-700 hover:bg-green-200"
+                        : "bg-red-100 text-red-600 hover:bg-red-200"
+                    }`}
+                  >
+                    {vehicle.is_active
+                      ? <><Eye className="h-3 w-3" /> Visible</>
+                      : <><EyeOff className="h-3 w-3" /> Hidden</>
+                    }
+                  </button>
+
+                  {/* Position Input */}
+                  <div className="ml-auto flex items-center gap-1">
+                    <Hash className="h-3 w-3 text-gray-400" />
+                    <input
+                      type="number"
+                      min="1"
+                      defaultValue={vehicle.sort_order}
+                      className="w-14 text-xs text-center border border-gray-200 rounded-md px-1 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-green-400"
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (!isNaN(val) && val !== vehicle.sort_order) {
+                          handleUpdatePosition(vehicle, val);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Link
                     href={`/admin/vehicles/${vehicle.id}/edit`}

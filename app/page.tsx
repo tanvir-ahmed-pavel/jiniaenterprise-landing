@@ -44,7 +44,7 @@ interface Vehicle {
   id: string;
   name: string;
   slug: string;
-  category: "Economy" | "Luxury" | "Bus";
+  category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
   features?: string[];
@@ -55,6 +55,8 @@ interface Vehicle {
   starting_price?: number | null;
   price_label?: string;
   is_active: boolean;
+  sort_order: number;
+  is_featured: boolean;
 }
 
 interface BlogPost {
@@ -71,11 +73,26 @@ interface BlogPost {
 
 async function getFeaturedVehicles(): Promise<Vehicle[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("vehicles")
     .select("*")
     .eq("is_active", true)
+    .eq("is_featured", true)
+    .order("sort_order", { ascending: true })
     .limit(6);
+
+  if (error) {
+    // Fallback: is_featured/sort_order columns may not exist yet.
+    // Run: ALTER TABLE vehicles ADD COLUMN sort_order INTEGER DEFAULT 0;
+    //      ALTER TABLE vehicles ADD COLUMN is_featured BOOLEAN DEFAULT false;
+    const { data: fallbackData } = await supabase
+      .from("vehicles")
+      .select("*")
+      .eq("is_active", true)
+      .limit(6);
+    return (fallbackData as Vehicle[]) || [];
+  }
+
   return (data as Vehicle[]) || [];
 }
 

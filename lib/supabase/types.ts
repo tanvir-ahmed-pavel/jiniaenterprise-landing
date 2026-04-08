@@ -24,6 +24,8 @@ export interface Database {
           starting_price: number | null;
           price_label: string;
           is_active: boolean;
+          sort_order: number;
+          is_featured: boolean;
           created_at: string;
           image_url: string | null;
         };
@@ -41,6 +43,8 @@ export interface Database {
           starting_price?: number | null;
           price_label?: string;
           is_active?: boolean;
+          sort_order?: number;
+          is_featured?: boolean;
           created_at?: string;
           image_url?: string | null;
         };
@@ -58,6 +62,8 @@ export interface Database {
           starting_price?: number | null;
           price_label?: string;
           is_active?: boolean;
+          sort_order?: number;
+          is_featured?: boolean;
           created_at?: string;
           image_url?: string | null;
         };
