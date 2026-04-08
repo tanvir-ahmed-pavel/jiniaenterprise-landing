@@ -20,6 +20,7 @@ export default function AddVehiclePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [features, setFeatures] = useState<string[]>([""]);
+  const [images, setImages] = useState<string[]>([""]);
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);
@@ -35,12 +36,27 @@ export default function AddVehiclePage() {
     setFeatures(newFeatures);
   };
 
+  const handleAddImage = () => {
+    if (images.length < 5) setImages([...images, ""]);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleImageChange = (index: number, value: string) => {
+    const newImages = [...images];
+    newImages[index] = value;
+    setImages(newImages);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const imageUrl = (formData.get("image_url") as string) || null;
+    const filteredImages = images.filter((img) => img.trim() !== "");
+    const imageUrl = filteredImages.length > 0 ? filteredImages[0] : null;
 
     // Create base slug from name
     const rawName = formData.get("name") as string;
@@ -54,7 +70,7 @@ export default function AddVehiclePage() {
     const vehicleData = {
       name: rawName,
       slug: slug,
-      category: formData.get("category") as "Economy" | "Luxury" | "Bus",
+      category: formData.get("category") as "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus",
       seats: parseInt(formData.get("seats") as string),
       engine_cc: formData.get("engine_cc")
         ? parseInt(formData.get("engine_cc") as string)
@@ -70,7 +86,7 @@ export default function AddVehiclePage() {
         .map((t) => t.trim()),
       is_active: formData.get("is_active") === "on",
       image_url: imageUrl,
-      images: imageUrl ? [imageUrl] : [],
+      images: filteredImages,
     };
 
     try {
@@ -127,7 +143,10 @@ export default function AddVehiclePage() {
                     required
                   >
                     <option value="Economy">Economy</option>
-                    <option value="Luxury">Luxury</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Premium">Premium</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Microbus">Microbus</option>
                     <option value="Bus">Bus</option>
                   </select>
                 </div>
@@ -202,15 +221,45 @@ export default function AddVehiclePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input
-                  id="image_url"
-                  name="image_url"
-                  placeholder="/vehicles/vehicle-name.jpg or https://..."
-                />
-                <p className="text-xs text-muted-foreground">
-                  Path to vehicle image (URL or local path)
-                </p>
+                <div className="flex items-center justify-between">
+                  <Label>Vehicle Images (Max 5)</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddImage}
+                    disabled={images.length >= 5}
+                  >
+                    <Plus className="h-4 w-4 mr-1" /> Add Image
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {images.map((image, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={image}
+                        onChange={(e) =>
+                          handleImageChange(index, e.target.value)
+                        }
+                        placeholder={index === 0 ? "Primary image URL..." : "Additional image URL..."}
+                      />
+                      {images.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveImage(index)}
+                          className="text-red-500"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <p className="text-xs text-muted-foreground">
+                    First image is the primary thumbnail. We recommend 16:10 aspect ratio.
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-2">

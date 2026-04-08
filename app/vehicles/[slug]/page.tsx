@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InquiryForm } from "@/components/forms/InquiryForm";
+import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
 import {
   Users,
   Check,
@@ -105,8 +106,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     Bus: "bg-blue-500",
   };
 
-  // Use first image from images array or fallback to image_url
-  const displayImage = vehicle.images?.[0] || vehicle.image_url;
+
 
   // Format price helper
   const formatPrice = (price: number) => {
@@ -125,19 +125,18 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
           <div className="space-y-6">
             {/* Image Gallery */}
             <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-gray-100">
-              {displayImage ? (
-                <img
-                  src={displayImage}
-                  alt={vehicle.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Car className="h-24 w-24 text-gray-300" />
-                </div>
-              )}
+              <ImageCarousel
+                images={
+                  vehicle.images && vehicle.images.length > 0
+                    ? vehicle.images
+                    : vehicle.image_url
+                    ? [vehicle.image_url]
+                    : []
+                }
+                vehicleName={vehicle.name}
+              />
               <Badge
-                className={`absolute top-4 left-4 ${
+                className={`absolute top-4 left-4 z-30 ${
                   categoryColors[vehicle.category]
                 } text-white`}
               >

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { generateAdminEmailHtml, generateCustomerEmailHtml, EmailSourceType } from "@/lib/email-templates";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +16,8 @@ export async function POST(request: NextRequest) {
       pickup_date,
       return_date,
       pickup_location,
+      destination,
+      source = "booking_direct",
       message,
     } = body;
 
@@ -36,7 +39,7 @@ export async function POST(request: NextRequest) {
       pickup_date,
       return_date: return_date || null,
       pickup_location: pickup_location || null,
-      message: message || null,
+      message: `${message || "Booking request"}${destination ? `\n(Dest: ${destination})` : ""}`,
       status: "new",
     };
 
@@ -62,22 +65,25 @@ export async function POST(request: NextRequest) {
         const adminEmail = process.env.ADMIN_EMAIL || "admin@jiniaenterprise.com";
         const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@jiniaenterprise.com";
 
+        const emailPayload = {
+          source: source as EmailSourceType,
+          name,
+          phone,
+          email,
+          rental_type,
+          start_date: pickup_date,
+          end_date: return_date,
+          pickup_location,
+          destination,
+          vehicle_name,
+          message,
+        };
+
         await resend.emails.send({
           from: fromEmail,
           to: [adminEmail],
           subject: `New Booking Request: ${name}`,
-          html: `
-            <h1>New Booking Request</h1>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Vehicle:</strong> ${vehicle_name || "Not selected"}</p>
-            <p><strong>Date:</strong> ${pickup_date}</p>
-            <p><strong>Type:</strong> ${rental_type}</p>
-            <br />
-            <a href="${
-              process.env.NEXT_PUBLIC_SITE_URL
-            }/admin/bookings">View in Dashboard</a>
-          `,
+          html: generateAdminEmailHtml(emailPayload),
         });
 
         // Send confirmation email to the customer
@@ -85,17 +91,7 @@ export async function POST(request: NextRequest) {
           from: fromEmail,
           to: [email],
           subject: `Booking Request Received - Jinia Enterprise`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-              <h2 style="color: #166534;">Thank you for your booking request, ${name}!</h2>
-              <p>We have successfully received your request for a <strong>${rental_type}</strong> rental${vehicle_name ? ` of <strong>${vehicle_name}</strong>` : ""}.</p>
-              <p>Our team will review your request for the pickup date on <strong>${pickup_date}</strong> and contact you shortly at ${phone} to confirm the details and final quote.</p>
-              <br />
-              <p>Best Regards,</p>
-              <p><strong>Jinia Enterprise Team</strong><br/>
-              Premium Car Rental Services</p>
-            </div>
-          `,
+          html: generateCustomerEmailHtml(emailPayload),
         });
       } catch (emailError) {
         console.error("Failed to send email:", emailError);

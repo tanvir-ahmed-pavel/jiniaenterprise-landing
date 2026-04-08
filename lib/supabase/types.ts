@@ -14,7 +14,7 @@ export interface Database {
           id: string;
           name: string;
           slug: string;
-          category: "Economy" | "Luxury" | "Bus";
+          category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats: number;
           engine_cc: number | null;
           features: string[];
@@ -31,7 +31,7 @@ export interface Database {
           id?: string;
           name: string;
           slug: string;
-          category: "Economy" | "Luxury" | "Bus";
+          category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats: number;
           engine_cc?: number | null;
           features?: string[];
@@ -48,7 +48,7 @@ export interface Database {
           id?: string;
           name?: string;
           slug?: string;
-          category?: "Economy" | "Luxury" | "Bus";
+          category?: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats?: number;
           engine_cc?: number | null;
           features?: string[];

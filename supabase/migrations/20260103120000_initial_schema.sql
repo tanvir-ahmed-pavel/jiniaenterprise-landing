@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
-  category VARCHAR(50) NOT NULL CHECK (category IN ('Economy', 'Luxury', 'Bus')),
+  category VARCHAR(50) NOT NULL CHECK (category IN ('Economy', 'Standard', 'Premium', 'SUV', 'Microbus', 'Bus')),
   seats INTEGER NOT NULL DEFAULT 4,
   features TEXT[] DEFAULT '{}',
   rental_types TEXT[] DEFAULT ARRAY['Daily', 'Weekly', 'Monthly'],

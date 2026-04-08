@@ -19,6 +19,8 @@ const inquirySchema = z.object({
   rental_type: z.string().optional(),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
+  pickup_location: z.string().optional(),
+  destination: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -27,9 +29,10 @@ type InquiryFormData = z.infer<typeof inquirySchema>;
 interface InquiryFormProps {
   vehicleName?: string;
   vehicleId?: string;
+  source?: "contact_page" | "hero_widget" | "vehicle_page" | "booking_direct";
 }
 
-export function InquiryForm({ vehicleName, vehicleId }: InquiryFormProps) {
+export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +61,8 @@ export function InquiryForm({ vehicleName, vehicleId }: InquiryFormProps) {
         body: JSON.stringify({
           ...data,
           vehicle_id: vehicleId || null,
+          vehicle_name: vehicleName || null,
+          source: source || (vehicleId ? "vehicle_page" : "contact_page"),
         }),
       });
 
@@ -163,6 +168,17 @@ export function InquiryForm({ vehicleName, vehicleId }: InquiryFormProps) {
         <div className="space-y-2">
           <Label htmlFor="end_date">End Date</Label>
           <Input id="end_date" type="date" {...register("end_date")} />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="pickup_location">Pickup Location (Optional)</Label>
+          <Input id="pickup_location" placeholder="e.g. Airport, Gulshan..." {...register("pickup_location")} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="destination">Destination / Drop-off (Optional)</Label>
+          <Input id="destination" placeholder="Where are you heading?" {...register("destination")} />
         </div>
       </div>
 

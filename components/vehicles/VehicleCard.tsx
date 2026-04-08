@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, ArrowRight, Fuel } from "lucide-react";
+import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
 
 interface Vehicle {
   id: string;
@@ -38,26 +39,24 @@ function formatPrice(price: number): string {
 }
 
 export function VehicleCard({ vehicle }: VehicleCardProps) {
-  const categoryStyles = {
-    Economy:
-      "bg-green-500/15 text-green-700 border-green-500/20 shadow-[0_0_10px_rgba(74,222,128,0.1)]",
-    Luxury:
-      "bg-amber-500/15 text-amber-700 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]",
-    Bus: "bg-blue-500/15 text-blue-700 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.1)]",
+  const categoryStyles: Record<string, string> = {
+    Economy: "bg-green-100 text-green-900 border-green-300 shadow-md",
+    Standard: "bg-blue-100 text-blue-900 border-blue-300 shadow-md",
+    Premium: "bg-amber-100 text-amber-900 border-amber-300 shadow-md",
+    SUV: "bg-purple-100 text-purple-900 border-purple-300 shadow-md",
+    Microbus: "bg-teal-100 text-teal-900 border-teal-300 shadow-md",
+    Bus: "bg-indigo-100 text-indigo-900 border-indigo-300 shadow-md",
   };
 
   const displayImage = vehicle.images?.[0] || vehicle.image_url;
 
   return (
-    <Card className="overflow-hidden cursor-pointer group">
+    <Link href={`/vehicles/${vehicle.slug}`} className="block h-full group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-xl">
+      <Card className="overflow-hidden h-full cursor-pointer hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
       {/* Image */}
       <div className="relative h-48 bg-gradient-to-br from-green-50/50 to-green-100/50 overflow-hidden">
         {displayImage ? (
-          <img
-            src={displayImage}
-            alt={vehicle.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-          />
+          <ImageCarousel images={vehicle.images || (vehicle.image_url ? [vehicle.image_url] : [])} vehicleName={vehicle.name} />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
             <span className="text-green-400/60 text-lg font-medium">
@@ -136,13 +135,12 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Link href={`/vehicles/${vehicle.slug}`} className="w-full">
-          <Button variant="outline" className="w-full gap-2">
-            View Details{" "}
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </Button>
-        </Link>
+        <Button variant="outline" className="w-full gap-2 pointer-events-none group-hover:bg-green-50 group-hover:text-green-700 group-hover:border-green-200">
+          View Details{" "}
+          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </Button>
       </CardFooter>
     </Card>
+    </Link>
   );
 }

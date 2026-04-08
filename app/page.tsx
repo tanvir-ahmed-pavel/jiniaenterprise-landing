@@ -8,6 +8,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
+import { HeroBookingWidget } from "@/components/forms/HeroBookingWidget";
 import {
   siteConfig,
   services,
@@ -137,93 +138,44 @@ export default async function Home() {
             </p>
 
             {/* CTA Buttons — Liquid Glass */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300">
-              <Link href="/vehicles">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center opacity-0 animate-fade-in-up animation-delay-300 px-4 sm:px-0">
+              <Link href="/vehicles" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base bg-green-500/85 hover:bg-green-400/95 text-white border border-green-400/30 shadow-[0_8px_40px_rgba(74,222,128,0.35)] hover:shadow-[0_12px_50px_rgba(74,222,128,0.5)] transition-all duration-500 hover:-translate-y-1"
+                  className="w-full sm:w-auto gap-2 sm:gap-2.5 px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base bg-green-500/85 hover:bg-green-400/95 text-white border border-green-400/30 shadow-[0_8px_40px_rgba(74,222,128,0.35)] hover:shadow-[0_12px_50px_rgba(74,222,128,0.5)] transition-all duration-500 hover:-translate-y-1"
                 >
-                  <Calendar className="h-5 w-5" /> Book Now
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5" /> Book Now
                 </Button>
               </Link>
-              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:-translate-y-1 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
+              
+              <div className="grid grid-cols-2 gap-3 w-full sm:w-auto sm:flex sm:gap-4">
+                <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto gap-2 sm:gap-2.5 px-2 sm:px-8 py-5 sm:py-6 text-sm sm:text-base text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:-translate-y-1 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
+                  >
+                    <Phone className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> Call Now
+                  </Button>
+                </a>
+                <a
+                  href={`https://wa.me/${siteConfig.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
                 >
-                  <Phone className="h-5 w-5" /> Call Now
-                </Button>
-              </a>
-              <a
-                href={`https://wa.me/${siteConfig.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto gap-2.5 px-8 py-6 text-base bg-emerald-500/75 hover:bg-emerald-400/90 text-white border border-emerald-400/25 shadow-[0_8px_40px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_50px_rgba(16,185,129,0.45)] transition-all duration-500 hover:-translate-y-1"
-                >
-                  <MessageSquare className="h-5 w-5" /> WhatsApp
-                </Button>
-              </a>
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto gap-2 sm:gap-2.5 px-2 sm:px-8 py-5 sm:py-6 text-sm sm:text-base bg-emerald-500/75 hover:bg-emerald-400/90 text-white border border-emerald-400/25 shadow-[0_8px_40px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_50px_rgba(16,185,129,0.45)] transition-all duration-500 hover:-translate-y-1"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> WhatsApp
+                  </Button>
+                </a>
+              </div>
             </div>
 
             {/* Quick Booking Widget — Floating 3D Glass */}
             <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-10 sm:mt-14 px-3 sm:px-0 relative z-20 perspective-1000">
-              <div className="rounded-[2.2rem] p-6 md:p-8 max-w-[50rem] mx-auto bg-gradient-to-br from-white/30 via-white/10 to-transparent backdrop-blur-2xl border-t border-l border-white/50 border-r border-b shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_40px_rgba(255,255,255,0.15),inset_0_1px_1px_rgba(255,255,255,0.8)]">
-                <form className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 items-end text-left">
-                  <div className="space-y-2.5 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-                      Rental Type
-                    </label>
-                    <select className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner appearance-none">
-                      <option value="daily" className="text-gray-900">
-                        Daily Rental
-                      </option>
-                      <option value="weekly" className="text-gray-900">
-                        Weekly Rental
-                      </option>
-                      <option value="monthly" className="text-gray-900">
-                        Monthly Rental
-                      </option>
-                      <option value="airport" className="text-gray-900">
-                        Airport Transfer
-                      </option>
-                    </select>
-                  </div>
-                  <div className="space-y-2.5 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-                      Pickup Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner scheme-dark"
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-                  <div className="space-y-2.5 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Pickup location"
-                      className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white placeholder:text-white/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner"
-                    />
-                  </div>
-                  <div className="w-full mt-2 sm:mt-0 pt-1 md:pt-0">
-                    <Link href="/vehicles" className="w-full block">
-                      <Button
-                        type="button"
-                        size="lg"
-                        className="w-full h-14 bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-400 hover:to-emerald-300 text-white font-black tracking-wide border border-green-400/50 shadow-[0_10px_30px_rgba(74,222,128,0.4),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_15px_40px_rgba(74,222,128,0.6),inset_0_1px_2px_rgba(255,255,255,0.7)] rounded-xl uppercase hover:-translate-y-1 transition-all duration-300"
-                      >
-                        Get Quote
-                      </Button>
-                    </Link>
-                  </div>
-                </form>
-              </div>
+              <HeroBookingWidget />
             </div>
 
             {/* Trust Badges — Floating Glass */}

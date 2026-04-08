@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { generateAdminEmailHtml, generateCustomerEmailHtml, EmailSourceType } from "@/lib/email-templates";
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,10 @@ export async function POST(request: Request) {
       end_date,
       message,
       vehicle_id,
+      vehicle_name,
+      pickup_location,
+      destination,
+      source = "contact_page",
     } = body;
 
     // Validate required fields
@@ -46,8 +51,7 @@ export async function POST(request: Request) {
       email,
       rental_type: rental_type || null,
       start_date: start_date || null,
-      end_date: end_date || null,
-      message,
+      message: `${message}${end_date ? `\n(End Date: ${end_date})` : ""}${pickup_location ? `\n(Pickup: ${pickup_location})` : ""}${destination ? `\n(Dest: ${destination})` : ""}`,
       vehicle_id: vehicle_id || null,
     }] as never);
 
@@ -64,22 +68,26 @@ export async function POST(request: Request) {
         const adminEmail = process.env.ADMIN_EMAIL || "admin@jiniaenterprise.com";
         const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@jiniaenterprise.com";
 
+        const emailPayload = {
+          source: source as EmailSourceType,
+          name,
+          phone,
+          email,
+          rental_type,
+          start_date,
+          end_date,
+          pickup_location,
+          destination,
+          vehicle_name,
+          message,
+        };
+
         // Notify Admin
         await resend.emails.send({
           from: fromEmail,
           to: [adminEmail],
-          subject: `New Quotation/Inquiry Request: ${name}`,
-          html: `
-            <h1>New Inquiry Request</h1>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Rental Type:</strong> ${rental_type || "N/A"}</p>
-            ${start_date ? `<p><strong>Start Date:</strong> ${start_date}</p>` : ''}
-            ${end_date ? `<p><strong>End Date:</strong> ${end_date}</p>` : ''}
-            <p><strong>Message:</strong></p>
-            <blockquote style="border-left: 4px solid #ccc; padding-left: 8px;">${message}</blockquote>
-          `,
+          subject: `New ${source === 'hero_widget' ? 'Quick Quote' : 'Inquiry'} Request: ${name}`,
+          html: generateAdminEmailHtml(emailPayload),
         });
 
         // Notify Customer
@@ -87,21 +95,7 @@ export async function POST(request: Request) {
           from: fromEmail,
           to: [email],
           subject: `Quotation Request Received - Jinia Enterprise`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-              <h2 style="color: #166534;">Thank you for your inquiry, ${name}!</h2>
-              <p>We have successfully received your quotation request.</p>
-              <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                <p style="margin-top: 0;"><strong>Your Message:</strong></p>
-                <p style="font-style: italic; margin-bottom: 0;">"${message}"</p>
-              </div>
-              <p>Our team will review your requirements and get back to you with a detailed quote as soon as possible.</p>
-              <br />
-              <p>Best Regards,</p>
-              <p><strong>Jinia Enterprise Team</strong><br/>
-              Premium Car Rental Services</p>
-            </div>
-          `,
+          html: generateCustomerEmailHtml(emailPayload),
         });
       } catch (emailError) {
         console.error("Failed to send inquiry email:", emailError);
