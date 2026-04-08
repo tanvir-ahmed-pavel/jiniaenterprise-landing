@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
-import { Plus, Pencil, Trash2, Car, Users, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy } from "lucide-react";
 
 interface Vehicle {
   id: string;
@@ -59,6 +59,56 @@ export default function VehiclesListPage() {
     } else {
       setVehicles(vehicles.filter((v) => v.id !== id));
     }
+  };
+
+  const handleClone = async (vehicle: Vehicle) => {
+    if (!confirm("Are you sure you want to clone this vehicle?")) return;
+    
+    setIsLoading(true);
+    const supabase = createClient();
+    
+    // Fetch full vehicle details
+    const { data: fullVehicleData, error: fetchError } = await supabase
+      .from("vehicles")
+      .select("*")
+      .eq("id", vehicle.id)
+      .single();
+
+    const fullVehicle = fullVehicleData as any;
+
+    if (fetchError || !fullVehicle) {
+      console.error("Error fetching full vehicle details:", fetchError);
+      alert("Failed to fetch vehicle details for cloning.");
+      setIsLoading(false);
+      return;
+    }
+
+    const newName = `${fullVehicle.name} (Copy)`;
+    const baseSlug = newName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
+    
+    const clonedData = { ...fullVehicle };
+    delete clonedData.id;
+    delete clonedData.created_at;
+    delete clonedData.updated_at;
+    clonedData.name = newName;
+    clonedData.slug = slug;
+    clonedData.is_active = false; // Set to inactive by default so they can review it
+
+    const { data: newVehicle, error: createError } = await supabase
+      .from("vehicles")
+      .insert(clonedData)
+      .select()
+      .single();
+
+    if (createError) {
+      console.error("Error cloning vehicle:", createError);
+      alert("Failed to clone vehicle");
+    } else if (newVehicle) {
+      setVehicles([newVehicle as Vehicle, ...vehicles]);
+      alert("Vehicle cloned successfully! The clone is inactive by default.");
+    }
+    setIsLoading(false);
   };
 
   const getCategoryColor = (category: string) => {
@@ -163,7 +213,7 @@ export default function VehiclesListPage() {
       {vehicles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="overflow-hidden">
+            <Card key={vehicle.id} className="overflow-hidden hover:transform-none! hover:shadow-(--glass-shadow) hover:bg-(--glass-bg)! transition-none">
               <div className="aspect-video bg-gray-100 relative">
                 {vehicle.images?.[0] || vehicle.image_url ? (
                   <img
@@ -213,8 +263,18 @@ export default function VehiclesListPage() {
                   <Button
                     variant="outline"
                     size="sm"
+                    className="text-blue-600 hover:bg-blue-50"
+                    onClick={() => handleClone(vehicle)}
+                    title="Clone Vehicle"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="text-red-600 hover:bg-red-50"
                     onClick={() => handleDelete(vehicle.id)}
+                    title="Delete Vehicle"
                   >
                     <Trash2 className="h-3 w-3" />
                   </Button>

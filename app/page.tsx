@@ -168,15 +168,15 @@ export default async function Home() {
               </a>
             </div>
 
-            {/* Quick Booking Widget — Floating Liquid Glass */}
-            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-8 sm:mt-10 md:mt-12 px-2 sm:px-0">
-              <div className="rounded-3xl p-5 md:p-6 max-w-3xl mx-auto bg-white/10 backdrop-blur-md sm:bg-white/8 border border-white/20 sm:border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.4)] sm:shadow-[0_16px_60px_rgba(0,0,0,0.25)]">
-                <form className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-4 items-start md:items-end text-left">
-                  <div className="space-y-2 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
+            {/* Quick Booking Widget — Floating 3D Glass */}
+            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-10 sm:mt-14 px-3 sm:px-0 relative z-20 perspective-1000">
+              <div className="rounded-[2.2rem] p-6 md:p-8 max-w-[50rem] mx-auto bg-gradient-to-br from-white/30 via-white/10 to-transparent backdrop-blur-2xl border-t border-l border-white/50 border-r border-b shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_40px_rgba(255,255,255,0.15),inset_0_1px_1px_rgba(255,255,255,0.8)]">
+                <form className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 items-end text-left">
+                  <div className="space-y-2.5 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
                       Rental Type
                     </label>
-                    <select className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50 appearance-none">
+                    <select className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner appearance-none">
                       <option value="daily" className="text-gray-900">
                         Daily Rental
                       </option>
@@ -191,24 +191,24 @@ export default async function Home() {
                       </option>
                     </select>
                   </div>
-                  <div className="space-y-2 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
+                  <div className="space-y-2.5 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
                       Pickup Date
                     </label>
                     <input
                       type="date"
-                      className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50 scheme-dark"
+                      className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner scheme-dark"
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
-                  <div className="space-y-2 w-full">
-                    <label className="text-[10px] sm:text-xs text-white/70 sm:text-white/55 font-semibold tracking-widest uppercase ml-1">
+                  <div className="space-y-2.5 w-full">
+                    <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
                       Location
                     </label>
                     <input
                       type="text"
                       placeholder="Pickup location"
-                      className="w-full h-12 px-4 rounded-2xl bg-white/10 sm:bg-white/6 border border-white/20 sm:border-white/12 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50"
+                      className="w-full h-14 px-4 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-white placeholder:text-white/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/80 focus:bg-black/40 transition-colors shadow-inner"
                     />
                   </div>
                   <div className="w-full mt-2 sm:mt-0 pt-1 md:pt-0">
@@ -216,7 +216,7 @@ export default async function Home() {
                       <Button
                         type="button"
                         size="lg"
-                        className="w-full h-12 bg-green-500/90 sm:bg-green-500/85 hover:bg-green-400 text-white font-bold tracking-wide border border-green-400/40 sm:border-green-400/25 shadow-[0_0_20px_rgba(74,222,128,0.3)] sm:shadow-[0_0_30px_rgba(74,222,128,0.25)] rounded-2xl"
+                        className="w-full h-14 bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-400 hover:to-emerald-300 text-white font-black tracking-wide border border-green-400/50 shadow-[0_10px_30px_rgba(74,222,128,0.4),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_15px_40px_rgba(74,222,128,0.6),inset_0_1px_2px_rgba(255,255,255,0.7)] rounded-xl uppercase hover:-translate-y-1 transition-all duration-300"
                       >
                         Get Quote
                       </Button>

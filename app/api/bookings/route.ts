@@ -59,10 +59,11 @@ export async function POST(request: NextRequest) {
       try {
         const { Resend } = await import("resend");
         const resend = new Resend(resendApiKey);
+        const adminEmail = process.env.ADMIN_EMAIL || "admin@jiniaenterprise.com";
 
         await resend.emails.send({
           from: "noreply@jiniaenterprise.com",
-          to: ["admin@jiniaenterprise.com"], // TODO: Make configurable via env
+          to: [adminEmail],
           subject: `New Booking Request: ${name}`,
           html: `
             <h1>New Booking Request</h1>
@@ -75,6 +76,24 @@ export async function POST(request: NextRequest) {
             <a href="${
               process.env.NEXT_PUBLIC_SITE_URL
             }/admin/bookings">View in Dashboard</a>
+          `,
+        });
+
+        // Send confirmation email to the customer
+        await resend.emails.send({
+          from: "noreply@jiniaenterprise.com",
+          to: [email],
+          subject: `Booking Request Received - Jinia Enterprise`,
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+              <h2 style="color: #166534;">Thank you for your booking request, ${name}!</h2>
+              <p>We have successfully received your request for a <strong>${rental_type}</strong> rental${vehicle_name ? ` of <strong>${vehicle_name}</strong>` : ""}.</p>
+              <p>Our team will review your request for the pickup date on <strong>${pickup_date}</strong> and contact you shortly at ${phone} to confirm the details and final quote.</p>
+              <br />
+              <p>Best Regards,</p>
+              <p><strong>Jinia Enterprise Team</strong><br/>
+              Premium Car Rental Services</p>
+            </div>
           `,
         });
       } catch (emailError) {

@@ -43,11 +43,10 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 ease-out ${
-        isTransparent
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 ease-out ${isTransparent
           ? "bg-transparent border-b border-transparent"
           : "bg-white/90 border-b border-gray-200/70 shadow-sm"
-      }`}
+        }`}
     >
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
         {/* Logo */}
@@ -55,13 +54,11 @@ export function Navbar() {
           <img
             src="/images/logo.png"
             alt="Jinia Enterprise"
-            className={`h-12 w-auto transition-all duration-300 ${
-              isTransparent ? "drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" : ""
-            }`}
+            className={`h-12 w-auto transition-all duration-300 ${isTransparent ? "drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" : ""
+              }`}
           />
-          <span className={`text-lg sm:text-xl font-bold tracking-tight whitespace-nowrap transition-colors duration-300 ${
-            isTransparent ? "text-white" : "text-gray-900"
-          }`}>
+          <span className={`text-lg sm:text-xl font-bold tracking-tight whitespace-nowrap transition-colors duration-300 ${isTransparent ? "text-white" : "text-gray-900"
+            }`}>
             JINIA ENTERPRISE
           </span>
         </Link>
@@ -72,11 +69,10 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium px-3 py-2 rounded-lg transition-all duration-200 ${
-                isTransparent
+              className={`text-sm font-medium px-3 py-2 rounded-lg transition-all duration-200 ${isTransparent
                   ? "text-white hover:bg-white/15 hover:text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
                   : "text-gray-700 hover:bg-gray-100 hover:text-green-700"
-              }`}
+                }`}
             >
               {link.label}
             </Link>
@@ -89,11 +85,10 @@ export function Navbar() {
             <Button
               variant="outline"
               size="sm"
-              className={`hidden lg:flex gap-2 transition-all duration-200 ${
-                isTransparent
+              className={`hidden lg:flex gap-2 transition-all duration-200 ${isTransparent
                   ? "border-white/30 text-white hover:bg-white/15 hover:text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
                   : "border-gray-200 text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <Phone className="h-4 w-4" />
               <span className="hidden xl:inline">{siteConfig.phone}</span>
@@ -114,11 +109,10 @@ export function Navbar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className={`flex items-center md:hidden w-11 h-11 rounded-xl border justify-center transition-all duration-200 ${
-            isTransparent
+          className={`flex items-center md:hidden w-11 h-11 rounded-xl border justify-center transition-all duration-200 ${isTransparent
               ? "bg-black/20 border-white/25 text-white hover:bg-black/30"
               : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-          }`}
+            }`}
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -129,11 +123,10 @@ export function Navbar() {
       {/* Mobile Nav */}
       {isOpen && (
         <div
-          className={`md:hidden p-4 ${
-            isTransparent
+          className={`md:hidden p-4 ${isTransparent
               ? "bg-gray-900/92 border-t border-white/10"
               : "bg-white/97 border-t border-gray-100"
-          }`}
+            }`}
         >
           <div className="flex flex-col space-y-1">
             {navLinks.map((link) => (
@@ -141,28 +134,25 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`text-sm font-medium px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isTransparent
+                className={`text-sm font-medium px-4 py-3 rounded-xl transition-all duration-200 ${isTransparent
                     ? "text-white hover:bg-white/10 hover:text-white"
                     : "text-gray-700 hover:bg-gray-100 hover:text-green-700"
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
             ))}
             <div
-              className={`flex flex-col gap-2 pt-4 mt-2 border-t ${
-                isTransparent ? "border-white/15" : "border-gray-200"
-              }`}
+              className={`flex flex-col gap-2 pt-4 mt-2 border-t ${isTransparent ? "border-white/15" : "border-gray-200"
+                }`}
             >
               <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
                 <Button
                   variant="outline"
-                  className={`w-full gap-2 ${
-                    isTransparent
+                  className={`w-full gap-2 ${isTransparent
                       ? "border-white/25 text-white hover:bg-white/10"
                       : ""
-                  }`}
+                    }`}
                 >
                   <Phone className="h-4 w-4" /> {siteConfig.phone}
                 </Button>
