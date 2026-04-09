@@ -26,10 +26,8 @@ export function Navbar() {
 
   // Close mobile menu on route change
   useEffect(() => {
-    if (isOpen) {
-      setIsOpen(false);
-    }
-  }, [pathname, isOpen]);
+    setIsOpen(false);
+  }, [pathname]);
 
   const navLinks = [
     { href: "/", label: "Home" },
