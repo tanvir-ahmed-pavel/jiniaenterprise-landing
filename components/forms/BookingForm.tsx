@@ -7,13 +7,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Vehicle } from "@/lib/supabase/admin-service";
 import {
   Loader2,
@@ -25,7 +18,9 @@ import {
   Car,
   MessageSquare,
   MapPin,
+  Sparkles,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -80,7 +75,6 @@ export function BookingForm({
     setError("");
 
     try {
-      // Get vehicle name if selected
       const vehicle = data.vehicle_id
         ? vehicles.find((v) => v.id === data.vehicle_id)
         : null;
@@ -111,254 +105,217 @@ export function BookingForm({
 
   if (isSuccess) {
     return (
-      <Card className="border-green-200 bg-green-50">
-        <CardContent className="pt-8 pb-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-          </div>
-          <h3 className="text-2xl font-heading font-bold text-green-800 mb-2">
-            Booking Request Received!
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Thank you for your interest. Our team will contact you shortly to
-            confirm your booking details.
-          </p>
-          <Button
-            onClick={() => setIsSuccess(false)}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Make Another Booking
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="text-center py-12 px-6">
+        <div className="w-20 h-20 bg-green-50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce">
+          <CheckCircle className="h-10 w-10 text-green-600" />
+        </div>
+        <h3 className="text-4xl font-heading font-black text-green-950 italic mb-4">
+          Request Received.
+        </h3>
+        <p className="text-gray-500 font-medium mb-10 max-w-md mx-auto">
+          Your journey orchestration has begun. Our concierge will reach out within two hours to finalize the details.
+        </p>
+        <Button
+          onClick={() => setIsSuccess(false)}
+          className="h-16 px-10 rounded-2xl bg-green-950 text-white hover:bg-green-900 font-black uppercase tracking-[0.2em] text-[10px]"
+        >
+          Initiate Another Request
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className="border-green-100 shadow-lg">
-      <CardHeader className="bg-green-50 border-b border-green-100">
-        <CardTitle className="flex items-center gap-2 text-green-800">
-          <Calendar className="h-5 w-5" />
-          Book a Vehicle
-        </CardTitle>
-        <CardDescription>
-          Fill out the form below and our team will get back to you within 2
-          hours.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {error && (
-            <div className="p-4 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
-              {error}
-            </div>
-          )}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+      {error && (
+        <div className="p-6 text-sm font-bold text-red-600 bg-red-50/50 border border-red-100 rounded-2xl animate-fade-in">
+          {error}
+        </div>
+      )}
 
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900 flex items-center gap-2">
-              <User className="h-4 w-4 text-green-600" />
-              Your Information
-            </h4>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">
-                  Full Name <span className="text-red-500">*</span>
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="name"
-                    placeholder="Your full name"
-                    className="pl-10"
-                    {...register("name")}
-                  />
-                </div>
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">
-                  Phone Number <span className="text-red-500">*</span>
-                </Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+880 1XXX XXXXXX"
-                    className="pl-10"
-                    {...register("phone")}
-                  />
-                </div>
-                {errors.phone && (
-                  <p className="text-sm text-red-500">{errors.phone.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                Email Address <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  className="pl-10"
-                  {...register("email")}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
+      {/* Section: Identity */}
+      <div className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
+            <User className="h-4 w-4 text-green-600" />
           </div>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">
+            The Client Identity
+          </h4>
+        </div>
 
-          {/* Booking Details */}
-          <div className="space-y-4 pt-4 border-t">
-            <h4 className="font-medium text-gray-900 flex items-center gap-2">
-              <Car className="h-4 w-4 text-green-600" />
-              Booking Details
-            </h4>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="vehicle_id">Vehicle (Optional)</Label>
-                <select
-                  id="vehicle_id"
-                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  {...register("vehicle_id")}
-                >
-                  <option value="">Any available vehicle</option>
-                  {vehicles.map((vehicle) => (
-                    <option key={vehicle.id} value={vehicle.id}>
-                      {vehicle.name} ({vehicle.seats} seats)
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="rental_type">
-                  Rental Type <span className="text-red-500">*</span>
-                </Label>
-                <select
-                  id="rental_type"
-                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  {...register("rental_type")}
-                >
-                  {rentalTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.rental_type && (
-                  <p className="text-sm text-red-500">
-                    {errors.rental_type.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="pickup_date">
-                  Pickup Date <span className="text-red-500">*</span>
-                </Label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="pickup_date"
-                    type="date"
-                    className="pl-10"
-                    min={new Date().toISOString().split("T")[0]}
-                    {...register("pickup_date")}
-                  />
-                </div>
-                {errors.pickup_date && (
-                  <p className="text-sm text-red-500">
-                    {errors.pickup_date.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="return_date">Return Date (Optional)</Label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="return_date"
-                    type="date"
-                    className="pl-10"
-                    {...register("return_date")}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pickup_location">
-                Pickup Location (Optional)
-              </Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  id="pickup_location"
-                  placeholder="e.g., Hazrat Shahjalal Airport, Gulshan"
-                  className="pl-10"
-                  {...register("pickup_location")}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="message">
-                Additional Requirements (Optional)
-              </Label>
-              <div className="relative">
-                <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <textarea
-                  id="message"
-                  rows={3}
-                  placeholder="Any special requirements or notes..."
-                  className="w-full pl-10 px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-none"
-                  {...register("message")}
-                />
-              </div>
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-6"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Calendar className="mr-2 h-4 w-4" />
-                Request Booking
-              </>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Legal Full Name
+            </Label>
+            <Input
+              id="name"
+              placeholder="e.g. Tanvir Ahmed"
+              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+              {...register("name")}
+            />
+            {errors.name && (
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.name.message}</p>
             )}
-          </Button>
+          </div>
 
-          <p className="text-xs text-center text-gray-500">
-            By submitting, you agree to be contacted regarding your booking
-            request.
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+          <div className="space-y-3">
+            <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Active Phone Axis
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+880 1XXX XXXXXX"
+              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+              {...register("phone")}
+            />
+            {errors.phone && (
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.phone.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+            Digital Correspondence
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="your@email.com"
+            className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.email.message}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Section: Logistics */}
+      <div className="space-y-8 pt-6 border-t border-black/[0.03]">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
+            <Car className="h-4 w-4 text-green-600" />
+          </div>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">
+            The Logistics Core
+          </h4>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <Label htmlFor="vehicle_id" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Fleet Selection
+            </Label>
+            <select
+              id="vehicle_id"
+              className="w-full h-14 px-6 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 appearance-none font-bold text-gray-700"
+              {...register("vehicle_id")}
+            >
+              <option value="">Any Selective Vehicle</option>
+              {vehicles.map((vehicle) => (
+                <option key={vehicle.id} value={vehicle.id}>
+                  {vehicle.name} ({vehicle.seats} Positions)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-3">
+            <Label htmlFor="rental_type" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Tenure Model
+            </Label>
+            <select
+              id="rental_type"
+              className="w-full h-14 px-6 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 appearance-none font-bold text-gray-700"
+              {...register("rental_type")}
+            >
+              {rentalTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <Label htmlFor="pickup_date" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Commencement Date
+            </Label>
+            <Input
+              id="pickup_date"
+              type="date"
+              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+              min={new Date().toISOString().split("T")[0]}
+              {...register("pickup_date")}
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label htmlFor="return_date" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+              Conclusion Date
+            </Label>
+            <Input
+              id="return_date"
+              type="date"
+              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+              {...register("return_date")}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label htmlFor="pickup_location" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+            Pickup Origin
+          </Label>
+          <Input
+            id="pickup_location"
+            placeholder="e.g. Hazrat Shahjalal Airport"
+            className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
+            {...register("pickup_location")}
+          />
+        </div>
+
+        <div className="space-y-3">
+          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
+            Bespoke Requirements
+          </Label>
+          <textarea
+            id="message"
+            rows={4}
+            placeholder="Specify any customized needs or orchestration notes..."
+            className="w-full h-32 px-6 py-4 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 resize-none font-medium text-gray-700"
+            {...register("message")}
+          />
+        </div>
+      </div>
+
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full h-16 rounded-2xl bg-green-600 text-white hover:bg-green-700 font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-green-200/50"
+      >
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+            Orchestrating...
+          </>
+        ) : (
+          <>
+            <Sparkles className="mr-3 h-4 w-4" />
+            Request Reservation
+          </>
+        )}
+      </Button>
+
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-center text-green-900/30">
+        By initiating, you authorize Jinia Concierge to contact you.
+      </p>
+    </form>
   );
 }

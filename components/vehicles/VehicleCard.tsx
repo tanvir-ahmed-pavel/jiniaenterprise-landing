@@ -1,14 +1,7 @@
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Users, Calendar, ArrowRight, Fuel } from "lucide-react";
+import { Users, Calendar, ArrowRight, Fuel, Star } from "lucide-react";
 import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
+import { cn } from "@/lib/utils";
 
 interface Vehicle {
   id: string;
@@ -23,12 +16,12 @@ interface Vehicle {
   starting_price?: number | null;
   price_label?: string;
   description?: string;
-  sort_order: number;
   is_featured: boolean;
 }
 
 interface VehicleCardProps {
   vehicle: Vehicle;
+  priority?: boolean;
 }
 
 function formatPrice(price: number): string {
@@ -40,109 +33,115 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-export function VehicleCard({ vehicle }: VehicleCardProps) {
-  const categoryStyles: Record<string, string> = {
-    Economy: "bg-green-100 text-green-900 border-green-300 shadow-md",
-    Standard: "bg-blue-100 text-blue-900 border-blue-300 shadow-md",
-    Premium: "bg-amber-100 text-amber-900 border-amber-300 shadow-md",
-    SUV: "bg-purple-100 text-purple-900 border-purple-300 shadow-md",
-    Microbus: "bg-teal-100 text-teal-900 border-teal-300 shadow-md",
-    Bus: "bg-indigo-100 text-indigo-900 border-indigo-300 shadow-md",
+export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
+  const categoryColors: Record<string, string> = {
+    Economy: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    Standard: "text-blue-600 bg-blue-50 border-blue-100",
+    Premium: "text-amber-600 bg-amber-50 border-amber-100",
+    SUV: "text-purple-600 bg-purple-50 border-purple-100",
+    Microbus: "text-teal-600 bg-teal-50 border-teal-100",
+    Bus: "text-indigo-600 bg-indigo-50 border-indigo-100",
   };
 
-  const displayImage = vehicle.images?.[0] || vehicle.image_url;
+  const displayImages = vehicle.images || (vehicle.image_url ? [vehicle.image_url] : []);
 
   return (
-    <Link href={`/vehicles/${vehicle.slug}`} className="block h-full group/card focus:outline-none focus:ring-2 focus:ring-green-500 rounded-xl">
-      <Card className="overflow-hidden h-full cursor-pointer hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
-      {/* Image */}
-      <div className="relative h-48 bg-linear-to-br from-green-50/50 to-green-100/50 overflow-hidden">
-        {displayImage ? (
-          <ImageCarousel images={vehicle.images || (vehicle.image_url ? [vehicle.image_url] : [])} vehicleName={vehicle.name} />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center group-hover/card:scale-105 transition-transform duration-500">
-            <span className="text-green-400/60 text-lg font-medium">
-              {vehicle.name}
+    <Link 
+      href={`/vehicles/${vehicle.slug}`} 
+      className="group/card block h-full focus:outline-none"
+    >
+      <div className="glass-card flex flex-col h-full overflow-hidden border-white/40 ring-1 ring-black/5">
+        {/* Visual Header / Image */}
+        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+          <ImageCarousel 
+            images={displayImages} 
+            vehicleName={vehicle.name} 
+            priority={priority}
+          />
+          
+          {/* Subtle Overlay on Hover */}
+          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+          {/* Top Badges */}
+          <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-20 pointer-events-none">
+            <span className={cn(
+              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-md border shadow-sm",
+              categoryColors[vehicle.category] || "text-gray-600 bg-white/80 border-white"
+            )}>
+              {vehicle.category}
             </span>
+            
+            {vehicle.is_featured && (
+              <span className="p-1.5 rounded-full bg-amber-400 text-white shadow-lg animate-float">
+                <Star className="h-3 w-3 fill-current" />
+              </span>
+            )}
           </div>
-        )}
 
-        {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 z-10" />
-
-        {/* Category Badge */}
-        <div className="absolute top-3 left-3 z-12">
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md border ${
-              categoryStyles[vehicle.category]
-            }`}
-          >
-            {vehicle.category}
-          </span>
-        </div>
-
-        {/* Price Badge */}
-        {vehicle.starting_price && (
-          <div className="absolute bottom-3 right-3 z-12">
-            <div
-              className="px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/30 shadow-lg"
-              style={{ background: "rgba(255, 255, 255, 0.7)" }}
-            >
-              <p className="text-[10px] text-gray-600">Starting from</p>
-              <p className="text-green-800 font-bold text-sm">
-                {formatPrice(vehicle.starting_price)}
-                <span className="text-[10px] font-normal text-gray-500 ml-1">
-                  /{vehicle.price_label || "day"}
+          {/* Price Tag — Minimalist */}
+          {vehicle.starting_price && (
+            <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
+              <div className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl border border-white/50 shadow-sm">
+                <span className="text-[10px] text-gray-500 block leading-none mb-0.5">Starts from</span>
+                <span className="text-sm font-black text-green-900 leading-none">
+                  {formatPrice(vehicle.starting_price)}
+                  <span className="text-[10px] font-normal text-gray-400 ml-1">/{vehicle.price_label || "day"}</span>
                 </span>
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-bold text-green-800 group-hover/card:text-green-600 transition-colors duration-300">
-          {vehicle.name}
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="space-y-2 pb-2">
-        {/* Seats & Engine */}
-        <div className="flex flex-wrap items-center gap-4 text-gray-600">
-          <div className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-lg icon-glow flex items-center justify-center">
-              <Users className="h-3.5 w-3.5 text-green-600" />
-            </div>
-            <span className="text-sm">{vehicle.seats} Seats</span>
-          </div>
-          {vehicle.engine_cc && (
-            <div className="flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded-lg icon-glow flex items-center justify-center">
-                <Fuel className="h-3.5 w-3.5 text-green-600" />
               </div>
-              <span className="text-sm">{vehicle.engine_cc} CC</span>
             </div>
           )}
         </div>
 
-        {/* Rental Types */}
-        <div className="flex items-center gap-2 text-gray-600">
-          <div className="w-6 h-6 rounded-lg icon-glow flex items-center justify-center">
-            <Calendar className="h-3.5 w-3.5 text-green-600" />
+        {/* Content Section */}
+        <div className="p-6 flex flex-col flex-1 gap-4">
+          <div className="space-y-1">
+            <h3 className="text-xl font-heading font-extrabold text-green-950 group-hover/card:text-green-700 transition-colors duration-300 line-clamp-1">
+              {vehicle.name}
+            </h3>
+            <p className="text-xs text-gray-500 line-clamp-1 font-medium">
+              {vehicle.description || "Premium comfort for your journey."}
+            </p>
           </div>
-          <span className="text-sm">
-            {vehicle.rental_types?.slice(0, 3).join(", ") || "Daily"}
-          </span>
-        </div>
-      </CardContent>
 
-      <CardFooter>
-        <Button variant="outline" className="w-full gap-2 pointer-events-none group-hover/card:bg-green-50 group-hover/card:text-green-700 group-hover/card:border-green-200">
-          View Details{" "}
-          <ArrowRight className="h-4 w-4 group-hover/card:translate-x-1 transition-transform duration-300" />
-        </Button>
-      </CardFooter>
-    </Card>
+          {/* Spec Grid — More Dynamic Layout */}
+          <div className="grid grid-cols-2 gap-y-3 gap-x-2 pt-2 border-t border-black/[0.03]">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+                <Users className="h-3.5 w-3.5 text-green-600" />
+              </div>
+              <span className="text-xs font-semibold text-gray-700">{vehicle.seats} Seats</span>
+            </div>
+            
+            {vehicle.engine_cc && (
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                  <Fuel className="h-3.5 w-3.5 text-emerald-600" />
+                </div>
+                <span className="text-xs font-semibold text-gray-700">{vehicle.engine_cc} CC</span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 col-span-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                <Calendar className="h-3.5 w-3.5 text-blue-600" />
+              </div>
+              <span className="text-xs font-semibold text-gray-700 line-clamp-1">
+                {vehicle.rental_types?.slice(0, 2).join(" • ") || "Daily/Monthly"}
+              </span>
+            </div>
+          </div>
+
+          {/* Animated Footer Action */}
+          <div className="mt-auto pt-2">
+            <div className="flex items-center justify-between group/btn text-green-800 font-bold text-sm tracking-tight transition-all">
+              <span>View Details</span>
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-green-700 group-hover/card:bg-green-600 group-hover/card:text-white transition-all duration-500 ease-out shadow-sm group-hover/card:shadow-green-200">
+                <ArrowRight className="h-4 w-4 group-hover/card:translate-x-0.5 transition-transform" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </Link>
   );
 }

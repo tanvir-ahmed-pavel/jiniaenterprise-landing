@@ -1,13 +1,6 @@
 import { Metadata } from "next";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { services, groupTransportOptions } from "@/lib/config";
+import { services, groupTransportOptions, siteConfig } from "@/lib/config";
 import {
   Car,
   Calendar,
@@ -20,11 +13,16 @@ import {
   Shield,
   MapPin,
   CheckCircle,
+  Sparkles,
+  ArrowRight,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Our Services | Jinia Enterprise",
+  title: "Bespoke Services | Jinia Enterprise",
   description:
     "Comprehensive car rental services in Dhaka including daily rental, monthly rental, corporate fleet, bus rental, chauffeur service, and airport transfers.",
 };
@@ -41,105 +39,115 @@ const iconMap: { [key: string]: React.ElementType } = {
 
 export default function ServicesPage() {
   return (
-    <div className="py-12">
-      <div className="container">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl font-heading font-bold text-green-800">
-            Our Services
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Comprehensive mobility solutions tailored to your needs. From daily
-            rentals to corporate fleet management, we have you covered.
-          </p>
-        </div>
+    <div className="pb-24">
+      <PageHeader 
+        title="Bespoke Services."
+        subtitle="Unparalleled Mobility"
+        description="Comprehensive mobility solutions tailored to your refined needs. From elite daily rentals to sophisticated corporate fleet management."
+        breadcrumbs={[{ label: "Services" }]}
+      />
 
-        {/* Services Grid — Glass Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {services.map((service) => {
+      <div className="container">
+        {/* Services Grid — Artistic Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
+          {services.map((service, idx) => {
             const IconComponent = iconMap[service.icon] || Car;
+            // Modern staggered layout logic from homepage
+            const isLarge = idx === 0 || idx === 7 || idx === 8;
+            
             return (
-              <Card key={service.id}>
-                <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-xl icon-glow flex items-center justify-center mb-4">
-                    <IconComponent className="h-6 w-6 text-green-600" />
+              <div 
+                key={service.id} 
+                className={cn(
+                  "glass-card p-10 group flex flex-col justify-between min-h-[320px] transition-all duration-500 hover:-translate-y-2",
+                  isLarge ? "lg:col-span-2 lg:bg-white/80" : "bg-white/40"
+                )}
+                style={{ transitionDelay: `${idx * 0.05}s` }}
+              >
+                <div className="space-y-8">
+                  <div className="w-16 h-16 rounded-2xl bg-white shadow-2xl shadow-green-900/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-black/[0.03]">
+                    <IconComponent className="h-8 w-8 text-green-700" />
                   </div>
-                  <CardTitle className="text-lg text-green-800">
-                    {service.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600">
-                    {service.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                  <div className="space-y-4">
+                    <h3 className="text-2xl font-heading font-black text-green-950 tracking-tight italic">
+                      {service.title}.
+                    </h3>
+                    <p className="text-gray-500 font-medium leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="pt-8">
+                  <Link 
+                    href="/booking"
+                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-green-700 hover:text-green-500 transition-all group/link"
+                  >
+                    Reserve This Space <ArrowRight className="h-3 w-3 group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* Group & Corporate — Dark Glass */}
-        <div
-          className="rounded-2xl p-8 md:p-12 mb-16 relative overflow-hidden"
-          style={{
-            background: "rgba(10, 25, 18, 0.92)",
-            border: "1px solid rgba(74, 222, 128, 0.12)",
-            boxShadow:
-              "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
-          }}
-        >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
-          <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
-            <div className="space-y-6">
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
-                Group & Corporate Transportation
-              </h2>
-              <p className="text-white/70">
-                Jinia Enterprise provides customized group transportation
-                solutions, combining experienced drivers with a modern fleet of
-                buses for safe and hassle-free trips.
+        {/* Group & Corporate — Cinematic Dark Section */}
+        <div className="relative glass-card p-12 md:p-24 mb-32 overflow-hidden bg-green-950">
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+            <span className="text-[20rem] font-heading font-black italic whitespace-nowrap">CORPORATE</span>
+          </div>
+
+          <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <span className="text-green-500 text-[10px] font-black uppercase tracking-[0.3em]">Institutional Care</span>
+                <h2 className="text-4xl md:text-6xl font-heading font-black text-white italic leading-tight">
+                  Group & <br /> <span className="text-green-400">Corporate.</span>
+                </h2>
+              </div>
+              <p className="text-white/60 font-medium text-lg leading-relaxed">
+                Jinia Enterprise provides customized group transportation solutions, combining experienced drivers with a modern fleet for safe and hassle-free institutional journeys.
               </p>
-              <ul className="space-y-3">
+              <div className="grid sm:grid-cols-2 gap-4">
                 {groupTransportOptions.map((option, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center gap-3 text-white/90"
-                  >
-                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(74,222,128,0.2)]">
-                      <CheckCircle className="h-3 w-3 text-green-400" />
-                    </div>
-                    <span>{option}</span>
-                  </li>
+                  <div key={idx} className="flex items-center gap-3 text-white/80">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    <span className="text-sm font-bold tracking-tight">{option}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+              <div className="pt-6">
+                <Link href="/contact">
+                  <Button className="h-16 px-10 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
+                    Inquire Concierge
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <div className="space-y-6">
-              {["Diversity", "Solutions"].map((title) => (
-                <div
-                  key={title}
-                  className="rounded-xl p-6 space-y-4"
-                  style={{
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }}
+
+            <div className="grid gap-6">
+              {[
+                {
+                  title: "Elite Fleet Diversity",
+                  items: ["Wide range of luxury vehicles", "Competitive institutional rates", "Business and executive grade"]
+                },
+                {
+                  title: "Agile Mobility Solutions",
+                  items: ["Long-term strategic leasing", "Dedicated chauffeur services", "24/7 Priority assistance"]
+                }
+              ].map((box) => (
+                <div 
+                  key={box.title}
+                  className="glass-card p-10 bg-white/5 border-white/10 space-y-4"
                 >
-                  <h3 className="text-xl font-semibold text-white">{title}</h3>
-                  <ul className="space-y-2 text-white/70">
-                    {title === "Diversity" ? (
-                      <>
-                        <li>• Wide range of vehicles from economy to luxury</li>
-                        <li>• Most competitive rates</li>
-                        <li>• Suitable for business and family use</li>
-                      </>
-                    ) : (
-                      <>
-                        <li>• Daily, weekly, monthly rentals</li>
-                        <li>• Long-term leasing</li>
-                        <li>• Chauffeur services</li>
-                        <li>• Pick-up and drop-off</li>
-                        <li>• 24-hour emergency assistance</li>
-                      </>
-                    )}
+                  <h3 className="text-xl font-heading font-black text-white italic">{box.title}.</h3>
+                  <ul className="space-y-3">
+                    {box.items.map((item) => (
+                      <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/50">
+                        <CheckCircle className="h-4 w-4 text-green-500/50" />
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               ))}
@@ -147,65 +155,72 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* Additional Features — Glass Section */}
-        <div className="section-glass rounded-2xl p-8 md:p-12 mb-16">
-          <h2 className="text-2xl font-heading font-bold mb-8 text-center text-green-800">
-            Why Our Services Stand Out
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Why Choice — Dynamic Grid */}
+        <div className="glass-card p-12 md:p-20 bg-green-50/50 border-green-100 mb-32">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-heading font-black text-green-950 italic">The Jinia Advantage.</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
               {
                 icon: Shield,
-                title: "First-Hand Vehicles",
-                text: "All vehicles are first-hand and maintained in excellent condition.",
+                title: "Elite Fleet",
+                text: "All vehicles are first-hand and maintained to peerless standards.",
               },
               {
                 icon: Clock,
-                title: "Quick Response",
-                text: "Ability to respond quickly to client needs.",
+                title: "Rapid Pulse",
+                text: "Instant responses to your most demanding scheduling needs.",
               },
               {
                 icon: MapPin,
-                title: "All Bangladesh",
-                text: "Explore Dhaka and the entire country with our fleet.",
+                title: "Global Reach",
+                text: "Unrestricted access across Dhaka and the entire nation.",
               },
               {
                 icon: Phone,
-                title: "Experienced Staff",
-                text: "Helpful and experienced staff at all times.",
+                title: "Concierge Staff",
+                text: "Elite, experienced professionals available at all moments.",
               },
             ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex items-start gap-4">
-                <div className="p-2.5 rounded-xl icon-glow shrink-0">
-                  <Icon className="h-5 w-5 text-green-600" />
+              <div key={title} className="flex flex-col gap-6 group">
+                <div className="w-14 h-14 rounded-2xl bg-white border border-green-100 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-500">
+                  <Icon className="h-6 w-6 text-green-600" />
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-1 text-gray-800">{title}</h3>
-                  <p className="text-sm text-gray-600">{text}</p>
+                <div className="space-y-2">
+                  <h4 className="font-heading font-black text-green-950 text-xl italic">{title}.</h4>
+                  <p className="text-sm text-gray-500 font-medium leading-relaxed">{text}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center space-y-6">
-          <h2 className="text-2xl font-heading font-bold text-green-800">
-            Ready to Get Started?
-          </h2>
-          <p className="text-gray-600 max-w-xl mx-auto italic">
-            &ldquo;For your next car rental, try Jinia — you will come
-            back.&rdquo;
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/contact">
-              <Button size="lg">Contact Us</Button>
-            </Link>
-            <Link href="/vehicles">
-              <Button size="lg" variant="outline">
-                View Fleet
-              </Button>
-            </Link>
+        {/* Premium CTA — Artistic Centered */}
+        <div className="relative glass-card p-12 md:p-20 text-center overflow-hidden bg-green-950">
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+            <span className="text-[20rem] font-heading font-black italic whitespace-nowrap">RESERVE</span>
+          </div>
+
+          <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+            <h2 className="text-3xl md:text-5xl font-heading font-black text-white italic leading-tight">
+              Ready for Your <br /> <span className="text-green-400">Next Destination?</span>
+            </h2>
+            <p className="text-white/60 font-medium text-lg leading-relaxed italic">
+              &ldquo;For your next car rental, try Jinia — you will come back.&rdquo;
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4">
+              <Link href="/booking">
+                <Button size="lg" className="h-16 px-10 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
+                  <Calendar className="mr-3 h-4 w-4" /> Book Reservation
+                </Button>
+              </Link>
+              <a href="https://wa.me/8801716633445" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
+                  <MessageSquare className="mr-3 h-4 w-4" /> WhatsApp Connect
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </div>

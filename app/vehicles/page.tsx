@@ -1,9 +1,10 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
+import { VehicleGrid } from "@/components/vehicles/VehicleGrid";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { createClient } from "@/lib/supabase/server";
-import { Phone, MessageSquare } from "lucide-react";
+import { Phone, MessageSquare, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Our Vehicle Fleet | Jinia Enterprise",
@@ -39,8 +40,6 @@ async function getVehicles(): Promise<Vehicle[]> {
     .order("sort_order", { ascending: true });
 
   if (error) {
-    // Fallback: sort_order column may not exist yet in the database.
-    // Run: ALTER TABLE vehicles ADD COLUMN sort_order INTEGER DEFAULT 0;
     const { data: fallbackData, error: fallbackError } = await supabase
       .from("vehicles")
       .select("*")
@@ -62,87 +61,63 @@ export default async function VehiclesPage() {
   const categories = ["All", "Economy", "Standard", "Premium", "SUV", "Microbus", "Bus"] as const;
 
   return (
-    <div className="py-12">
-      <div className="container">
-        {/* Header */}
-        <div className="text-center mb-12 space-y-4">
-          <h1 className="text-4xl font-heading font-bold text-green-800">
-            Our Vehicle Fleet
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Choose from our wide range of well-maintained vehicles. All vehicles
-            are first-hand and maintained in excellent condition.
-          </p>
-        </div>
+    <div className="pb-24">
+      <PageHeader 
+        title="Selective Fleet."
+        subtitle="Uncompromising Quality"
+        description="Every vehicle in our collection is handpicked and maintained to the highest standards, ensuring a seamless experience for your journey."
+        breadcrumbs={[{ label: "Fleet" }]}
+      />
 
-        {/* Category Filters — Glass Pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
+      <div className="container">
+        {/* Artistic Filter Bar */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-16 animate-fade-in animation-delay-300">
           {categories.map((category) => (
             <button
               key={category}
-              className="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-md border border-white/30 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(74,222,128,0.15)]"
-              style={{ background: "rgba(255,255,255,0.4)" }}
+              className="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 glass-card bg-white/40 hover:bg-green-600 hover:text-white hover:-translate-y-1 border-white/60"
             >
               {category}
             </button>
           ))}
         </div>
 
-        {/* Vehicle Grid */}
+        {/* Vehicle Grid — Dynamic Gaps */}
         {vehicles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {vehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
-            ))}
-          </div>
+          <VehicleGrid vehicles={vehicles as any[]} />
         ) : (
-          <div className="text-center py-16 mb-16">
-            <div className="glass rounded-2xl p-12 max-w-md mx-auto">
-              <p className="text-gray-500 text-lg">
-                No vehicles available at the moment. Please check back later.
-              </p>
-            </div>
+          <div className="text-center py-32 mb-16 glass-card max-w-2xl mx-auto">
+            <Sparkles className="h-12 w-12 text-green-200 mx-auto mb-6" />
+            <p className="text-gray-400 font-medium italic">
+              Our fleet is currently reaching its destination. <br />
+              Please check back shortly for available selections.
+            </p>
           </div>
         )}
 
-        {/* CTA — Dark Glass */}
-        <div
-          className="rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
-          style={{
-            background: "rgba(10, 25, 18, 0.92)",
-            border: "1px solid rgba(74, 222, 128, 0.12)",
-            boxShadow:
-              "0 8px 40px rgba(0,0,0,0.2), 0 0 30px rgba(74,222,128,0.05)",
-          }}
-        >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
-          <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4 text-white">
-              Can&apos;t Find What You&apos;re Looking For?
+        {/* Premium CTA — Artistic Centered */}
+        <div className="relative glass-card p-12 md:p-20 text-center overflow-hidden bg-green-950">
+          {/* Decorative Text background */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+            <span className="text-[20rem] font-heading font-black italic whitespace-nowrap">CUSTOM CARE</span>
+          </div>
+
+          <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+            <h2 className="text-3xl md:text-5xl font-heading font-black text-white italic leading-tight">
+              A Bespoke Journey <br /> <span className="text-green-400">Awaits You.</span>
             </h2>
-            <p className="text-lg text-white/70 mb-6 max-w-xl mx-auto">
-              Contact us directly and we&apos;ll help you find the perfect
-              vehicle for your needs.
+            <p className="text-white/60 font-medium text-lg leading-relaxed">
+              Cannot find the exact vehicle you have in mind? Contact our concierge team for specialized arrangements.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4">
               <a href="tel:+8801716633445">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto gap-2 bg-white/90 text-green-800 hover:bg-white border border-white/50 font-bold shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-                >
-                  <Phone className="h-5 w-5" /> Call Now
+                <Button size="lg" className="h-16 px-10 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
+                  <Phone className="mr-3 h-4 w-4" /> Personal Call
                 </Button>
               </a>
-              <a
-                href="https://wa.me/8801716633445"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto gap-2 bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-sm"
-                >
-                  <MessageSquare className="h-5 w-5" /> WhatsApp
+              <a href="https://wa.me/8801716633445" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
+                  <MessageSquare className="mr-3 h-4 w-4" /> WhatsApp Connect
                 </Button>
               </a>
             </div>

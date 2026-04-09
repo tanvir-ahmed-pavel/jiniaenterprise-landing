@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
-import { Calendar, Clock, ArrowLeft, User, Share2 } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, User, Share2, MessageSquare, Phone } from "lucide-react";
 import type { Metadata } from "next";
+import { cn } from "@/lib/utils";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -113,7 +114,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
@@ -124,7 +125,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return Math.ceil(words / wordsPerMinute);
   };
 
-  // Simple markdown-like rendering for content
+  // Simple markdown-like rendering for content with premium styling
   const renderContent = (content: string) => {
     const lines = content.split("\n");
     return lines.map((line, index) => {
@@ -133,9 +134,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         return (
           <h2
             key={index}
-            className="text-2xl font-heading font-bold text-gray-900 mt-8 mb-4"
+            className="text-3xl md:text-4xl font-heading font-black text-green-950 mt-12 mb-6 italic"
           >
-            {line.replace("## ", "")}
+            {line.replace("## ", "")}.
           </h2>
         );
       }
@@ -143,17 +144,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         return (
           <h3
             key={index}
-            className="text-xl font-heading font-bold text-gray-800 mt-6 mb-3"
+            className="text-2xl font-heading font-black text-green-900 mt-10 mb-4 italic"
           >
-            {line.replace("### ", "")}
+            {line.replace("### ", "")}.
           </h3>
         );
       }
       // Lists
       if (line.startsWith("- ")) {
         return (
-          <li key={index} className="ml-4 list-disc text-gray-700 mb-2">
-            {line.replace("- ", "")}
+          <li key={index} className="ml-6 flex items-start gap-4 text-gray-700 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2.5 shrink-0" />
+            <span className="text-lg font-medium leading-relaxed">{line.replace("- ", "")}</span>
           </li>
         );
       }
@@ -163,7 +165,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       }
       // Paragraphs
       return (
-        <p key={index} className="text-gray-700 leading-relaxed mb-4">
+        <p key={index} className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed mb-6">
           {line}
         </p>
       );
@@ -171,168 +173,179 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-linear-to-br from-green-50 via-white to-green-50 py-16 md:py-20">
+    <div className="pb-24">
+      {/* Cinematic Hero Header */}
+      <section className="relative pt-32 pb-16 md:pt-48 md:pb-24 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-green-50/50 via-white to-transparent -z-10" />
+        
         <div className="container">
-          <div className="max-w-4xl mx-auto">
-            {/* Back Link */}
+          <div className="max-w-5xl mx-auto space-y-10">
+            {/* Nav Back */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 mb-8 transition-colors"
+              className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-green-600 hover:text-green-800 transition-all group"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Blog
+              <ArrowLeft className="h-3 w-3 group-hover:-translate-x-1 transition-transform" />
+              Back to Journal
             </Link>
 
-            {/* Meta */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {formatDate(post.created_at)}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                {getReadingTime(post.content)} min read
-              </span>
-              <span className="flex items-center gap-1">
-                <User className="h-4 w-4" />
-                {post.author}
-              </span>
+            <div className="space-y-6">
+                <div className="flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-green-600/60">
+                    <span className="flex items-center gap-2">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(post.created_at)}
+                    </span>
+                    <span className="flex items-center gap-2 text-green-600">
+                        <Clock className="h-3 w-3" />
+                        {getReadingTime(post.content)} min read
+                    </span>
+                </div>
+
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-green-950 leading-[0.9] italic tracking-tighter">
+                    {post.title}
+                </h1>
+
+                <p className="text-xl md:text-2xl text-gray-500 font-medium leading-relaxed max-w-3xl italic border-l-4 border-green-500/20 pl-8 py-2">
+                    {post.excerpt}
+                </p>
             </div>
-
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 mb-6">
-              {post.title}
-            </h1>
-
-            {/* Excerpt */}
-            <p className="text-xl text-gray-600">{post.excerpt}</p>
           </div>
         </div>
       </section>
 
-      {/* Content Section */}
-      <section className="py-12 md:py-16">
-        <div className="container">
-          <div className="grid lg:grid-cols-4 gap-12">
-            {/* Main Content */}
-            <article className="lg:col-span-3">
-              {/* Featured Image */}
-              <div className="aspect-video rounded-xl bg-linear-to-br from-green-100 to-green-200 flex items-center justify-center mb-10 overflow-hidden">
+      {/* Main Content & Sidebar */}
+      <section className="container">
+        <div className="grid lg:grid-cols-12 gap-16 item-start">
+          {/* Article Area */}
+          <div className="lg:col-span-8 space-y-12">
+            {/* Featured Image - Artistic Frame */}
+            <div className="glass-card aspect-video relative overflow-hidden bg-green-50 group">
                 {post.cover_image ? (
                   <img
                     src={post.cover_image}
                     alt={post.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                   />
                 ) : (
-                  <div className="text-green-500/40 text-6xl">📰</div>
+                  <div className="w-full h-full flex items-center justify-center text-9xl grayscale opacity-10 font-heading font-black italic">JINIA</div>
                 )}
-              </div>
+                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5" />
+            </div>
 
-              {/* Article Content */}
-              <div className="prose prose-lg max-w-none">
+            {/* Content Body */}
+            <article className="max-w-none">
+              <div className="prose-custom">
                 {renderContent(post.content)}
-              </div>
-
-              {/* Share Section */}
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Share2 className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-600 font-medium">
-                      Share this article
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      Facebook
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      LinkedIn
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      WhatsApp
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="mt-12 p-8 bg-green-50 rounded-2xl text-center">
-                <h3 className="text-2xl font-heading font-bold text-green-800 mb-4">
-                  Ready to Book?
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-xl mx-auto">
-                  Experience premium car rental service with Jinia Enterprise.
-                  Contact us today for a quote.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/vehicles">
-                    <Button className="bg-green-600 hover:bg-green-700 text-white">
-                      Browse Vehicles
-                    </Button>
-                  </Link>
-                  <Link href="/contact">
-                    <Button
-                      variant="outline"
-                      className="border-green-600 text-green-600"
-                    >
-                      Contact Us
-                    </Button>
-                  </Link>
-                </div>
               </div>
             </article>
 
-            {/* Sidebar */}
-            <aside className="lg:col-span-1">
-              <div className="sticky top-24 space-y-8">
-                {/* Related Posts */}
-                {relatedPosts.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-heading font-bold text-gray-900 mb-4">
-                      Related Articles
-                    </h3>
-                    <div className="space-y-4">
-                      {relatedPosts.map((relatedPost) => (
-                        <Link
-                          key={relatedPost.id}
-                          href={`/blog/${relatedPost.slug}`}
-                          className="block group"
-                        >
-                          <div className="p-4 rounded-lg border border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all">
-                            <h4 className="font-medium text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2 text-sm">
-                              {relatedPost.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-2">
-                              {formatDate(relatedPost.created_at)}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
+            {/* Social Share — Glass Minimal */}
+            <div className="glass-card p-10 flex flex-col sm:flex-row items-center justify-between gap-8 border-black/[0.05]">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-green-950 flex items-center justify-center text-white">
+                        <Share2 className="h-4 w-4" />
                     </div>
-                  </div>
-                )}
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-950">Broadcast Narrative</span>
+                </div>
+                <div className="flex gap-3">
+                    {['X-Axis', 'Facebook', 'LinkedIn', 'WhatsApp'].map((platform) => (
+                        <Button 
+                            key={platform}
+                            variant="outline" 
+                            size="sm"
+                            className="h-10 px-6 rounded-xl border-green-100 text-green-950 hover:bg-green-50 font-black uppercase tracking-widest text-[9px]"
+                        >
+                            {platform}
+                        </Button>
+                    ))}
+                </div>
+            </div>
 
-                {/* Quick Contact */}
-                <div className="p-6 bg-gray-50 rounded-xl">
-                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-4">
-                    Need a Vehicle?
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Call us for immediate assistance or browse our fleet online.
-                  </p>
-                  <Link href="/contact">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                      Get in Touch
-                    </Button>
-                  </Link>
+            {/* Author Footer */}
+            <div className="flex items-center gap-6 p-10 bg-green-50/50 rounded-[2rem] border border-green-100">
+                <div className="w-20 h-20 rounded-full bg-green-200 flex items-center justify-center text-3xl font-heading font-black italic text-green-950">
+                    {post.author.charAt(0)}
+                </div>
+                <div className="space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-600">Authored By</span>
+                    <h4 className="text-xl font-heading font-black text-green-950 italic">{post.author}</h4>
+                </div>
+            </div>
+          </div>
+
+          {/* Sidebar — Sticky Elite */}
+          <aside className="lg:col-span-4 space-y-12 lg:sticky lg:top-32">
+            {/* Recent Stories */}
+            {relatedPosts.length > 0 && (
+              <div className="space-y-8">
+                <div className="space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-600">Fresh Perspective</span>
+                    <h3 className="text-2xl font-heading font-black text-green-950 italic">Recent Stories.</h3>
+                </div>
+                <div className="space-y-6">
+                  {relatedPosts.map((relatedPost) => (
+                    <Link
+                      key={relatedPost.id}
+                      href={`/blog/${relatedPost.slug}`}
+                      className="group block space-y-3"
+                    >
+                      <h4 className="font-heading font-black text-lg text-green-950 group-hover:text-green-600 transition-colors line-clamp-2 leading-snug italic">
+                        {relatedPost.title}
+                      </h4>
+                      <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-gray-400">
+                        <span className="flex items-center gap-2"><Calendar className="h-3 w-3" /> {formatDate(relatedPost.created_at)}</span>
+                        <span className="text-green-600/40">{getReadingTime(relatedPost.content)} MIN</span>
+                      </div>
+                      <div className="h-px w-full bg-black/[0.05] group-hover:bg-green-500/20 transition-colors" />
+                    </Link>
+                  ))}
                 </div>
               </div>
-            </aside>
-          </div>
+            )}
+
+            {/* Concierge Widget */}
+            <div className="glass-dark p-10 bg-green-950 space-y-8 rounded-[2rem] shadow-2xl">
+              <div className="space-y-4">
+                  <h3 className="text-2xl font-heading font-black text-white italic leading-tight">Elite Mobility <br /> Awaits.</h3>
+                  <p className="text-sm text-white/50 font-medium leading-relaxed italic">
+                    Why just read about excellence? Experience it firsthand with our premier concierge services.
+                  </p>
+              </div>
+              <div className="space-y-3 pt-2">
+                  <Link href="/booking">
+                    <Button className="w-full h-14 bg-white text-green-950 hover:bg-green-50 gap-3 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl">
+                        Reserve Space
+                    </Button>
+                  </Link>
+                  <a href="https://wa.me/8801716633445" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full h-14 border-white/20 text-white hover:bg-white/10 gap-3 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl">
+                        <MessageSquare className="h-4 w-4" /> WhatsApp Axis
+                    </Button>
+                  </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* Bottom Large CTA */}
+      <section className="container mt-32">
+        <div className="glass-card p-12 md:p-24 text-center bg-green-50/50 border-green-100 flex flex-col items-center gap-10">
+            <h2 className="text-3xl md:text-6xl font-heading font-black text-green-950 italic leading-tight max-w-4xl">
+              &ldquo;One Journey <span className="text-green-500/40">is all it takes</span> to see the difference.&rdquo;
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-6">
+                <Link href="/vehicles">
+                    <Button size="lg" className="h-16 px-12 rounded-2xl bg-green-950 text-white hover:bg-green-900 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl">
+                        Browse The Collection
+                    </Button>
+                </Link>
+                <a href="tel:8801716633445">
+                    <Button size="lg" variant="outline" className="h-16 px-12 rounded-2xl border-green-200 text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
+                        <Phone className="mr-3 h-4 w-4" /> Personal Call
+                    </Button>
+                </a>
+            </div>
         </div>
       </section>
     </div>

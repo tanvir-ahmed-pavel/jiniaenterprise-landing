@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle, X } from "lucide-react";
+import { Loader2, CheckCircle, X, MapPin, Calendar as CalendarIcon, Car, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function HeroBookingWidget() {
   const [rentalType, setRentalType] = useState("daily");
@@ -31,7 +32,7 @@ export function HeroBookingWidget() {
 
   const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone || !email) return alert("Please fill in all contact details.");
+    if (!name || !phone || !email) return;
     
     setIsSubmitting(true);
     try {
@@ -54,11 +55,9 @@ export function HeroBookingWidget() {
       if (response.ok) {
         setIsSuccess(true);
         setIsModalOpen(false);
-      } else {
-        alert("Something went wrong. Please try again.");
       }
     } catch (err) {
-      alert("Failed to submit request.");
+      console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -76,12 +75,14 @@ export function HeroBookingWidget() {
 
   if (isSuccess) {
     return (
-      <div className="rounded-[2.2rem] p-6 md:p-8 max-w-2xl mx-auto bg-green-500/10 backdrop-blur-2xl border border-green-500/30 text-center animate-in fade-in duration-700">
-        <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-3" />
-        <h3 className="text-xl font-bold text-white mb-2">Quote Request Sent!</h3>
-        <p className="text-white/80 text-sm mb-6">Our team will call you at {phone} shortly with your custom rate.</p>
-        <Button onClick={resetForm} variant="outline" className="text-white border-white/40 hover:bg-white/20">
-          Submit Another Request
+      <div className="glass-card p-10 max-w-2xl mx-auto bg-white/20 text-center animate-scale-in">
+        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/20">
+          <CheckCircle className="h-8 w-8 text-white" />
+        </div>
+        <h3 className="text-2xl font-heading font-black text-white mb-2 tracking-tight">Quote Request Sent!</h3>
+        <p className="text-white/70 text-sm mb-8 max-w-sm mx-auto">Our specialized team will contact you at <span className="text-white font-bold">{phone}</span> within minutes.</p>
+        <Button onClick={resetForm} variant="outline" className="px-8 py-6 rounded-2xl text-white border-white/20 hover:bg-white/10 transition-all font-bold">
+          Request Another Quote
         </Button>
       </div>
     );
@@ -89,138 +90,154 @@ export function HeroBookingWidget() {
 
   return (
     <>
-      <div className="rounded-[2.2rem] p-5 md:p-6 lg:p-8 max-w-6xl mx-auto bg-linear-to-br from-white/30 via-white/10 to-transparent backdrop-blur-2xl border-t border-l border-white/50 border-r border-b shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_40px_rgba(255,255,255,0.15),inset_0_1px_1px_rgba(255,255,255,0.8)]">
-        <form onSubmit={handleInitialSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 items-end text-left">
-          <div className="space-y-1.5 lg:space-y-2.5 w-full">
-            <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-              Rental Type
+      <div className="glass-card p-1 md:p-3 lg:p-4 max-w-6xl mx-auto bg-white/10 backdrop-blur-3xl border-white/20 shadow-2xl">
+        <form onSubmit={handleInitialSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 md:gap-2 items-end">
+          {/* Rental Type */}
+          <div className="space-y-1.5 p-3">
+            <label className="flex items-center gap-2 text-[10px] text-white/50 font-black uppercase tracking-[0.2em] ml-1">
+              <Zap className="h-3 w-3" /> Type
             </label>
-            <select 
-              value={rentalType}
-              onChange={(e) => setRentalType(e.target.value)}
-              className="w-full h-12 lg:h-14 px-4 rounded-xl bg-white border border-white/40 text-gray-900 text-base font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors shadow-sm appearance-none"
-            >
-              <option value="daily" className="text-gray-900">Daily Rental</option>
-              <option value="weekly" className="text-gray-900">Weekly Rental</option>
-              <option value="monthly" className="text-gray-900">Monthly Rental</option>
-              <option value="airport" className="text-gray-900">Airport Transfer</option>
-            </select>
+            <div className="relative">
+              <select 
+                value={rentalType}
+                onChange={(e) => setRentalType(e.target.value)}
+                className="w-full h-14 px-5 rounded-2xl bg-white/95 border-none text-green-950 text-sm font-bold focus:ring-4 focus:ring-green-500/20 transition-all appearance-none cursor-pointer"
+              >
+                <option value="daily">Daily Rental</option>
+                <option value="weekly">Weekly Rental</option>
+                <option value="monthly">Monthly Rental</option>
+                <option value="airport">Airport Transfer</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-green-900/40">
+                <X className="h-4 w-4 rotate-45" />
+              </div>
+            </div>
           </div>
-          <div className="space-y-1.5 lg:space-y-2.5 w-full">
-            <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-              Pickup Date
+
+          {/* Pickup Date */}
+          <div className="space-y-1.5 p-3">
+            <label className="flex items-center gap-2 text-[10px] text-white/50 font-black uppercase tracking-[0.2em] ml-1">
+              <CalendarIcon className="h-3 w-3" /> Date
             </label>
             <input
               type="date"
               required
               value={pickupDate}
               onChange={(e) => setPickupDate(e.target.value)}
-              className="w-full h-12 lg:h-14 px-4 rounded-xl bg-white border border-white/40 text-gray-900 text-base font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors shadow-sm cursor-pointer"
+              className="w-full h-14 px-5 rounded-2xl bg-white/95 border-none text-green-950 text-sm font-bold focus:ring-4 focus:ring-green-500/20 transition-all cursor-pointer"
               min={new Date().toISOString().split("T")[0]}
             />
           </div>
-          <div className="space-y-1.5 lg:space-y-2.5 w-full">
-            <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-              Location
+
+          {/* Location */}
+          <div className="space-y-1.5 p-3">
+            <label className="flex items-center gap-2 text-[10px] text-white/50 font-black uppercase tracking-[0.2em] ml-1">
+              <MapPin className="h-3 w-3" /> Location
             </label>
             <input
               type="text"
               required
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Airport, Gulshan"
-              className="w-full h-12 lg:h-14 px-4 rounded-xl bg-white border border-white/40 text-gray-900 placeholder:text-gray-400 text-base font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors shadow-sm"
+              placeholder="e.g. Gulshan, Dhaka"
+              className="w-full h-14 px-5 rounded-2xl bg-white/95 border-none text-green-950 placeholder:text-gray-400 text-sm font-bold focus:ring-4 focus:ring-green-500/20 transition-all"
             />
           </div>
-          <div className="space-y-1.5 lg:space-y-2.5 w-full">
-            <label className="text-[10px] sm:text-xs text-white/90 font-bold tracking-widest uppercase ml-1 drop-shadow-sm">
-              Vehicle (Optional)
+
+          {/* Vehicle */}
+          <div className="space-y-1.5 p-3">
+            <label className="flex items-center gap-2 text-[10px] text-white/50 font-black uppercase tracking-[0.2em] ml-1">
+              <Car className="h-3 w-3" /> Vehicle
             </label>
             <input
               type="text"
               value={vehicleName}
               onChange={(e) => setVehicleName(e.target.value)}
-              placeholder="e.g. Prado, SUV"
-              className="w-full h-12 lg:h-14 px-4 rounded-xl bg-white border border-white/40 text-gray-900 placeholder:text-gray-400 text-base font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors shadow-sm"
+              placeholder="e.g. Prado, Noah"
+              className="w-full h-14 px-5 rounded-2xl bg-white/95 border-none text-green-950 placeholder:text-gray-400 text-sm font-bold focus:ring-4 focus:ring-green-500/20 transition-all"
             />
           </div>
-          <div className="w-full mt-2 sm:mt-0 pt-1 md:pt-0 sm:col-span-2 md:col-span-1 lg:col-span-1">
+
+          {/* Submit */}
+          <div className="p-3 pt-4 sm:pt-3">
             <Button
               type="submit"
-              size="lg"
-              className="w-full h-12 lg:h-14 bg-linear-to-r from-green-500 to-emerald-400 hover:from-green-400 hover:to-emerald-300 text-white font-black tracking-wide border border-green-400/50 shadow-[0_10px_30px_rgba(74,222,128,0.4),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_15px_40px_rgba(74,222,128,0.6),inset_0_1px_2px_rgba(255,255,255,0.7)] rounded-xl uppercase hover:-translate-y-1 transition-all duration-300"
+              className="w-full h-14 bg-green-500 hover:bg-green-400 text-white font-black text-sm tracking-widest uppercase rounded-2xl shadow-xl shadow-green-950/20 hover:-translate-y-1 transition-all duration-300"
             >
-              Get Quote
+              Get Rates
             </Button>
           </div>
         </form>
       </div>
 
       {mounted && isModalOpen && createPortal(
-        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 sm:p-0" style={{ zIndex: 9999 }}>
+        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
           <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" 
+            className="absolute inset-0 bg-black/60 backdrop-blur-xl animate-fade-in" 
             onClick={() => setIsModalOpen(false)}
           />
-          <div className="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-[0_0_100px_rgba(0,0,0,0.5)] relative animate-in fade-in zoom-in-95 duration-300 z-10 border border-gray-100">
+          <div className="glass-card bg-white p-8 sm:p-10 w-full max-w-lg shadow-[0_0_100px_rgba(0,0,0,0.3)] relative animate-scale-in z-10 border-none overflow-hidden">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-full blur-3xl -mr-16 -mt-16 -z-10" />
+            
             <button 
               onClick={() => setIsModalOpen(false)} 
-              className="absolute right-4 top-4 text-gray-400 hover:text-gray-900 transition-colors bg-gray-100 hover:bg-gray-200 rounded-full p-2"
+              className="absolute right-6 top-6 text-gray-400 hover:text-green-950 transition-colors p-2 hover:bg-gray-50 rounded-full"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </button>
             
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Where should we send your quote?</h2>
-              <p className="text-sm text-gray-500">Provide your contact info and our team will get right back to you.</p>
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-heading font-black text-green-950 tracking-tight mb-3 italic">Almost There.</h2>
+              <p className="text-sm text-gray-500 font-medium">We just need a few details to send your personalized quote.</p>
             </div>
 
-            <form onSubmit={handleFinalSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <form onSubmit={handleFinalSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-green-900/40 ml-1 italic">Full Identity</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="John Doe"
+                  className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-green-950"
+                  placeholder="Shahab Uddin"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-green-900/40 ml-1 italic">Phone Axis</label>
                 <input
                   type="tel"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="+880 1234-567890"
+                  className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-green-950"
+                  placeholder="+880 1XXX-XXXXXX"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-green-900/40 ml-1 italic">Digital Mail</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="john@example.com"
+                  className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-green-950"
+                  placeholder="jinia@example.com"
                 />
               </div>
 
-              <div className="pt-2">
+              <div className="pt-4">
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-base font-bold bg-green-600 hover:bg-green-700 rounded-xl"
+                  className="w-full h-16 text-sm font-black tracking-[0.2em] uppercase bg-green-950 hover:bg-green-900 text-white rounded-2xl shadow-2xl shadow-green-950/20 transition-all"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
-                    <><Loader2 className="mr-2 h-5 w-5 animate-spin"/> Processing...</>
-                  ) : "Send Request"}
+                    <Loader2 className="h-6 w-6 animate-spin"/>
+                  ) : "Complete Request"}
                 </Button>
-                <p className="text-xs text-center text-gray-400 mt-4">By continuing, you agree to Jinia Enterprise&apos;s privacy policy.</p>
+                <p className="text-[10px] text-center text-gray-400 mt-6 font-bold uppercase tracking-wider">Secure Transmission • Privacy Guaranteed</p>
               </div>
             </form>
           </div>

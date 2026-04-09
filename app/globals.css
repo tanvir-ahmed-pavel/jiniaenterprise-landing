@@ -7,39 +7,36 @@
 
 @layer base {
   :root {
-    /* Premium Green Theme */
-    --primary: 155 45% 25%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 35 70% 50%;
-    --secondary-foreground: 0 0% 100%;
+    /* Premium Artistic Green */
+    --primary: 158 50% 18%; /* Darker, richer forest green */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 42 85% 55%; /* Richer amber/gold */
+    --secondary-foreground: 158 50% 10%;
 
-    /* Backgrounds */
-    --background: 145 20% 96%;
-    --foreground: 155 45% 15%;
+    /* Backgrounds — Ultra Clean */
+    --background: 145 25% 98%;
+    --foreground: 158 60% 12%;
 
-    /* Muted */
-    --muted: 145 12% 92%;
-    --muted-foreground: 155 15% 45%;
+    /* Muted — Sophisticated */
+    --muted: 155 15% 94%;
+    --muted-foreground: 155 10% 40%;
 
-    /* Cards/Borders */
+    /* Cards/Borders — Minimalist */
     --card: 0 0% 100%;
-    --card-foreground: 155 45% 15%;
-    --border: 145 15% 88%;
-    --input: 145 12% 90%;
+    --card-foreground: 158 60% 12%;
+    --border: 155 20% 92%;
+    --input: 155 20% 92%;
 
     /* Ring */
-    --ring: 155 45% 35% / 0.4;
-    --radius: 1.25rem;
+    --ring: 158 50% 25% / 0.3;
+    --radius: 1rem;
 
-    /* ── Clean Glass Tokens (NO blur) ── */
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --glass-bg-hover: rgba(255, 255, 255, 0.7);
-    --glass-border-top: rgba(255, 255, 255, 0.8);
-    --glass-border-side: rgba(255, 255, 255, 0.4);
-    --glass-border-bottom: rgba(0, 0, 0, 0.04);
-    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-    --glass-shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.1);
-    --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    /* ── Artistic Glass Tokens ── */
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-bg-hover: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.7);
+    --glass-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.05);
+    --glass-inner: inset 0 1px 1px rgba(255, 255, 255, 0.8);
   }
 
   html {
@@ -50,86 +47,68 @@
 
   * {
     scroll-margin-top: 5rem;
+    @apply transition-colors duration-300;
   }
 
   body {
-    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-sans antialiased;
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-sans antialiased selection:bg-green-100 selection:text-green-900;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  ::selection {
-    background: rgba(74, 222, 128, 0.2);
-  }
-
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
+    @apply font-heading font-bold tracking-tight text-balance;
   }
 }
 
 @layer components {
   .container {
-    @apply mx-auto px-4 md:px-6 lg:px-8 max-w-7xl;
+    @apply mx-auto px-4 md:px-6 lg:px-10 max-w-7xl;
   }
 
   /* ═══════════════════════════════════════════════
-     CLEAN GLASS — NO backdrop-filter, NO heavy blur
-     Uses solid semi-transparent backgrounds + borders
-     GPU-friendly, buttery smooth on mobile
+     ARTISTIC GLASS — High-end Minimalist Feel
      ═══════════════════════════════════════════════ */
 
   .glass {
     background: var(--glass-bg);
-    border-top: 1px solid var(--glass-border-top);
-    border-left: 1px solid var(--glass-border-side);
-    border-bottom: 1px solid var(--glass-border-bottom);
-    border-right: 1px solid var(--glass-border-bottom);
+    border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow), var(--glass-inner);
+    backdrop-filter: blur(8px); /* Subtle blur for artistic depth */
   }
 
-  .glass-subtle {
-    background: rgba(255, 255, 255, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03), var(--glass-inner);
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.02),
+      0 10px 15px -3px rgba(0, 0, 0, 0.03),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    @apply rounded-3xl transition-all duration-500 ease-out;
   }
 
-  .glass-solid {
-    background: rgba(255, 255, 255, 0.7);
-    border-top: 1.5px solid rgba(255, 255, 255, 0.95);
-    border-left: 1.5px solid rgba(255, 255, 255, 0.6);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: var(--glass-shadow-elevated), var(--glass-inner);
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.05),
+      0 8px 10px -6px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    transform: translateY(-4px);
   }
 
   .glass-dark {
-    background: rgba(15, 23, 20, 0.88);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    border-right: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: rgba(10, 25, 18, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
     color: white;
   }
 
-  .glass-glow {
-    background: rgba(240, 253, 244, 0.6);
-    border-top: 1px solid rgba(74, 222, 128, 0.3);
-    border-left: 1px solid rgba(74, 222, 128, 0.15);
-    border-bottom: 1px solid rgba(74, 222, 128, 0.05);
-    border-right: 1px solid rgba(74, 222, 128, 0.05);
-    box-shadow: 0 0 30px rgba(74, 222, 128, 0.08), var(--glass-shadow), var(--glass-inner);
-  }
-
-  .glass-hover {
-    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .glass-hover:hover {
-    background: var(--glass-bg-hover);
-    border-top-color: rgba(255 ,255, 255, 0.95);
-    box-shadow: var(--glass-shadow-elevated), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    transform: translateY(-3px);
+  .glass-input {
+    @apply bg-white/40 border-white/60 focus:bg-white/60 focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all duration-300 backdrop-blur-md rounded-2xl;
   }
 
   /* Section backgrounds */
@@ -247,11 +226,16 @@
 }
 
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 50s linear infinite;
 }
 
 .animate-marquee-reverse {
-  animation: marquee-reverse 30s linear infinite;
+  animation: marquee-reverse 50s linear infinite;
+}
+
+.pause-on-hover:hover .animate-marquee,
+.pause-on-hover:hover .animate-marquee-reverse {
+  animation-play-state: paused;
 }
 
 .animation-delay-100 { animation-delay: 0.1s; }
@@ -264,3 +248,43 @@
 .animation-delay-3000 { animation-delay: 3s; }
 .animation-delay-4000 { animation-delay: 4s; }
 .animation-delay-5000 { animation-delay: 5s; }
+
+/* ── Mobile-First Touch Refinements ── */
+
+@media (hover: none) {
+  .glass-card:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.6);
+  }
+  
+  .glass-card:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.8);
+    transition: transform 0.1s ease;
+  }
+
+  button:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Better vertical breathing room on small screens */
+@media (max-width: 640px) {
+  .container {
+    @apply px-6;
+  }
+  
+  section {
+    @apply py-20;
+  }
+}
+
+/* Ensure iOS forms don't zoom on focus */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select:focus,
+  textarea:focus,
+  input:focus {
+    font-size: 16px;
+  }
+}
