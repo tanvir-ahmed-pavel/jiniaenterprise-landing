@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/lib/config";
+import Script from 'next/script';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -219,6 +220,13 @@ export default function RootLayout({
         >
           {children}
         </SiteShell>
+
+        <Script
+          id="nodi-chat-script"
+          src="https://cdn.chat-widget-source.usenodi.com/staging/index.js"
+          data-widget-id="wc_b9a30cb72b357f06dbd346314dcfb404"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
