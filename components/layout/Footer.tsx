@@ -8,16 +8,12 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 pt-16 pb-12 overflow-hidden bg-emerald-950">
-      {/* ── Signature Diagonal Silk Ribbon Point of Interest ── */}
-      <SilkRibbonBackdrop className="opacity-45" />
+    <footer className="relative mt-24 pt-16 pb-12 overflow-hidden bg-radial from-emerald-950/95 via-[#031d14] to-[#01120c] rounded-t-[3rem] sm:rounded-t-[4rem] md:rounded-t-[5rem] border-t border-amber-400/20 shadow-[0_-12px_36px_rgba(1,18,12,0.4)]">
+      {/* ── Signature Diagonal Silk Ribbon Point of Interest (Subtle Dark Theme) ── */}
+      <SilkRibbonBackdrop variant="dark" className="opacity-35" />
 
-      {/* Premium Dark Glass Background Layer */}
-      <div className="absolute inset-0 bg-emerald-950/80 -z-10 rounded-t-[2.5rem] md:rounded-t-[4rem]" />
-      
-      {/* ── Prominent Shiny Golden Top Border & Edge Glow ── */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_18px_rgba(251,191,36,0.7)]" />
-      <div className="absolute top-0 left-8 right-8 h-px bg-linear-to-r from-transparent via-amber-200 to-transparent opacity-90" />
+      {/* ── Sleek, Subtle Golden Top Rim Line ── */}
+      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-amber-400/50 to-transparent z-10" />
 
       <div className="container relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
