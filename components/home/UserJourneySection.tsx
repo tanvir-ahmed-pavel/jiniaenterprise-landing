@@ -109,7 +109,7 @@ export function UserJourneySection() {
         </div>
 
         {/* 4 Interactive Visual Step Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
           {journeySteps.map((step, idx) => {
             const isSelected = activeStep === idx;
             const StepIcon = step.icon;
@@ -117,31 +117,31 @@ export function UserJourneySection() {
               <button
                 key={step.number}
                 onClick={() => setActiveStep(idx)}
-                className={`text-left p-6 rounded-2xl border transition-all duration-300 relative ${
+                className={`text-left p-3.5 sm:p-5 md:p-6 rounded-2xl border transition-all duration-300 relative cursor-pointer ${
                   isSelected
                     ? "bg-emerald-950 text-white border-emerald-900 shadow-xl scale-[1.02]"
                     : "bg-gray-50/70 hover:bg-emerald-50/60 text-gray-700 border-gray-200 hover:border-emerald-300"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`text-2xl font-heading font-black italic ${
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <span className={`text-xl sm:text-2xl font-heading font-black italic ${
                     isSelected ? "text-emerald-400" : "text-gray-300 group-hover:text-emerald-600"
                   }`}>
                     {step.number}
                   </span>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center ${
                     isSelected ? "bg-white/10 text-emerald-300" : "bg-white text-gray-500 shadow-xs"
                   }`}>
-                    <StepIcon className="h-4 w-4" />
+                    <StepIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </div>
                 </div>
 
-                <h4 className={`text-sm font-heading font-black leading-snug line-clamp-1 ${
+                <h4 className={`text-xs sm:text-sm font-heading font-black leading-snug line-clamp-1 ${
                   isSelected ? "text-white" : "text-emerald-950"
                 }`}>
                   {step.title}
                 </h4>
-                <p className={`text-[11px] mt-1 font-medium truncate ${
+                <p className={`text-[10px] sm:text-[11px] mt-0.5 sm:mt-1 font-medium truncate ${
                   isSelected ? "text-emerald-200/80" : "text-gray-500"
                 }`}>
                   {step.subtitle}
@@ -151,9 +151,9 @@ export function UserJourneySection() {
           })}
         </div>
 
-        {/* Active Step Feature Box - Compact & Scannable */}
-        <div className="editorial-card rounded-3xl p-8 sm:p-10 border border-emerald-100 bg-white shadow-lg">
-          <div className="grid lg:grid-cols-12 gap-8 items-center">
+        {/* Active Step Feature Box - Compact, Scannable & Mobile-Optimized */}
+        <div className="editorial-card rounded-3xl p-5 sm:p-8 md:p-10 border border-emerald-100 bg-white shadow-lg overflow-hidden">
+          <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             {/* Left Highlights */}
             <div className="lg:col-span-7 space-y-4">
               <div className="flex items-center gap-2">
@@ -163,33 +163,34 @@ export function UserJourneySection() {
                 <span className="text-xs font-bold text-gray-400">Step {activeStep + 1} of 4</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-heading font-black text-emerald-950">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-heading font-black text-emerald-950 leading-tight">
                 {current.title}
               </h3>
 
-              <p className="text-sm text-gray-600 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
                 {current.description}
               </p>
 
               {/* 3 Quick Highlight Tags */}
-              <div className="grid sm:grid-cols-3 gap-2.5 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1 sm:pt-2">
                 {current.highlights.map((highlight, i) => (
                   <div key={i} className="flex items-center gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100">
                     <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[3]" />
-                    <span className="text-xs font-bold text-gray-800 leading-tight">{highlight}</span>
+                    <span className="text-xs font-bold text-gray-800 leading-tight break-words">{highlight}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-3 flex items-center gap-3">
-                <Link href="/booking">
-                  <Button size="sm" className="h-11 px-6 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs uppercase tracking-wider gap-2">
+              {/* Responsive Action Buttons */}
+              <div className="pt-2 sm:pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full">
+                <Link href="/booking" className="w-full sm:w-auto">
+                  <Button size="sm" className="w-full sm:w-auto h-11 px-6 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs uppercase tracking-wider gap-2 cursor-pointer">
                     <span>Book a Vehicle Now</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
-                <a href="tel:+8801716633445">
-                  <Button variant="outline" size="sm" className="h-11 px-4 rounded-xl border-gray-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider">
+                <a href="tel:+8801716633445" className="w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto h-11 px-4 rounded-xl border-gray-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider cursor-pointer">
                     <PhoneCall className="h-3.5 w-3.5 text-emerald-700" />
                     <span>Call Helpline</span>
                   </Button>
@@ -198,8 +199,8 @@ export function UserJourneySection() {
             </div>
 
             {/* Right Quick Assurance Badge */}
-            <div className="lg:col-span-5">
-              <div className="bg-emerald-950 rounded-2xl p-6 text-white space-y-4 border border-emerald-800 shadow-xl">
+            <div className="lg:col-span-5 w-full">
+              <div className="bg-emerald-950 rounded-2xl p-4 sm:p-6 text-white space-y-4 border border-emerald-800 shadow-xl">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div className="flex items-center gap-2.5">
                     <div className="p-2 rounded-lg bg-white/10 text-emerald-300">
