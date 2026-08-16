@@ -3,9 +3,24 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
-import { Calendar, Clock, ArrowLeft, User, Share2, MessageSquare, Phone } from "lucide-react";
+import { 
+  Calendar, 
+  Clock, 
+  ArrowLeft, 
+  User, 
+  Share2, 
+  MessageSquare, 
+  Phone, 
+  ArrowRight,
+  Sparkles,
+  Bookmark,
+  CheckCircle2,
+  Quote as QuoteIcon
+} from "lucide-react";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
+import { siteConfig } from "@/lib/config";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -83,12 +98,12 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "Post Not Found",
+      title: "Post Not Found | Jinia Enterprise",
     };
   }
 
   return {
-    title: post.title,
+    title: `${post.title} | Jinia Enterprise Journal`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -125,229 +140,358 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return Math.ceil(words / wordsPerMinute);
   };
 
-  // Simple markdown-like rendering for content with premium styling
+  // Helper to format inline bold formatting **text**
+  const formatInlineText = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={i} className="font-extrabold text-emerald-950">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
+  // Rich Editorial Markdown Parser with luxury styling
   const renderContent = (content: string) => {
     const lines = content.split("\n");
     return lines.map((line, index) => {
-      // Headers
+      // H2 Headings
       if (line.startsWith("## ")) {
         return (
           <h2
             key={index}
-            className="text-3xl md:text-4xl font-heading font-black text-green-950 mt-12 mb-6 italic"
+            className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-emerald-950 mt-12 mb-5 tracking-tight border-b border-emerald-900/10 pb-3"
           >
-            {line.replace("## ", "")}.
+            {line.replace("## ", "")}
           </h2>
         );
       }
+      // H3 Headings
       if (line.startsWith("### ")) {
         return (
           <h3
             key={index}
-            className="text-2xl font-heading font-black text-green-900 mt-10 mb-4 italic"
+            className="text-xl sm:text-2xl font-heading font-black text-emerald-900 mt-8 mb-3 tracking-tight"
           >
-            {line.replace("### ", "")}.
+            {line.replace("### ", "")}
           </h3>
         );
       }
-      // Lists
-      if (line.startsWith("- ")) {
+      // Blockquotes
+      if (line.startsWith("> ")) {
         return (
-          <li key={index} className="ml-6 flex items-start gap-4 text-gray-700 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2.5 shrink-0" />
-            <span className="text-lg font-medium leading-relaxed">{line.replace("- ", "")}</span>
+          <div
+            key={index}
+            className="my-8 p-6 sm:p-8 rounded-2xl bg-linear-to-r from-emerald-50 via-white to-emerald-50/50 border-l-4 border-emerald-600 shadow-xs"
+          >
+            <div className="flex gap-4 items-start">
+              <QuoteIcon className="h-6 w-6 text-emerald-600 shrink-0 mt-1" />
+              <p className="text-base sm:text-lg font-heading font-extrabold text-emerald-950 italic leading-relaxed">
+                {formatInlineText(line.replace("> ", ""))}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      // Unordered Lists
+      if (line.startsWith("- ") || line.startsWith("* ")) {
+        return (
+          <li key={index} className="ml-4 sm:ml-6 flex items-start gap-3 text-gray-700 mb-3.5 list-none">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 mt-2 shrink-0 ring-4 ring-emerald-100" />
+            <span className="text-base sm:text-lg font-medium leading-relaxed">
+              {formatInlineText(line.replace(/^[-*]\s+/, ""))}
+            </span>
+          </li>
+        );
+      }
+      // Numbered Lists
+      if (/^\d+\.\s/.test(line)) {
+        const num = line.match(/^(\d+)\./)?.[1] || "1";
+        return (
+          <li key={index} className="ml-4 sm:ml-6 flex items-start gap-3.5 text-gray-700 mb-3.5 list-none">
+            <span className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-900 text-xs font-black flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200/60">
+              {num}
+            </span>
+            <span className="text-base sm:text-lg font-medium leading-relaxed">
+              {formatInlineText(line.replace(/^\d+\.\s+/, ""))}
+            </span>
           </li>
         );
       }
       // Empty lines
       if (line.trim() === "") {
-        return <br key={index} />;
+        return <div key={index} className="h-3" />;
       }
-      // Paragraphs
+      // Standard Paragraphs
       return (
-        <p key={index} className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed mb-6">
-          {line}
+        <p key={index} className="text-gray-700 text-base sm:text-lg md:text-[19px] font-normal leading-relaxed mb-6">
+          {formatInlineText(line)}
         </p>
       );
     });
   };
 
+  const shareUrl = typeof window !== "undefined" ? window.location.href : `https://jiniaenterprise.com/blog/${post.slug}`;
+  const shareText = encodeURIComponent(`Read "${post.title}" on Jinia Enterprise`);
+
   return (
-    <div className="pb-24">
-      {/* Cinematic Hero Header */}
-      <section className="relative pt-32 pb-16 md:pt-48 md:pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-green-50/50 via-white to-transparent -z-10" />
-        
-        <div className="container">
-          <div className="max-w-5xl mx-auto space-y-10">
-            {/* Nav Back */}
+    <div className="pb-24 overflow-hidden relative">
+      {/* ── Signature Diagonal Silk Ribbon Backdrop (Full Page Depth) ── */}
+      <SilkRibbonBackdrop className="opacity-50" />
+      <SilkRibbonBackdrop flip className="opacity-35 top-[600px]" />
+
+      {/* ── Cinematic Hero Header with Signature Silk Backdrop ── */}
+      <section className="relative pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-44 md:pb-20 overflow-hidden">
+        <div className="container relative z-10">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Back Navigation */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-green-600 hover:text-green-800 transition-all group"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-900 bg-white/70 hover:bg-white border border-emerald-200/80 shadow-2xs transition-all group"
             >
-              <ArrowLeft className="h-3 w-3 group-hover:-translate-x-1 transition-transform" />
-              Back to Journal
+              <ArrowLeft className="h-3.5 w-3.5 text-emerald-600 group-hover:-translate-x-1 transition-transform" />
+              <span>Back to Journal</span>
             </Link>
 
-            <div className="space-y-6">
-                <div className="flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-green-600/60">
-                    <span className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3" />
-                        {formatDate(post.created_at)}
-                    </span>
-                    <span className="flex items-center gap-2 text-green-600">
-                        <Clock className="h-3 w-3" />
-                        {getReadingTime(post.content)} min read
-                    </span>
-                </div>
+            <div className="space-y-4">
+              {/* Meta pills */}
+              <div className="flex flex-wrap items-center gap-3 text-xs font-extrabold uppercase tracking-wider text-emerald-800">
+                <span className="flex items-center gap-1.5 bg-emerald-100/90 px-3 py-1 rounded-full border border-emerald-200/80">
+                  <Calendar className="h-3.5 w-3.5 text-emerald-700" />
+                  {formatDate(post.created_at)}
+                </span>
+                <span className="flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-emerald-100 shadow-2xs text-gray-700">
+                  <Clock className="h-3.5 w-3.5 text-amber-600" />
+                  {getReadingTime(post.content)} min read
+                </span>
+                <span className="flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-emerald-100 shadow-2xs text-gray-700">
+                  <User className="h-3.5 w-3.5 text-emerald-700" />
+                  By {post.author}
+                </span>
+              </div>
 
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-green-950 leading-[0.9] italic tracking-tighter">
-                    {post.title}
-                </h1>
+              {/* Title */}
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-heading font-black text-emerald-950 tracking-tight leading-[1.1]">
+                {post.title}
+              </h1>
 
-                <p className="text-xl md:text-2xl text-gray-500 font-medium leading-relaxed max-w-3xl italic border-l-4 border-green-500/20 pl-8 py-2">
-                    {post.excerpt}
-                </p>
+              {/* Excerpt Lead */}
+              <p className="text-base sm:text-xl text-gray-700 font-medium leading-relaxed max-w-3xl border-l-4 border-emerald-500 pl-5 sm:pl-6 py-1 bg-emerald-50/50 rounded-r-2xl">
+                {post.excerpt}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content & Sidebar */}
-      <section className="container">
-        <div className="grid lg:grid-cols-12 gap-16 item-start">
-          {/* Article Area */}
-          <div className="lg:col-span-8 space-y-12">
-            {/* Featured Image - Artistic Frame */}
-            <div className="glass-card aspect-video relative overflow-hidden bg-green-50 group">
-                {post.cover_image ? (
-                  <img
-                    src={post.cover_image}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-9xl grayscale opacity-10 font-heading font-black italic">JINIA</div>
-                )}
-                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5" />
-            </div>
+      {/* ── Main Article & Sticky Sidebar ── */}
+      <section className="container relative z-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Main Article Content */}
+          <div className="lg:col-span-8 space-y-10">
+            {/* Featured Cover Photography Frame */}
+            {post.cover_image && (
+              <div className="rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 aspect-video relative group bg-emerald-950">
+                <img
+                  src={post.cover_image}
+                  alt={post.title}
+                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              </div>
+            )}
 
-            {/* Content Body */}
-            <article className="max-w-none">
-              <div className="prose-custom">
+            {/* Editorial Content Surface */}
+            <article className="p-6 sm:p-10 md:p-12 rounded-3xl bg-white border border-gray-200/90 shadow-xl shadow-emerald-950/5">
+              <div className="prose-custom max-w-none">
                 {renderContent(post.content)}
               </div>
             </article>
 
-            {/* Social Share — Glass Minimal */}
-            <div className="glass-card p-10 flex flex-col sm:flex-row items-center justify-between gap-8 border-black/[0.05]">
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-green-950 flex items-center justify-center text-white">
-                        <Share2 className="h-4 w-4" />
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-950">Broadcast Narrative</span>
+            {/* Social Share & Broadcast Bar */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-gray-200/90 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center border border-emerald-200">
+                  <Share2 className="h-4 w-4" />
                 </div>
-                <div className="flex gap-3">
-                    {['X-Axis', 'Facebook', 'LinkedIn', 'WhatsApp'].map((platform) => (
-                        <Button 
-                            key={platform}
-                            variant="outline" 
-                            size="sm"
-                            className="h-10 px-6 rounded-xl border-green-100 text-green-950 hover:bg-green-50 font-black uppercase tracking-widest text-[9px]"
-                        >
-                            {platform}
-                        </Button>
-                    ))}
+                <div>
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-950 block">Share This Guide</span>
+                  <span className="text-[11px] text-gray-500 font-medium">Forward to colleagues or travel coordinators</span>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <a
+                  href={`https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 text-xs font-bold gap-1.5 cursor-pointer">
+                    <span>WhatsApp</span>
+                  </Button>
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-bold gap-1.5 cursor-pointer">
+                    <span>LinkedIn</span>
+                  </Button>
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-bold gap-1.5 cursor-pointer">
+                    <span>Facebook</span>
+                  </Button>
+                </a>
+              </div>
             </div>
 
-            {/* Author Footer */}
-            <div className="flex items-center gap-6 p-10 bg-green-50/50 rounded-[2rem] border border-green-100">
-                <div className="w-20 h-20 rounded-full bg-green-200 flex items-center justify-center text-3xl font-heading font-black italic text-green-950">
-                    {post.author.charAt(0)}
-                </div>
-                <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-600">Authored By</span>
-                    <h4 className="text-xl font-heading font-black text-green-950 italic">{post.author}</h4>
-                </div>
+            {/* Author Attribution Card */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-r from-emerald-50 via-white to-emerald-50/60 border border-emerald-200/80 flex items-center gap-5 shadow-xs">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-900 text-white flex items-center justify-center text-2xl font-heading font-black shadow-md shrink-0">
+                {post.author.charAt(0)}
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-200 inline-block">
+                  Verified Author
+                </span>
+                <h4 className="text-xl font-heading font-black text-emerald-950 tracking-tight">{post.author}</h4>
+                <p className="text-xs text-gray-600 font-medium">
+                  Mobility Specialist & Executive Logistics Coordinator at Jinia Enterprise.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Sidebar — Sticky Elite */}
-          <aside className="lg:col-span-4 space-y-12 lg:sticky lg:top-32">
-            {/* Recent Stories */}
+          {/* ── Sticky Sidebar ── */}
+          <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-28">
+            {/* Quick Concierge Dispatch Card */}
+            <div className="p-7 sm:p-8 rounded-3xl bg-emerald-950 text-white space-y-6 shadow-2xl border border-emerald-800/40 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="space-y-2 relative z-10">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 bg-amber-400/15 px-2.5 py-1 rounded-full border border-amber-300/30 inline-block">
+                  Direct Concierge
+                </span>
+                <h3 className="text-2xl font-heading font-black text-white tracking-tight leading-tight">
+                  Book Your Ride in Dhaka
+                </h3>
+                <p className="text-xs text-emerald-100/75 font-medium leading-relaxed">
+                  Need a reliable sedan, VIP Prado, or luxury microbus with a professional driver today?
+                </p>
+              </div>
+
+              <div className="space-y-3 relative z-10 pt-1">
+                <Link href="/booking" className="block w-full">
+                  <Button className="w-full h-12 bg-linear-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-black uppercase tracking-wider text-xs rounded-xl shadow-lg shadow-amber-500/25 cursor-pointer">
+                    <span>Reserve Vehicle Now</span>
+                    <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                  </Button>
+                </Link>
+
+                <a 
+                  href={`https://wa.me/${siteConfig.whatsapp}?text=Hello%20Jinia%20Enterprise,%20I%20am%20reading%20"${encodeURIComponent(post.title)}"%20and%20would%20like%20to%20inquire%20about%20a%20car%20rental.`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block w-full"
+                >
+                  <Button variant="outline" className="w-full h-12 border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider text-xs rounded-xl backdrop-blur-md cursor-pointer gap-2">
+                    <MessageSquare className="h-4 w-4 text-emerald-400" />
+                    <span>WhatsApp Concierge</span>
+                  </Button>
+                </a>
+              </div>
+
+              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-amber-300" />
+                  Guaranteed Punctuality
+                </span>
+                <span>24/7 Helpline</span>
+              </div>
+            </div>
+
+            {/* Related Recent Stories */}
             {relatedPosts.length > 0 && (
-              <div className="space-y-8">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-gray-200/90 shadow-lg space-y-5">
                 <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-600">Fresh Perspective</span>
-                    <h3 className="text-2xl font-heading font-black text-green-950 italic">Recent Stories.</h3>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700">
+                    Latest Insights
+                  </span>
+                  <h3 className="text-xl font-heading font-black text-emerald-950 tracking-tight">
+                    Related Articles
+                  </h3>
                 </div>
-                <div className="space-y-6">
+
+                <div className="space-y-4 divide-y divide-gray-100">
                   {relatedPosts.map((relatedPost) => (
                     <Link
                       key={relatedPost.id}
                       href={`/blog/${relatedPost.slug}`}
-                      className="group block space-y-3"
+                      className="group block pt-4 first:pt-0 space-y-2 cursor-pointer"
                     >
-                      <h4 className="font-heading font-black text-lg text-green-950 group-hover:text-green-600 transition-colors line-clamp-2 leading-snug italic">
+                      <h4 className="font-heading font-bold text-sm text-gray-800 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
                         {relatedPost.title}
                       </h4>
-                      <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-gray-400">
-                        <span className="flex items-center gap-2"><Calendar className="h-3 w-3" /> {formatDate(relatedPost.created_at)}</span>
-                        <span className="text-green-600/40">{getReadingTime(relatedPost.content)} MIN</span>
+                      <div className="flex items-center gap-3 text-[10px] font-extrabold uppercase tracking-wider text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {formatDate(relatedPost.created_at)}
+                        </span>
+                        <span className="text-emerald-700">
+                          {getReadingTime(relatedPost.content)} min
+                        </span>
                       </div>
-                      <div className="h-px w-full bg-black/[0.05] group-hover:bg-green-500/20 transition-colors" />
                     </Link>
                   ))}
                 </div>
               </div>
             )}
-
-            {/* Concierge Widget */}
-            <div className="glass-dark p-10 bg-green-950 space-y-8 rounded-[2rem] shadow-2xl">
-              <div className="space-y-4">
-                  <h3 className="text-2xl font-heading font-black text-white italic leading-tight">Elite Mobility <br /> Awaits.</h3>
-                  <p className="text-sm text-white/50 font-medium leading-relaxed italic">
-                    Why just read about excellence? Experience it firsthand with our premier concierge services.
-                  </p>
-              </div>
-              <div className="space-y-3 pt-2">
-                  <Link href="/booking">
-                    <Button className="w-full h-14 bg-white text-green-950 hover:bg-green-50 gap-3 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl">
-                        Reserve Space
-                    </Button>
-                  </Link>
-                  <a href="https://wa.me/8801716633445" target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" className="w-full h-14 border-white/20 text-white hover:bg-white/10 gap-3 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl">
-                        <MessageSquare className="h-4 w-4" /> WhatsApp Axis
-                    </Button>
-                  </a>
-              </div>
-            </div>
           </aside>
         </div>
       </section>
 
-      {/* Bottom Large CTA */}
-      <section className="container mt-32">
-        <div className="glass-card p-12 md:p-24 text-center bg-green-50/50 border-green-100 flex flex-col items-center gap-10">
-            <h2 className="text-3xl md:text-6xl font-heading font-black text-green-950 italic leading-tight max-w-4xl">
-              &ldquo;One Journey <span className="text-green-500/40">is all it takes</span> to see the difference.&rdquo;
+      {/* ── Bottom Quote & Callout ── */}
+      <section className="container mt-20">
+        <div className="p-8 sm:p-14 md:p-16 rounded-3xl bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-950 text-white text-center shadow-2xl relative overflow-hidden border border-white/15">
+          <SilkRibbonBackdrop className="opacity-30" />
+          <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-heading font-black text-white leading-tight">
+              Ready to Experience Dhaka&apos;s Premier Car Rental Service?
             </h2>
-            <div className="flex flex-col sm:flex-row gap-6">
-                <Link href="/vehicles">
-                    <Button size="lg" className="h-16 px-12 rounded-2xl bg-green-950 text-white hover:bg-green-900 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl">
-                        Browse The Collection
-                    </Button>
-                </Link>
-                <a href="tel:8801716633445">
-                    <Button size="lg" variant="outline" className="h-16 px-12 rounded-2xl border-green-200 text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
-                        <Phone className="mr-3 h-4 w-4" /> Personal Call
-                    </Button>
-                </a>
+            <p className="text-sm sm:text-base text-emerald-100/80 font-medium max-w-xl mx-auto">
+              Transparent rates, clean air-conditioned vehicles, and verified professional drivers ready at your schedule.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 pt-2">
+              <Link href="/vehicles">
+                <Button size="lg" className="h-12 px-8 rounded-xl bg-linear-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-black uppercase tracking-wider text-xs shadow-xl cursor-pointer">
+                  <span>Browse Available Fleet</span>
+                  <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                </Button>
+              </Link>
+              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
+                <Button size="lg" variant="outline" className="h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-bold uppercase tracking-wider text-xs backdrop-blur-md cursor-pointer gap-2">
+                  <Phone className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Call: {siteConfig.phone}</span>
+                </Button>
+              </a>
             </div>
+          </div>
         </div>
       </section>
     </div>
   );
 }
+

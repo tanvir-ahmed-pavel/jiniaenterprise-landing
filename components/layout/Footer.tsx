@@ -2,19 +2,24 @@ import Link from "next/link";
 import { Phone, Mail, MapPin, MessageSquare, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
+import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 pt-16 pb-12 overflow-hidden">
-      {/* Premium Dark Glass Background */}
-      <div className="absolute inset-0 glass-dark -z-10 rounded-t-[2.5rem] md:rounded-t-[4rem]" />
-      
-      {/* Decorative Gradient Line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-px bg-linear-to-r from-transparent via-emerald-400/40 to-transparent" />
+    <footer className="relative mt-20 pt-16 pb-12 overflow-hidden bg-emerald-950">
+      {/* ── Signature Diagonal Silk Ribbon Point of Interest ── */}
+      <SilkRibbonBackdrop className="opacity-45" />
 
-      <div className="container">
+      {/* Premium Dark Glass Background Layer */}
+      <div className="absolute inset-0 bg-emerald-950/80 -z-10 rounded-t-[2.5rem] md:rounded-t-[4rem]" />
+      
+      {/* ── Prominent Shiny Golden Top Border & Edge Glow ── */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_18px_rgba(251,191,36,0.7)]" />
+      <div className="absolute top-0 left-8 right-8 h-px bg-linear-to-r from-transparent via-amber-200 to-transparent opacity-90" />
+
+      <div className="container relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Brand Identity */}
           <div className="space-y-6">

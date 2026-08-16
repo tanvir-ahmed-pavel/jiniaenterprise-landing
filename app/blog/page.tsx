@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Calendar, Clock, ArrowRight, User, MousePointer2 } from "lucide-react";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -61,7 +62,9 @@ export default async function BlogPage() {
   };
 
   return (
-    <div className="pb-24">
+    <div className="pb-24 relative overflow-hidden">
+      <SilkRibbonBackdrop className="opacity-45" />
+
       <PageHeader 
         title="The Journal."
         subtitle="Travel Narratives"

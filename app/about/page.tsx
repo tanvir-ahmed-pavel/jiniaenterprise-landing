@@ -129,18 +129,22 @@ export default function AboutPage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member) => (
-              <div key={member.id} className="glass-card group p-8 bg-white/60 border-white/80 text-center hover:bg-white/90 transition-all duration-500 rounded-3xl shadow-sm hover:shadow-lg">
+              <div key={member.id} className="glass-card group p-8 bg-white/70 border-white/80 text-center hover:bg-white/95 transition-all duration-500 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1">
+                {/* Perfectly Centered Executive Portrait Frame */}
                 <div className="relative w-32 h-32 mx-auto mb-6">
-                  <div className="absolute inset-0 bg-emerald-100 rounded-2xl rotate-6 transition-transform group-hover:rotate-12 duration-500" />
-                  <div className="absolute inset-0 bg-emerald-950 rounded-2xl flex items-center justify-center transition-transform group-hover:-rotate-3 duration-500 overflow-hidden border border-emerald-800/40 shadow-md">
+                  {/* Subtle Luxury Ambient Ring */}
+                  <div className="absolute -inset-1 bg-linear-to-tr from-emerald-600/30 via-emerald-400/20 to-amber-400/30 rounded-3xl blur-xs group-hover:scale-105 transition-all duration-500" />
+                  <div className="relative w-full h-full rounded-3xl overflow-hidden border-2 border-emerald-700/20 bg-emerald-950 shadow-md flex items-center justify-center">
                     {member.image ? (
                       <img
                         src={member.image}
                         alt={member.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <User className="h-12 w-12 text-white/30" />
+                      <div className="w-full h-full flex items-center justify-center bg-emerald-900/40 text-emerald-300">
+                        <User className="h-12 w-12 opacity-60" />
+                      </div>
                     )}
                   </div>
                 </div>
