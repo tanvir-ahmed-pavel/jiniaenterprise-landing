@@ -1,7 +1,12 @@
+"use client";
+
+import React, { memo, useMemo } from "react";
 import Link from "next/link";
-import { Users, Calendar, ArrowRight, Fuel, Star } from "lucide-react";
-import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
+import { Users, Fuel, Star, Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ImageCarousel } from "./ImageCarousel";
+
+const formatPrice = (price: number) => "৳" + price.toLocaleString("en-BD");
 
 interface Vehicle {
   id: string;
@@ -10,13 +15,16 @@ interface Vehicle {
   category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
   seats: number;
   engine_cc?: number | null;
+  features?: string[];
   rental_types?: string[];
-  image_url?: string | null;
+  description?: string;
   images?: string[];
+  image_url?: string | null;
   starting_price?: number | null;
   price_label?: string;
-  description?: string;
-  is_featured: boolean;
+  is_active: boolean;
+  sort_order: number;
+  is_featured?: boolean;
 }
 
 interface VehicleCardProps {
@@ -24,68 +32,69 @@ interface VehicleCardProps {
   priority?: boolean;
 }
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
-}
+const CATEGORY_COLORS: { [key: string]: string } = {
+  Economy: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  Standard: "text-blue-700 bg-blue-50 border-blue-200",
+  Premium: "text-amber-700 bg-amber-50 border-amber-200",
+  SUV: "text-emerald-800 bg-emerald-100 border-emerald-300",
+  Microbus: "text-teal-700 bg-teal-50 border-teal-200",
+  Bus: "text-indigo-700 bg-indigo-50 border-indigo-200",
+};
 
-export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
-  const categoryColors: Record<string, string> = {
-    Economy: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    Standard: "text-blue-600 bg-blue-50 border-blue-100",
-    Premium: "text-amber-600 bg-amber-50 border-amber-100",
-    SUV: "text-purple-600 bg-purple-50 border-purple-100",
-    Microbus: "text-teal-600 bg-teal-50 border-teal-100",
-    Bus: "text-indigo-600 bg-indigo-50 border-indigo-100",
-  };
-
-  const displayImages = vehicle.images || (vehicle.image_url ? [vehicle.image_url] : []);
+export const VehicleCard = memo(function VehicleCard({
+  vehicle,
+  priority = false,
+}: VehicleCardProps) {
+  const displayImages = useMemo(() => {
+    return vehicle.images && vehicle.images.length > 0
+      ? vehicle.images
+      : vehicle.image_url
+      ? [vehicle.image_url]
+      : [];
+  }, [vehicle.images, vehicle.image_url]);
 
   return (
-    <Link 
-      href={`/vehicles/${vehicle.slug}`} 
-      className="group/card block h-full focus:outline-none"
-    >
-      <div className="glass-card flex flex-col h-full overflow-hidden border-white/40 ring-1 ring-black/5">
+    <div className="group/card block h-full relative">
+      <div className="glass-card flex flex-col h-full overflow-hidden border border-white/80 hover:border-emerald-300/80 transition-all duration-300 rounded-3xl shadow-[0_4px_20px_-4px_rgba(10,25,18,0.05)] hover:shadow-[0_16px_32px_-8px_rgba(16,185,129,0.15)] transform-gpu relative">
         {/* Visual Header / Image */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
-          <ImageCarousel 
-            images={displayImages} 
-            vehicleName={vehicle.name} 
+        <div className="relative aspect-[16/10] overflow-hidden bg-emerald-950/5">
+          <ImageCarousel
+            images={displayImages}
+            vehicleName={vehicle.name}
             priority={priority}
           />
-          
-          {/* Subtle Overlay on Hover */}
-          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
           {/* Top Badges */}
-          <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-20 pointer-events-none">
-            <span className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-md border shadow-sm",
-              categoryColors[vehicle.category] || "text-gray-600 bg-white/80 border-white"
-            )}>
+          <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-20 pointer-events-none">
+            <span
+              className={cn(
+                "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-xs",
+                CATEGORY_COLORS[vehicle.category] || "text-gray-700 bg-white/95 border-gray-200"
+              )}
+            >
               {vehicle.category}
             </span>
-            
+
             {vehicle.is_featured && (
-              <span className="p-1.5 rounded-full bg-amber-400 text-white shadow-lg animate-float">
+              <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-linear-to-r from-amber-400 to-amber-500 text-emerald-950 text-[10px] font-black uppercase tracking-wider shadow-sm">
                 <Star className="h-3 w-3 fill-current" />
+                <span>VIP Choice</span>
               </span>
             )}
           </div>
 
-          {/* Price Tag — Minimalist */}
+          {/* Price Tag — Prominent Luxury Label */}
           {vehicle.starting_price && (
-            <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
-              <div className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl border border-white/50 shadow-sm">
-                <span className="text-[10px] text-gray-500 block leading-none mb-0.5">Starts from</span>
-                <span className="text-sm font-black text-green-900 leading-none">
+            <div className="absolute bottom-3 left-3 z-20 pointer-events-none">
+              <div className="px-3 py-1.5 bg-white/95 rounded-xl border border-white/80 shadow-sm">
+                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider block leading-none mb-0.5">
+                  Rates From
+                </span>
+                <span className="text-sm font-black text-emerald-950 leading-none">
                   {formatPrice(vehicle.starting_price)}
-                  <span className="text-[10px] font-normal text-gray-400 ml-1">/{vehicle.price_label || "day"}</span>
+                  <span className="text-[10px] font-semibold text-emerald-700 ml-1">
+                    /{vehicle.price_label || "day"}
+                  </span>
                 </span>
               </div>
             </div>
@@ -93,55 +102,65 @@ export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
         </div>
 
         {/* Content Section */}
-        <div className="p-6 flex flex-col flex-1 gap-4">
+        <div className="p-5 sm:p-6 flex flex-col flex-1 gap-4">
           <div className="space-y-1">
-            <h3 className="text-xl font-heading font-extrabold text-green-950 group-hover/card:text-green-700 transition-colors duration-300 line-clamp-1">
-              {vehicle.name}
-            </h3>
+            <Link href={`/vehicles/${vehicle.slug}`} className="focus:outline-none">
+              <h3 className="text-lg sm:text-xl font-heading font-extrabold text-emerald-950 group-hover/card:text-emerald-700 transition-colors duration-200 line-clamp-1">
+                {vehicle.name}
+              </h3>
+            </Link>
             <p className="text-xs text-gray-500 line-clamp-1 font-medium">
-              {vehicle.description || "Premium comfort for your journey."}
+              {vehicle.description || "Executive chauffeur & premium comfort for your travel."}
             </p>
           </div>
 
-          {/* Spec Grid — More Dynamic Layout */}
-          <div className="grid grid-cols-2 gap-y-3 gap-x-2 pt-2 border-t border-black/[0.03]">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
-                <Users className="h-3.5 w-3.5 text-green-600" />
-              </div>
-              <span className="text-xs font-semibold text-gray-700">{vehicle.seats} Seats</span>
+          {/* Spec Grid */}
+          <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-black/5 text-xs">
+            <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-50/50">
+              <Users className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span className="font-semibold text-emerald-950 truncate">
+                {vehicle.seats} Seats
+              </span>
             </div>
-            
-            {vehicle.engine_cc && (
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                  <Fuel className="h-3.5 w-3.5 text-emerald-600" />
-                </div>
-                <span className="text-xs font-semibold text-gray-700">{vehicle.engine_cc} CC</span>
+
+            {vehicle.engine_cc ? (
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-50/50">
+                <Fuel className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <span className="font-semibold text-emerald-950 truncate">
+                  {vehicle.engine_cc} CC
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-50/50">
+                <Star className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <span className="font-semibold text-emerald-950 truncate">
+                  AC & Chauffeur
+                </span>
               </div>
             )}
 
-            <div className="flex items-center gap-2 col-span-2">
-              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                <Calendar className="h-3.5 w-3.5 text-blue-600" />
-              </div>
-              <span className="text-xs font-semibold text-gray-700 line-clamp-1">
-                {vehicle.rental_types?.slice(0, 2).join(" • ") || "Daily/Monthly"}
+            <div className="flex items-center gap-2 col-span-2 p-2 rounded-xl bg-blue-50/40">
+              <Calendar className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+              <span className="font-semibold text-gray-700 line-clamp-1">
+                {vehicle.rental_types?.slice(0, 3).join(" • ") || "Daily • Monthly • Corporate"}
               </span>
             </div>
           </div>
 
           {/* Animated Footer Action */}
           <div className="mt-auto pt-2">
-            <div className="flex items-center justify-between group/btn text-green-800 font-bold text-sm tracking-tight transition-all">
-              <span>View Details</span>
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-green-700 group-hover/card:bg-green-600 group-hover/card:text-white transition-all duration-500 ease-out shadow-sm group-hover/card:shadow-green-200">
-                <ArrowRight className="h-4 w-4 group-hover/card:translate-x-0.5 transition-transform" />
+            <Link
+              href={`/vehicles/${vehicle.slug}`}
+              className="flex items-center justify-between text-emerald-900 font-bold text-xs uppercase tracking-wider focus:outline-none"
+            >
+              <span>Explore Fleet Details</span>
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100/80 text-emerald-800 group-hover/card:bg-emerald-900 group-hover/card:text-white transition-all duration-200 shadow-xs">
+                <ArrowRight className="h-3.5 w-3.5 group-hover/card:translate-x-0.5 transition-transform" />
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
-}
+});

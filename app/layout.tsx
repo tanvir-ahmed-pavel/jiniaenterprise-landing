@@ -196,6 +196,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <LocalBusinessSchema />
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="489134d9-4050-4fe6-a9ef-1dd6cc0c320f"
+        />
       </head>
       <body
         className={cn(

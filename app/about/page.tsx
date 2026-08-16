@@ -73,8 +73,8 @@ export default function AboutPage() {
             <div className="glass-card p-10 bg-green-50/30 border-green-100 space-y-4">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">Headquarters Axis</h3>
               <p className="text-xl font-heading font-black text-green-950 leading-tight">
-                42 Sabera Tower, Road-52 <br />
-                Gulshan-2, Dhaka-1212.
+                40/2, Unicorn Plaza (Level-2), <br />
+                Shop-9,10, Dhaka 1212
               </p>
               <div className="pt-4 flex items-center gap-2 text-xs font-bold text-green-600">
                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
@@ -122,32 +122,40 @@ export default function AboutPage() {
         {/* Team Section — Refined Cards */}
         <div className="mb-32">
           <div className="text-center mb-16 space-y-4">
-            <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">The Craftsmen</span>
-            <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 leading-none italic">
-              Our Elite Team.
+            <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/80 px-3.5 py-1.5 rounded-full border border-emerald-200/80">Leadership & Team</span>
+            <h2 className="text-4xl md:text-5xl font-heading font-black text-emerald-950 leading-tight">
+              Meet Our Dedicated Team.
             </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member) => (
-              <div key={member.id} className="glass-card group p-8 bg-white/40 border-white/60 text-center hover:bg-white/80 transition-all duration-500">
+              <div key={member.id} className="glass-card group p-8 bg-white/60 border-white/80 text-center hover:bg-white/90 transition-all duration-500 rounded-3xl shadow-sm hover:shadow-lg">
                 <div className="relative w-32 h-32 mx-auto mb-6">
-                  <div className="absolute inset-0 bg-green-100 rounded-2xl rotate-6 transition-transform group-hover:rotate-12 duration-500" />
-                  <div className="absolute inset-0 bg-green-950 rounded-2xl flex items-center justify-center transition-transform group-hover:-rotate-3 duration-500">
-                    <User className="h-12 w-12 text-white/30" />
+                  <div className="absolute inset-0 bg-emerald-100 rounded-2xl rotate-6 transition-transform group-hover:rotate-12 duration-500" />
+                  <div className="absolute inset-0 bg-emerald-950 rounded-2xl flex items-center justify-center transition-transform group-hover:-rotate-3 duration-500 overflow-hidden border border-emerald-800/40 shadow-md">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <User className="h-12 w-12 text-white/30" />
+                    )}
                   </div>
                 </div>
-                <h3 className="text-xl font-heading font-black text-green-950 tracking-tight">{member.name}</h3>
-                <p className="text-green-600 text-[10px] font-black uppercase tracking-widest mt-1 mb-4">{member.role}</p>
-                <p className="text-gray-400 text-xs font-medium leading-relaxed italic">{member.description}</p>
+                <h3 className="text-xl font-heading font-black text-emerald-950 tracking-tight">{member.name}</h3>
+                <p className="text-emerald-700 text-[10px] font-black uppercase tracking-widest mt-1 mb-4">{member.role}</p>
+                <p className="text-gray-500 text-xs font-medium leading-relaxed">{member.description}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Why Choice — Dynamic Grid */}
-        <div className="glass-card p-12 md:p-20 bg-green-50/50 border-green-100">
+        {/* Why Choose — Clear Grid */}
+        <div className="glass-card p-12 md:p-20 bg-emerald-50/50 border-emerald-100 rounded-3xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-black text-green-950 italic">The Jinia Advantage.</h2>
+            <h2 className="text-3xl font-heading font-black text-emerald-950">Why Choose Jinia Enterprise?</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {whyChooseUs.map((item) => (

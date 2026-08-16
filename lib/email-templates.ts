@@ -37,9 +37,8 @@ const EmailSignature = () => `
     <p style="margin: 0; color: #4b5563; font-size: 14px;">Looking forward to serving you,</p>
     <p style="margin: 8px 0 2px 0; color: #166534; font-size: 16px; font-weight: bold;">Jinia Enterprise Team</p>
     <p style="margin: 0; color: #6b7280; font-size: 12px; line-height: 1.6;">
-      42 Sabera Tower, Room-04, Road-52<br/>
-      Gulshan North Commercial Area<br/>
-      Gulshan-2, Dhaka-1212, Bangladesh<br/>
+      40/2, Unicorn Plaza (Level-2), Shop-9,10<br/>
+      Dhaka 1212, Bangladesh<br/>
       <a href="https://jiniaenterprise.com" style="color: #22c55e; text-decoration: none;">www.jiniaenterprise.com</a>
     </p>
   </div>

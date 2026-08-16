@@ -120,11 +120,48 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const isLoginPage = pathname === "/admin/login";
+
+  useEffect(() => {
+    if (isLoginPage) {
+      setIsCheckingAuth(false);
+      return;
+    }
+
+    const checkAuth = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          router.push("/admin/login");
+        } else {
+          setIsCheckingAuth(false);
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        router.push("/admin/login");
+      }
+    };
+
+    checkAuth();
+  }, [pathname, isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;
+  }
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-medium text-gray-500">Checking admin authorization...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

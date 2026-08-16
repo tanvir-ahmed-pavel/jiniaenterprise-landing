@@ -58,6 +58,37 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
+  const handleDeleteVehicle = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this vehicle?")) return;
+    const ok = await vehicleService.delete(id);
+    if (ok) {
+      setVehicles((prev) => prev.filter((v) => v.id !== id));
+    } else {
+      alert("Failed to delete vehicle");
+    }
+  };
+
+  const handleDeleteBlog = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    const ok = await blogService.delete(id);
+    if (ok) {
+      setBlogPosts((prev) => prev.filter((p) => p.id !== id));
+    } else {
+      alert("Failed to delete blog post");
+    }
+  };
+
+  const handleUpdateBookingStatus = async (id: string, newStatus: Booking["status"]) => {
+    const ok = await bookingService.updateStatus(id, newStatus);
+    if (ok) {
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+      );
+    } else {
+      alert("Failed to update booking status");
+    }
+  };
+
   const getStatusColor = (
     status: string,
   ): "default" | "secondary" | "success" | "outline" | "destructive" => {
@@ -234,17 +265,21 @@ export default function AdminDashboard() {
                               href={`/vehicles/${vehicle.slug}`}
                               target="_blank"
                             >
-                              <Button variant="ghost" size="sm">
+                              <Button variant="ghost" size="sm" title="View on site">
                                 <Eye className="h-4 w-4" />
                               </Button>
                             </Link>
-                            <Button variant="ghost" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                            <Link href={`/admin/vehicles/${vehicle.id}/edit`}>
+                              <Button variant="ghost" size="sm" title="Edit vehicle">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-red-500 hover:text-red-600"
+                              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                              onClick={() => handleDeleteVehicle(vehicle.id)}
+                              title="Delete vehicle"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -263,8 +298,13 @@ export default function AdminDashboard() {
       {/* Bookings Tab */}
       {activeTab === "bookings" && (
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Booking Requests</CardTitle>
+            <Link href="/admin/bookings">
+              <Button size="sm" variant="outline">
+                Open Full Bookings Page
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
@@ -297,8 +337,8 @@ export default function AdminDashboard() {
                         <td className="py-3 px-2">
                           <div className="text-xs space-y-1">
                             <div className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {booking.phone}
+                              <Phone className="h-3 w-3 text-muted-foreground" />
+                              <a href={`tel:${booking.phone}`} className="hover:underline text-emerald-700 font-semibold">{booking.phone}</a>
                             </div>
                             <div className="flex items-center gap-1 text-muted-foreground">
                               <Mail className="h-3 w-3" />
@@ -330,14 +370,30 @@ export default function AdminDashboard() {
                           </Badge>
                         </td>
                         <td className="py-3 px-2 text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" size="sm">
-                              {booking.status === "new"
-                                ? "Contact"
-                                : booking.status === "contacted"
-                                  ? "Confirm"
-                                  : "View"}
-                            </Button>
+                          <div className="flex justify-end gap-1.5">
+                            {booking.status === "new" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleUpdateBookingStatus(booking.id, "contacted")}
+                              >
+                                Mark Contacted
+                              </Button>
+                            )}
+                            {booking.status === "contacted" && (
+                              <Button
+                                size="sm"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                onClick={() => handleUpdateBookingStatus(booking.id, "confirmed")}
+                              >
+                                Confirm
+                              </Button>
+                            )}
+                            <Link href="/admin/bookings">
+                              <Button variant="ghost" size="sm" title="View in bookings">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </Link>
                           </div>
                         </td>
                       </tr>
@@ -405,17 +461,21 @@ export default function AdminDashboard() {
                         <td className="py-3 px-2 text-right">
                           <div className="flex justify-end gap-2">
                             <Link href={`/blog/${post.slug}`} target="_blank">
-                              <Button variant="ghost" size="sm">
+                              <Button variant="ghost" size="sm" title="View post">
                                 <Eye className="h-4 w-4" />
                               </Button>
                             </Link>
-                            <Button variant="ghost" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                            <Link href={`/admin/blog/${post.id}/edit`}>
+                              <Button variant="ghost" size="sm" title="Edit post">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-red-500 hover:text-red-600"
+                              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                              onClick={() => handleDeleteBlog(post.id)}
+                              title="Delete post"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

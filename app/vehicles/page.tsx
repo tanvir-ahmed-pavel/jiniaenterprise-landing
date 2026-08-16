@@ -1,10 +1,12 @@
 import { Metadata } from "next";
-import { VehicleCard } from "@/components/vehicles/VehicleCard";
 import { VehicleGrid } from "@/components/vehicles/VehicleGrid";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { createStaticClient } from "@/lib/supabase/static";
 import { createClient } from "@/lib/supabase/server";
 import { Phone, MessageSquare, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+export const revalidate = 60; // Revalidate at most every 60 seconds
 
 export const metadata: Metadata = {
   title: "Our Vehicle Fleet | Jinia Enterprise",
@@ -32,7 +34,9 @@ interface Vehicle {
 }
 
 async function getVehicles(): Promise<Vehicle[]> {
-  const supabase = await createClient();
+  const staticClient = createStaticClient();
+  const supabase = staticClient || (await createClient());
+
   const { data, error } = await supabase
     .from("vehicles")
     .select("*")
@@ -58,7 +62,6 @@ async function getVehicles(): Promise<Vehicle[]> {
 
 export default async function VehiclesPage() {
   const vehicles = await getVehicles();
-  const categories = ["All", "Economy", "Standard", "Premium", "SUV", "Microbus", "Bus"] as const;
 
   return (
     <div className="pb-24">
@@ -70,53 +73,43 @@ export default async function VehiclesPage() {
       />
 
       <div className="container">
-        {/* Artistic Filter Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-16 animate-fade-in animation-delay-300">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 glass-card bg-white/40 hover:bg-green-600 hover:text-white hover:-translate-y-1 border-white/60"
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        {/* Vehicle Grid — Dynamic Gaps */}
+        {/* Vehicle Grid with Interactive Filter Pills */}
         {vehicles.length > 0 ? (
-          <VehicleGrid vehicles={vehicles as any[]} />
+          <VehicleGrid vehicles={vehicles} />
         ) : (
-          <div className="text-center py-32 mb-16 glass-card max-w-2xl mx-auto">
-            <Sparkles className="h-12 w-12 text-green-200 mx-auto mb-6" />
-            <p className="text-gray-400 font-medium italic">
+          <div className="text-center py-32 mb-16 glass-card max-w-2xl mx-auto rounded-3xl">
+            <Sparkles className="h-12 w-12 text-emerald-300 mx-auto mb-6" />
+            <p className="text-gray-500 font-medium italic">
               Our fleet is currently reaching its destination. <br />
               Please check back shortly for available selections.
             </p>
           </div>
         )}
 
-        {/* Premium CTA — Artistic Centered */}
-        <div className="relative glass-card p-12 md:p-20 text-center overflow-hidden bg-green-950">
+        {/* Premium CTA */}
+        <div className="relative glass-card p-12 md:p-20 text-center overflow-hidden bg-emerald-950 rounded-3xl border border-emerald-900/50 shadow-2xl">
           {/* Decorative Text background */}
           <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-            <span className="text-[20rem] font-heading font-black italic whitespace-nowrap">CUSTOM CARE</span>
+            <span className="text-[18rem] font-heading font-black italic whitespace-nowrap text-white">
+              CUSTOM CARE
+            </span>
           </div>
 
           <div className="relative z-10 max-w-2xl mx-auto space-y-8">
             <h2 className="text-3xl md:text-5xl font-heading font-black text-white italic leading-tight">
-              A Bespoke Journey <br /> <span className="text-green-400">Awaits You.</span>
+              A Bespoke Journey <br /> <span className="text-emerald-400">Awaits You.</span>
             </h2>
-            <p className="text-white/60 font-medium text-lg leading-relaxed">
+            <p className="text-white/70 font-medium text-lg leading-relaxed">
               Cannot find the exact vehicle you have in mind? Contact our concierge team for specialized arrangements.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4">
               <a href="tel:+8801716633445">
-                <Button size="lg" className="h-16 px-10 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
+                <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-[0.2em] text-[10px] shadow-lg">
                   <Phone className="mr-3 h-4 w-4" /> Personal Call
                 </Button>
               </a>
               <a href="https://wa.me/8801716633445" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
+                <Button size="lg" variant="outline" className="h-14 px-8 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
                   <MessageSquare className="mr-3 h-4 w-4" /> WhatsApp Connect
                 </Button>
               </a>
@@ -127,3 +120,4 @@ export default async function VehiclesPage() {
     </div>
   );
 }
+

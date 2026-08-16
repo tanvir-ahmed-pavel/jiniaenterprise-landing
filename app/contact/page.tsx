@@ -73,9 +73,9 @@ export default function ContactPage() {
                   title: "Headquarters",
                   content: (
                     <address className="not-italic text-gray-500 font-medium leading-relaxed">
-                      42 Sabera Tower, Road-52, <br />
-                      Gulshan North Commercial Area, <br />
-                      Gulshan-2, Dhaka-1212.
+                      40/2, Unicorn Plaza (Level-2), <br />
+                      Shop-9,10, <br />
+                      Dhaka 1212.
                     </address>
                   ),
                 },

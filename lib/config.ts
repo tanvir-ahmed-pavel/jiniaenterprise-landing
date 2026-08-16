@@ -1,11 +1,11 @@
-// Site configuration and content data - Updated with actual PDF content
+// Site configuration and content data - Updated with clear, friendly content
 export const siteConfig = {
   name: "Jinia Enterprise",
-  tagline: "An Exclusive Car Rental Service",
-  subtitle: "The Best Car Rental Service in Your City",
-  description: "10+ Years of Trusted Corporate & Luxury Transport",
+  tagline: "Premier Car & Bus Rental Service in Dhaka",
+  subtitle: "Reliable, Affordable & Comfortable Rides Across Bangladesh",
+  description: "10+ Years of Trusted Car & Bus Rental with Professional Drivers",
   philosophy:
-    "Our product is not vehicles, but customer satisfaction delivered by people.",
+    "We don't just rent vehicles — we deliver reliable, comfortable, and safe journeys for every passenger.",
   experience: "10+",
   managingDirector: "MD. Shahab Uddin",
   phone: "+88 01716 633445",
@@ -15,10 +15,10 @@ export const siteConfig = {
   email: "jiniaenterprise.com@gmail.com",
   website: "www.jiniaenterprise.com",
   address: {
-    line1: "42 Sabera Tower, Room-04, Road-52",
-    line2: "Gulshan North Commercial Area",
-    area: "Gulshan-2",
-    city: "Dhaka-1212",
+    line1: "40/2, Unicorn Plaza (Level-2)",
+    line2: "Shop-9,10",
+    area: "Dhaka",
+    city: "Dhaka 1212",
     country: "Bangladesh",
   },
   socialLinks: {
@@ -34,31 +34,31 @@ export const teamMembers = [
     name: "MD. Shahab Uddin",
     role: "Managing Director",
     description:
-      "With over 10 years of experience in the transportation industry, MD. Shahab Uddin founded Jinia Enterprise with a vision to provide exceptional customer service. His leadership has transformed the company into one of the most trusted car rental services in Bangladesh.",
-    image: "/team/managing-director.jpg",
+      "With over 10 years of experience in Bangladesh's transport industry, MD. Shahab Uddin founded Jinia Enterprise to provide dependable, high-quality car rental services with a personal touch.",
+    image: "/images/team/md-shahab-uddin.png",
   },
   {
     id: "2",
-    name: "Operations Manager",
-    role: "Head of Operations",
+    name: "Operations Team",
+    role: "Fleet & Driver Operations",
     description:
-      "Responsible for ensuring smooth day-to-day operations, fleet management, and maintaining our high service standards. Coordinates with drivers and clients to ensure timely and efficient service delivery.",
+      "Ensures all cars and buses are on time, well-maintained, and assigned with professional drivers for smooth daily service.",
     image: "/team/operations-manager.jpg",
   },
   {
     id: "3",
-    name: "Customer Relations",
-    role: "Customer Service Lead",
+    name: "Customer Support Desk",
+    role: "Booking & Inquiries",
     description:
-      "Dedicated to ensuring customer satisfaction at every touchpoint. Handles inquiries, bookings, and ensures every client receives personalized attention and support.",
+      "Available 24/7 on call and WhatsApp to assist you with quick bookings, price estimates, and custom route plans.",
     image: "/team/customer-relations.jpg",
   },
   {
     id: "4",
-    name: "Fleet Supervisor",
-    role: "Vehicle Maintenance Head",
+    name: "Vehicle Quality & Maintenance",
+    role: "Fleet Maintenance",
     description:
-      "Oversees the maintenance and upkeep of our entire vehicle fleet. Ensures all vehicles are first-hand quality and maintained in excellent condition for safe and comfortable journeys.",
+      "Inspects every car's AC, tyres, engine, and cleanliness daily so you enjoy a comfortable, trouble-free ride.",
     image: "/team/fleet-supervisor.jpg",
   },
 ];
@@ -66,77 +66,77 @@ export const teamMembers = [
 export const trustIndicators = [
   {
     title: "10+ Years Experience",
-    description: "Established and trusted since 2014",
+    description: "Serving Dhaka & Bangladesh with trust",
   },
   {
-    title: "Embassy & Corporate Clients",
-    description: "Serving prestigious organizations",
+    title: "Embassies & Corporates",
+    description: "Trusted by top organizations",
   },
   {
-    title: "Professional Chauffeurs",
-    description: "Experienced, skilled crew members",
+    title: "Polite & Verified Drivers",
+    description: "Experienced, licensed, and on time",
   },
   {
-    title: "24/7 Support",
-    description: "Emergency roadside assistance available",
+    title: "24/7 Phone & WhatsApp Help",
+    description: "Fast response whenever you need us",
   },
 ];
 
 export const services = [
   {
     id: "daily-rental",
-    title: "Daily Rental",
+    title: "Daily Car Rental with Driver",
     description:
-      "Flexible daily car hire for personal or business needs. Perfect for short trips, meetings, or city tours.",
+      "Full-day car rental for 10-12 hours inside Dhaka or nearby factory visits. Safe, comfortable, and convenient.",
     icon: "car",
   },
   {
     id: "weekly-rental",
-    title: "Weekly Rental",
+    title: "Weekly Car Rental",
     description:
-      "Cost-effective weekly rental solutions. Ideal for extended trips or business projects.",
+      "Affordable weekly packages for business projects, family tours, or visiting guests.",
     icon: "calendar",
   },
   {
     id: "monthly-rental",
-    title: "Monthly Rental",
+    title: "Monthly Car Rental",
     description:
-      "Long-term monthly rental at competitive rates. Perfect for extended projects or regular commuting.",
+      "Cost-effective monthly car rental with dedicated driver for office commute or personal use.",
     icon: "calendar",
   },
   {
     id: "long-term-leasing",
-    title: "Long-term Leasing",
+    title: "Corporate Fleet Rental",
     description:
-      "Tailored fleet solutions for businesses requiring ongoing transportation needs.",
+      "Custom vehicle fleet solutions for companies, NGOs, and embassies with monthly billing and backup support.",
     icon: "briefcase",
   },
   {
     id: "chauffeur-service",
-    title: "Chauffeur Services",
+    title: "Driver-Only Service",
     description:
-      "Professional drivers for your personal vehicle or our fleet. Trained, experienced, and courteous.",
+      "Hire a polite, experienced driver for your personal car for daily office commute or outstation trips.",
     icon: "user",
   },
   {
     id: "pickup-drop",
-    title: "Pick-up & Drop-off",
+    title: "Airport Pickup & Drop",
     description:
-      "Convenient pick-up and drop-off services including airport transfers from Hazrat Shahjalal International Airport.",
+      "Hassle-free Hazrat Shahjalal Airport (DAC) pickup and drop. Flight tracking and name signboard greeting included.",
     icon: "plane",
   },
   {
     id: "group-transport",
-    title: "Group Transportation",
+    title: "Microbus & AC Bus Rental",
     description:
-      "Customized group transportation with 4-45 seated vehicles including luxury AC buses.",
+      "11-seat Hiace microbuses, 29-seat Coasters, and 45-seat AC coaches for weddings, picnics, and group events.",
     icon: "bus",
   },
   {
     id: "emergency-assistance",
-    title: "24-Hour Emergency Assistance",
+    title: "24/7 Roadside Assistance",
     description:
-      "Round-the-clock emergency roadside assistance for peace of mind on every journey.",
+      "Immediate driver coordination and fast vehicle replacement in case of unexpected delays or breakdowns.",
     icon: "shield",
   },
 ];

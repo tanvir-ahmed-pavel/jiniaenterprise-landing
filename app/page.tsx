@@ -1,47 +1,28 @@
-import React, { type ElementType } from "react";
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
 import { HeroBookingWidget } from "@/components/forms/HeroBookingWidget";
+import { UserJourneySection } from "@/components/home/UserJourneySection";
+import { ConciergeShowcase } from "@/components/home/ConciergeShowcase";
+import { ProtocolSpotlight } from "@/components/home/ProtocolSpotlight";
+import { SilkyHeroCanvas } from "@/components/home/SilkyHeroCanvas";
+import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 import {
   siteConfig,
-  services,
-  whyChooseUs,
   corporateClients,
 } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import {
-  CheckCircle,
-  Briefcase,
-  Shield,
   Phone,
-  Car,
-  Bus,
   Calendar,
-  User,
-  Plane,
   MessageSquare,
   ArrowRight,
-  Quote,
+  Sparkles,
+  ShieldCheck,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const iconMap: { [key: string]: ElementType } = {
-  car: Car,
-  calendar: Calendar,
-  briefcase: Briefcase,
-  bus: Bus,
-  user: User,
-  plane: Plane,
-  shield: Shield,
-};
 
 interface Vehicle {
   id: string;
@@ -114,330 +95,274 @@ export default async function Home() {
   const featuredVehicles = await getFeaturedVehicles();
   const latestBlogPosts = await getLatestBlogPosts();
 
+  const trustStats = [
+    { value: "10+", label: "Years in Service" },
+    { value: "2,500+", label: "Successful Trips" },
+    { value: "100%", label: "Verified Drivers" },
+    { value: "24/7", label: "Customer Helpline" },
+  ];
+
   return (
     <div className="flex flex-col">
-      {/* ════════ HERO SECTION — IMMERSIVE ════════ */}
-      <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden -mt-16">
-        {/* Background Image with Parallax-like feel */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: "url('/images/hero-bg.png')" }}
-        />
+      {/* ════════ HERO SECTION ════════ */}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden -mt-16 pt-24 pb-16">
+        {/* Interactive Silky Green & Golden Canvas */}
+        <SilkyHeroCanvas />
 
-        {/* Cinematic Gradient Overlay — More Nuanced */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/40 to-[hsl(var(--background))]" />
+        {/* Ambient Dark Emerald Subtle Vignette */}
+        <div className="absolute inset-0 bg-linear-to-b from-emerald-950/40 via-transparent to-[hsl(var(--background))] pointer-events-none z-1" />
 
         {/* Content */}
-        <div className="container relative z-10 py-20 md:py-28">
-          <div className="max-w-6xl mx-auto text-center">
-            {/* Experience Badge — More Minimalist */}
-            <div className="opacity-0 animate-fade-in-up mb-8">
-              <span className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white/90 bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-glow-pulse" />
-                {siteConfig.experience}+ Years of Premium Service
-              </span>
+        <div className="container relative z-10 py-12 md:py-16">
+          <div className="max-w-5xl mx-auto text-center space-y-8">
+            {/* Trust Pill Badge */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-200 bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg animate-fade-in">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              <span>Dhaka&apos;s Trusted Car & Bus Rental Service</span>
             </div>
 
-            {/* Main Heading — Artistic & Bold */}
-            <div className="opacity-0 animate-fade-in-up animation-delay-100 mb-8 space-y-2">
-              <h1 className="font-heading font-black tracking-tighter leading-none italic">
-                <span className="block text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] bg-linear-to-r from-emerald-300 via-white to-green-300 bg-clip-text text-transparent">
-                  JINIA
+            {/* Main Headline */}
+            <div className="space-y-4 animate-fade-in-up">
+              <h1 className="font-heading font-black tracking-tight leading-[1.05] text-white">
+                <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl">
+                  Rent Clean Cars & Buses
                 </span>
-                <span className="block text-4xl sm:text-[4rem] md:text-[5rem] lg:text-[6.5rem] text-white -mt-2 sm:-mt-6 drop-shadow-2xl">
-                  ENTERPRISE
+                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-gold italic mt-1">
+                  With Professional Drivers
                 </span>
               </h1>
-              <p className="text-amber-400 text-lg sm:text-2xl md:text-3xl font-heading font-light tracking-[0.15em] uppercase px-4 max-w-4xl mx-auto">
-                {siteConfig.subtitle}
+              
+              <p className="text-sm sm:text-base md:text-lg text-emerald-100/90 max-w-2xl mx-auto font-medium leading-relaxed">
+                Daily, monthly, and airport car rentals across Dhaka & Bangladesh. 
+                Reliable vehicles, experienced drivers, and fair, transparent rates.
               </p>
             </div>
 
-            {/* Subtitle — Clean Minimalist */}
-            <p className="text-sm sm:text-base md:text-lg text-white/70 max-w-2xl mx-auto font-medium leading-relaxed opacity-0 animate-fade-in-up animation-delay-200 mb-10 px-6">
-              {siteConfig.tagline}. Professional chauffeurs, premium fleet, and 
-              bespoke mobility solutions tailored for excellence.
-            </p>
-
-            {/* CTA Buttons — High Contrast */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 animate-fade-in-up animation-delay-300 mb-16">
-              <Link href="/vehicles" className="group/cta w-full sm:w-auto">
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-3.5 justify-center items-center pt-2">
+              <Link href="/vehicles">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto gap-3 px-10 py-7 text-base bg-white text-green-950 hover:bg-green-50 rounded-2xl shadow-[0_20px_40px_-10px_rgba(255,255,255,0.2)] transition-all duration-500 hover:-translate-y-1 font-bold"
+                  className="gap-2.5 px-8 h-14 text-sm font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-2xl shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all duration-300"
                 >
-                  <Calendar className="h-5 w-5" /> Book Your Ride
+                  <Calendar className="h-4 w-4" /> View All Vehicles
                 </Button>
               </Link>
               
-              <div className="flex gap-4 w-full sm:w-auto">
-                <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="flex-1 sm:flex-none">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full sm:w-auto px-8 py-7 text-white border-white/20 bg-white/5 hover:bg-white/10 rounded-2xl backdrop-blur-md transition-all duration-500"
-                  >
-                    <Phone className="h-5 w-5" />
-                  </Button>
-                </a>
-                <a
-                  href={`https://wa.me/${siteConfig.whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-none"
+              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="gap-2.5 px-6 h-14 text-sm font-bold text-white border-white/20 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md transition-all duration-300"
                 >
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto gap-3 px-8 py-7 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl shadow-lg transition-all duration-500"
-                  >
-                    <MessageSquare className="h-5 w-5" />
-                    <span className="hidden sm:inline font-bold">WhatsApp</span>
-                  </Button>
-                </a>
-              </div>
+                  <Phone className="h-4 w-4 text-emerald-400" />
+                  <span>Call Us Now</span>
+                </Button>
+              </a>
+
+              <a
+                href={`https://wa.me/${siteConfig.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  size="lg"
+                  className="gap-2.5 px-6 h-14 text-sm font-bold bg-white text-emerald-950 hover:bg-emerald-50 rounded-2xl shadow-lg transition-all duration-300"
+                >
+                  <MessageSquare className="h-4 w-4 text-emerald-600" />
+                  <span>WhatsApp Us</span>
+                </Button>
+              </a>
             </div>
 
-            {/* Quick Booking Widget — More Integrated */}
-            <div className="opacity-0 animate-fade-in-up animation-delay-400 mt-12 px-2 relative z-20">
+            {/* Quick Booking Widget */}
+            <div className="pt-6 relative z-20">
               <HeroBookingWidget />
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Decorative Scroll Line */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in animation-delay-500 flex flex-col items-center gap-4">
-          <span className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold">Scroll to Explore</span>
-          <div className="w-px h-16 bg-linear-to-b from-white/40 to-transparent" />
+      {/* ════════ TRUST STATS STRIP ════════ */}
+      <section className="relative -mt-8 z-20 container mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 sm:p-6 glass-card bg-white/80 border border-white shadow-xl rounded-3xl">
+          {trustStats.map((stat) => (
+            <div key={stat.label} className="text-center p-3 sm:p-4 rounded-2xl bg-emerald-50/50">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-emerald-950">
+                {stat.value}
+              </div>
+              <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 mt-1">
+                {stat.label}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ════════ SERVICES — ARTISTIC BENTO GRID ════════ */}
-      <section className="py-24 sm:py-32 relative overflow-hidden bg-white/40">
-        {/* Background Accents */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-50 rounded-full blur-[120px] -z-10 opacity-60" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-50 rounded-full blur-[100px] -z-10 opacity-60" />
-
-        <div className="container space-y-16">
-          <div className="max-w-3xl space-y-4">
-            <span className="text-green-600 text-xs font-black uppercase tracking-[0.2em]">What we offer</span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-heading font-black text-green-950 leading-[0.9]">
-              Premium Mobility <br />
-              <span className="text-green-500/50">Solutions.</span>
-            </h2>
-            <p className="text-gray-500 text-lg max-w-xl font-medium leading-relaxed">
-              Adaptable transportation services designed for the highest standards of reliability and comfort.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.slice(0, 8).map((service, idx) => {
-              const IconComponent = iconMap[service.icon] || Car;
-              // Modern staggered layout logic
-              const isLarge = idx === 0 || idx === 7;
-              
-              return (
-                <div 
-                  key={service.id} 
-                  className={cn(
-                    "glass-card p-8 group flex flex-col justify-between min-h-[280px]",
-                    isLarge ? "lg:col-span-2 lg:bg-white/80" : "bg-white/40"
-                  )}
-                >
-                  <div className="space-y-6">
-                    <div className="w-14 h-14 rounded-2xl bg-white shadow-xl shadow-green-900/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-black/[0.03]">
-                      <IconComponent className="h-7 w-7 text-green-700" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-heading font-black text-green-950 tracking-tight">
-                        {service.title}
-                      </h3>
-                      <p className="text-sm text-gray-500 font-medium leading-relaxed">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-6">
-                    <Link 
-                      href={`/services#${service.id}`}
-                      className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-green-700 hover:text-green-500 transition-colors"
-                    >
-                      Learn More <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex justify-center pt-8">
-            <Link href="/services">
-              <Button variant="outline" className="px-10 py-6 rounded-2xl border-green-200 text-green-800 hover:bg-green-50 gap-3 font-bold group">
-                Explore All Services 
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ════════ CONCIERGE CAPABILITY SHOWCASE ════════ */}
+      <ConciergeShowcase />
 
       {/* ════════ FEATURED VEHICLES ════════ */}
       {featuredVehicles.length > 0 && (
-        <section className="py-24 sm:py-32">
-          <div className="container space-y-16">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-              <div className="max-w-xl space-y-4">
-                <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">The Collection</span>
-                <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 leading-none italic">
-                  Premier <br /> <span className="text-green-500/50">Selections.</span>
+        <section className="py-24 sm:py-32 bg-linear-to-b from-transparent via-emerald-950/[0.035] to-transparent relative overflow-hidden">
+          {/* Subtle Silk Ribbon Flow */}
+          <SilkRibbonBackdrop className="opacity-40" />
+
+          <div className="container space-y-14 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+              <div className="max-w-xl space-y-3">
+                <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/70 px-3.5 py-1.5 rounded-full border border-emerald-200">
+                  Featured Fleet
+                </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 leading-tight">
+                  Our Top Rental Cars <br />
+                  <span className="text-gradient-emerald">Ready When You Are.</span>
                 </h2>
+                <p className="text-sm sm:text-base text-gray-600 font-medium">
+                  Sedans, VIP SUVs, family microbuses, and AC coaches available for immediate booking with professional drivers.
+                </p>
               </div>
               <Link href="/vehicles">
-                <Button variant="outline" className="px-10 py-6 rounded-2xl border-green-200 text-green-800 hover:bg-green-50 gap-3 font-bold group">
-                  View All Fleet <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <Button variant="outline" className="px-6 h-12 rounded-xl border-emerald-200 text-emerald-900 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider group">
+                  View All Vehicles ({featuredVehicles.length}+ Models) <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {featuredVehicles.map((vehicle) => (
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))}
+            </div>
+
+            <div className="flex justify-center pt-4 sm:pt-6">
+              <Link href="/vehicles">
+                <Button
+                  size="lg"
+                  className="px-8 h-14 rounded-2xl bg-emerald-900 hover:bg-emerald-800 text-white font-black text-xs uppercase tracking-wider gap-3 shadow-xl shadow-emerald-950/15 hover:scale-105 transition-all duration-300 group"
+                >
+                  <span>View All Vehicles ({featuredVehicles.length}+ Models)</span>
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
       )}
 
+      {/* ════════ EXECUTIVE USER JOURNEY (HOW IT WORKS) ════════ */}
+      <UserJourneySection />
+
+      {/* ════════ PROTOCOL & SAFETY STANDARDS ════════ */}
+      <ProtocolSpotlight />
+
       {/* ════════ CORPORATE CLIENTS — ARTISTIC MARQUEE ════════ */}
-      <section className="py-24 sm:py-32 overflow-hidden bg-green-50/30">
-        <div className="container mb-16 text-center">
-            <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">Global Network</span>
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-green-950 mt-4 italic">
-              Serving the <span className="text-green-500/40">Excellence.</span>
-            </h2>
+      <section className="py-24 sm:py-32 overflow-hidden bg-emerald-950/5 relative">
+        {/* Subtle Silk Ribbon Flow (Flipped) */}
+        <SilkRibbonBackdrop flip className="opacity-30" />
+
+        <div className="container mb-12 text-center space-y-3 max-w-3xl relative z-10">
+          <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/70 px-3.5 py-1.5 rounded-full border border-emerald-200">
+            Trusted by Top Clients
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-heading font-black text-emerald-950">
+            Serving Embassies, Corporates & Families
+          </h2>
+          <p className="text-sm text-gray-600 font-medium">
+            Over a decade of reliable, safe, and punctual car & bus rental services across Bangladesh.
+          </p>
         </div>
 
         {/* Marquee Row 1 */}
-        <div className="relative mb-6 pause-on-hover">
-          <div className="flex animate-marquee gap-6 w-max">
+        <div className="relative mb-4 pause-on-hover z-10">
+          <div className="flex animate-marquee gap-4 w-max">
             {[...corporateClients, ...corporateClients].map((client, i) => (
               <div
                 key={`r1-${i}`}
-                className="glass-card px-10 py-5 bg-white/60 border-white/80 text-[10px] font-black uppercase tracking-[0.2em] text-green-900/60 whitespace-nowrap flex items-center gap-4 group hover:bg-green-950 hover:text-white transition-all duration-500"
+                className="px-6 py-4 rounded-2xl bg-white border border-emerald-100 text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-3 shadow-xs hover:bg-emerald-900 hover:text-white transition-all duration-300"
               >
                 <div className={cn(
-                  "w-1.5 h-1.5 rounded-full animate-pulse",
-                  client.type === "Embassy" ? "bg-green-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
+                  "w-2.5 h-2.5 rounded-full",
+                  client.type === "Embassy" ? "bg-emerald-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
                 )} />
-                {client.name}
+                <span>{client.name}</span>
+                <span className="text-[10px] opacity-60 font-semibold lowercase">({client.type})</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Marquee Row 2 */}
-        <div className="relative pause-on-hover">
-          <div className="flex animate-marquee-reverse gap-6 w-max">
+        <div className="relative pause-on-hover z-10">
+          <div className="flex animate-marquee-reverse gap-4 w-max">
             {[...corporateClients.slice().reverse(), ...corporateClients.slice().reverse()].map((client, i) => (
               <div
                 key={`r2-${i}`}
-                className="glass-card px-10 py-5 bg-white/60 border-white/80 text-[10px] font-black uppercase tracking-[0.2em] text-green-900/60 whitespace-nowrap flex items-center gap-4 group hover:bg-green-950 hover:text-white transition-all duration-500"
+                className="px-6 py-4 rounded-2xl bg-white border border-emerald-100 text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-3 shadow-xs hover:bg-emerald-900 hover:text-white transition-all duration-300"
               >
                 <div className={cn(
-                  "w-1.5 h-1.5 rounded-full animate-pulse",
-                  client.type === "Embassy" ? "bg-green-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
+                  "w-2.5 h-2.5 rounded-full",
+                  client.type === "Embassy" ? "bg-emerald-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
                 )} />
-                {client.name}
+                <span>{client.name}</span>
+                <span className="text-[10px] opacity-60 font-semibold lowercase">({client.type})</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════ WHY CHOOSE US — ARTISTIC LAYOUT ════════ */}
-      <section className="py-24 sm:py-32">
-        <div className="container">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-12">
-              <div className="space-y-4">
-                <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">The Difference</span>
-                <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 leading-none italic">
-                  Why Choice <br /> <span className="text-green-500/50">Matters.</span>
+      {/* ════════ ARTICLES — THE JOURNAL ════════ */}
+      {latestBlogPosts.length > 0 && (
+        <section className="py-20 sm:py-28 bg-linear-to-b from-transparent via-emerald-950/[0.03] to-transparent relative overflow-hidden">
+          {/* Subtle Silk Ribbon Flow */}
+          <SilkRibbonBackdrop className="opacity-35" />
+
+          <div className="container space-y-12 relative z-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+              <div className="space-y-2">
+                <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em]">Insights & Guides</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-emerald-950">
+                  Dhaka Travel & Mobility Journal
                 </h2>
               </div>
-              
-              <div className="space-y-10">
-                {whyChooseUs.slice(0, 4).map((item) => (
-                  <div key={item.title} className="flex gap-8 group">
-                    <div className="w-14 h-14 rounded-2xl bg-white border border-green-100 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-green-950 group-hover:text-white transition-all duration-500">
-                      <CheckCircle className="h-6 w-6 text-green-600 group-hover:text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="font-heading font-black text-green-950 text-xl italic">{item.title}</h4>
-                      <p className="text-gray-500 font-medium leading-relaxed">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Link href="/blog">
+                <Button variant="outline" className="px-5 h-11 rounded-xl border-emerald-200 text-emerald-900 hover:bg-emerald-50 text-xs font-bold uppercase tracking-wider">
+                  All Articles <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                </Button>
+              </Link>
             </div>
 
-            <div className="relative">
-              <div className="aspect-auto md:aspect-square glass-card rounded-[3rem] p-10 sm:p-12 md:p-20 flex flex-col items-start md:items-center justify-center bg-green-950 text-left md:text-center overflow-hidden">
-                <Quote className="absolute top-10 left-10 h-32 w-32 text-white/5 -z-0" />
-                <div className="relative z-10 space-y-8">
-                  <p className="text-2xl md:text-4xl font-heading font-black text-white italic leading-tight">
-                    &ldquo;{siteConfig.philosophy}&rdquo;
-                  </p>
-                  <Link href="/about">
-                    <Button variant="outline" className="h-14 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
-                      Discover Our Story
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════ ARTICLES — CLEAN MINIMAL ════════ */}
-      {latestBlogPosts.length > 0 && (
-        <section className="py-24 sm:py-32 bg-white/40">
-          <div className="container space-y-16">
-            <div className="text-center space-y-4">
-              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">The Journal</span>
-              <h2 className="text-3xl md:text-4xl font-heading font-black text-green-950 italic">Travel <span className="text-green-500/40">Narratives.</span></h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {latestBlogPosts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-                  <div className="glass-card overflow-hidden h-full flex flex-col bg-white border-white/60">
-                    <div className="aspect-[16/10] overflow-hidden bg-green-50">
+                  <div className="glass-card overflow-hidden h-full flex flex-col bg-white border-white/80 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
+                    <div className="aspect-[16/10] overflow-hidden bg-emerald-950/5 relative">
                       {post.cover_image ? (
                         <img
                           src={post.cover_image}
                           alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl grayscale opacity-20">📰</div>
                       )}
                     </div>
-                    <div className="p-8 flex-1 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-green-600">
+                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
                           {new Date(post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
-                        <h3 className="text-xl font-heading font-black text-green-950 group-hover:text-green-600 transition-colors line-clamp-2 italic">
+                        <h3 className="text-lg font-heading font-extrabold text-emerald-950 group-hover:text-emerald-700 transition-colors line-clamp-2">
                           {post.title}
                         </h3>
-                        <p className="text-sm text-gray-500 font-medium line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-gray-500 font-medium line-clamp-2 leading-relaxed">
                           {post.excerpt}
                         </p>
                       </div>
-                      <div className="pt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-green-950 group-hover:gap-4 transition-all duration-500">
-                        Read Story <ArrowRight className="h-3 w-3" />
+                      <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                        <span>Read Full Guide</span>
+                        <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </div>
@@ -448,35 +373,42 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ════════ FINAL CTA — ARTISTIC GLASS DARK ════════ */}
-      <section className="py-24 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-x-8 bottom-8 top-0 glass-dark rounded-[3rem] sm:rounded-[4rem] -z-10" />
-        
-        <div className="container relative z-10 text-center space-y-12">
-          <div className="space-y-6 max-w-4xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl md:text-6xl font-heading font-black text-white italic leading-tight">
-              &ldquo;Try Jinia — <br /> <span className="text-green-400">You Will Come Back.</span>&rdquo;
-            </h2>
-            <p className="text-lg md:text-xl text-white/50 font-medium max-w-2xl mx-auto">
-              Luxury is in the details. Experience the gold standard of concierge mobility in Bangladesh.
-            </p>
-          </div>
+      {/* ════════ FINAL CTA ════════ */}
+      <section className="py-20 sm:py-28 relative overflow-hidden">
+        <div className="container">
+          <div className="rounded-3xl sm:rounded-[3rem] p-8 sm:p-14 md:p-20 text-center relative overflow-hidden shadow-2xl border border-white/20 bg-emerald-950">
+            {/* Interactive Silky Green & Golden Canvas for CTA */}
+            <SilkyHeroCanvas className="rounded-3xl sm:rounded-[3rem]" />
+            <div className="absolute inset-0 bg-linear-to-b from-emerald-950/50 via-emerald-950/20 to-emerald-950/60 pointer-events-none z-1" />
 
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-              <Button size="lg" className="h-16 px-12 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl">
-                <Phone className="mr-3 h-4 w-4" /> Personal Call
-              </Button>
-            </a>
-            <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button size="lg" className="h-16 px-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl">
-                <MessageSquare className="mr-3 h-4 w-4" /> WhatsApp Axis
-              </Button>
-            </a>
+            <div className="space-y-6 max-w-3xl mx-auto relative z-10">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                Ready to Experience Difference?
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white leading-tight">
+                Reserve Your Executive Ride or Corporate Fleet Today.
+              </h2>
+              <p className="text-sm sm:text-base text-emerald-100/70 font-medium max-w-xl mx-auto">
+                Speak directly with our concierge desk or request an instant bespoke quotation on WhatsApp.
+              </p>
+
+              <div className="flex flex-wrap justify-center gap-4 pt-4">
+                <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
+                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-xl">
+                    <Phone className="mr-2.5 h-4 w-4 text-emerald-700" /> Call Hotline: {siteConfig.phone}
+                  </Button>
+                </a>
+                <a
+                  href={`https://wa.me/${siteConfig.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black uppercase tracking-wider text-xs shadow-xl">
+                    <MessageSquare className="mr-2.5 h-4 w-4" /> Instant WhatsApp
+                  </Button>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 
 interface Breadcrumb {
   label: string;
@@ -16,27 +17,26 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, description, breadcrumbs }: PageHeaderProps) {
   return (
     <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
-      {/* Premium Artistic Accents */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-50 rounded-full blur-[120px] -z-10 opacity-60 translate-x-1/4 -translate-y-1/4" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-50 rounded-full blur-[100px] -z-10 opacity-50 -translate-x-1/4 translate-y-1/4" />
+      {/* Signature Diagonal Silk Ribbon Backdrop */}
+      <SilkRibbonBackdrop className="opacity-55" />
       
       <div className="container relative z-10">
         <div className="max-w-4xl space-y-6">
           {/* Breadcrumbs — Minimalist */}
           {breadcrumbs && (
             <div className="flex items-center gap-2 opacity-0 animate-fade-in mb-4">
-              <Link href="/" className="text-[10px] font-black uppercase tracking-[0.2em] text-green-900/40 hover:text-green-600 transition-colors">
+              <Link href="/" className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-900/50 hover:text-emerald-700 transition-colors">
                 Home
               </Link>
               {breadcrumbs.map((crumb, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <ChevronRight className="h-3 w-3 text-green-900/20" />
+                  <ChevronRight className="h-3 w-3 text-emerald-900/30" />
                   {crumb.href ? (
-                    <Link href={crumb.href} className="text-[10px] font-black uppercase tracking-[0.2em] text-green-900/40 hover:text-green-600 transition-colors">
+                    <Link href={crumb.href} className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-900/50 hover:text-emerald-700 transition-colors">
                       {crumb.label}
                     </Link>
                   ) : (
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-600">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700 font-extrabold">
                       {crumb.label}
                     </span>
                   )}
@@ -47,15 +47,15 @@ export function PageHeader({ title, subtitle, description, breadcrumbs }: PageHe
 
           <div className="space-y-4">
             {subtitle && (
-              <span className="block text-green-600 text-xs font-black uppercase tracking-[0.3em] opacity-0 animate-fade-in-up">
+              <span className="inline-block text-emerald-800 text-xs font-black uppercase tracking-[0.25em] bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-200 opacity-0 animate-fade-in-up">
                 {subtitle}
               </span>
             )}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black text-green-950 leading-[0.85] tracking-tight italic opacity-0 animate-fade-in-up animation-delay-100">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-black text-emerald-950 leading-[0.9] tracking-tight opacity-0 animate-fade-in-up animation-delay-100">
               {title}
             </h1>
             {description && (
-              <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl opacity-0 animate-fade-in-up animation-delay-200">
+              <p className="text-gray-600 text-base sm:text-lg font-medium leading-relaxed max-w-2xl opacity-0 animate-fade-in-up animation-delay-200">
                 {description}
               </p>
             )}

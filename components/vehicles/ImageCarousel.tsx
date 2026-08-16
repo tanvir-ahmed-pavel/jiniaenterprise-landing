@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, memo } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Car } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface ImageCarouselProps {
@@ -12,126 +11,120 @@ interface ImageCarouselProps {
   priority?: boolean;
 }
 
-export function ImageCarousel({ images, vehicleName, priority = false }: ImageCarouselProps) {
+export const ImageCarousel = memo(function ImageCarousel({
+  images,
+  vehicleName,
+  priority = false,
+}: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isInteracted, setIsInteracted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Filter out any empty strings
-  const validImages = images.filter((img) => img && img.trim() !== "");
+  // Memoize valid images array to prevent unnecessary re-computations and effect triggers
+  const validImages = useMemo(() => {
+    return (images || []).filter((img) => typeof img === "string" && img.trim() !== "");
+  }, [images]);
 
-  const handlePrevious = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
-  }, [validImages.length]);
+  const hasMultipleImages = validImages.length > 1;
 
-  const handleNext = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
-  }, [validImages.length]);
+  const handlePrevious = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
+    },
+    [validImages.length]
+  );
 
-  // Preload the next image if we've interacted
+  const handleNext = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
+    },
+    [validImages.length]
+  );
+
+  // Preload the next image only after the user has interacted with the carousel
   useEffect(() => {
-    if (isInteracted && validImages.length > 1) {
+    if (isInteracted && hasMultipleImages) {
       const nextIndex = (currentIndex + 1) % validImages.length;
-      const img = new (window as any).Image();
-      img.src = validImages[nextIndex];
+      const preloadImg = new window.Image();
+      preloadImg.src = validImages[nextIndex];
     }
-  }, [currentIndex, isInteracted, validImages]);
+  }, [currentIndex, isInteracted, hasMultipleImages, validImages]);
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full h-full min-h-[200px] flex flex-col items-center justify-center bg-green-50/30">
-        <Car className="h-12 w-12 text-green-200 mb-2" />
-        <span className="text-[10px] font-bold text-green-300 uppercase tracking-widest">No Image</span>
+      <div className="w-full h-full min-h-[200px] flex flex-col items-center justify-center bg-emerald-950/5">
+        <Car className="h-10 w-10 text-emerald-900/20 mb-2" />
+        <span className="text-[10px] font-bold text-emerald-900/30 uppercase tracking-widest">
+          No Image Available
+        </span>
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       className="relative w-full h-full group/carousel overflow-hidden bg-muted"
-      onMouseEnter={() => setIsInteracted(true)}
-      onTouchStart={() => setIsInteracted(true)}
+      onMouseEnter={() => !isInteracted && setIsInteracted(true)}
+      onTouchStart={() => !isInteracted && setIsInteracted(true)}
     >
-      {/* Skeleton Shimmer */}
-      {isLoading && (
-        <div className="absolute inset-0 z-10 bg-muted animate-shimmer" />
+      {/* Lightweight Placeholder */}
+      {!isLoaded && (
+        <div className="absolute inset-0 z-10 bg-emerald-950/5 transition-opacity duration-300 pointer-events-none" />
       )}
 
-      {/* Images container */}
+      {/* Image Display */}
       <div className="w-full h-full relative overflow-hidden">
-        <AnimatePresence initial={false} mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <Image
-              src={validImages[currentIndex]}
-              alt={`${vehicleName} - Image ${currentIndex + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={priority && currentIndex === 0}
-              onLoad={() => setIsLoading(false)}
-              className="object-cover group-hover/card:scale-105 transition-transform duration-1000 ease-out"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Deferred Images (only rendered when interacted to save DOM/Memory) */}
-        {isInteracted && validImages.length > 1 && (
-          <div className="hidden">
-            {validImages.map((src, index) => (
-              index !== currentIndex && (
-                <Image 
-                  key={src} 
-                  src={src} 
-                  alt="" 
-                  width={10} 
-                  height={10} 
-                  aria-hidden="true" 
-                />
-              )
-            ))}
-          </div>
-        )}
+        <Image
+          key={validImages[currentIndex]}
+          src={validImages[currentIndex]}
+          alt={`${vehicleName} - View ${currentIndex + 1}`}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={priority && currentIndex === 0}
+          onLoad={() => setIsLoaded(true)}
+          className={cn(
+            "object-cover transition-transform duration-700 ease-out will-change-transform group-hover/card:scale-105",
+            !isLoaded ? "opacity-0 scale-100" : "opacity-100"
+          )}
+        />
       </div>
 
-      {validImages.length > 1 && (
+      {hasMultipleImages && (
         <>
           {/* Navigation Arrows */}
           <button
+            type="button"
             onClick={handlePrevious}
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/10 hover:bg-white/90 text-white hover:text-green-950 backdrop-blur-md border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 flex items-center justify-center shadow-lg"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-white hover:text-emerald-950 text-white backdrop-blur-xs border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 flex items-center justify-center shadow-md cursor-pointer"
             aria-label="Previous image"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
 
           <button
+            type="button"
             onClick={handleNext}
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/10 hover:bg-white/90 text-white hover:text-green-950 backdrop-blur-md border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 flex items-center justify-center shadow-lg"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-white hover:text-emerald-950 text-white backdrop-blur-xs border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 flex items-center justify-center shadow-md cursor-pointer"
             aria-label="Next image"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
 
           {/* Navigation Dots */}
-          <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-1.5 pointer-events-none">
+          <div className="absolute bottom-2.5 left-0 right-0 z-20 flex justify-center gap-1.5 pointer-events-none">
             {validImages.map((_, index) => (
               <button
                 key={index}
+                type="button"
                 className={cn(
-                  "h-1 rounded-full transition-all duration-500 pointer-events-auto",
+                  "h-1.5 rounded-full transition-all duration-300 pointer-events-auto cursor-pointer",
                   index === currentIndex
-                    ? "w-6 bg-white shadow-sm"
-                    : "w-1.5 bg-white/40 hover:bg-white/60"
+                    ? "w-5 bg-white shadow-sm"
+                    : "w-1.5 bg-white/50 hover:bg-white/80"
                 )}
                 onClick={(e) => {
                   e.preventDefault();
@@ -147,4 +140,5 @@ export function ImageCarousel({ images, vehicleName, priority = false }: ImageCa
       )}
     </div>
   );
-}
+});
+

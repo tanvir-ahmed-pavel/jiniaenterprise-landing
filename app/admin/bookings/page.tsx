@@ -101,7 +101,7 @@ export default function BookingsManagementPage() {
 
   const getStatusColor = (
     status: string
-  ): "default" | "secondary" | "success" | "destructive" => {
+  ): "default" | "secondary" | "success" | "destructive" | "outline" => {
     switch (status) {
       case "new":
         return "default";
@@ -110,7 +110,7 @@ export default function BookingsManagementPage() {
       case "confirmed":
         return "success";
       case "completed":
-        return "success";
+        return "outline";
       case "cancelled":
         return "destructive";
       default:
@@ -141,25 +141,25 @@ export default function BookingsManagementPage() {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      {/* Stats / Filter Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-6">
         {["all", "new", "contacted", "confirmed", "completed", "cancelled"].map(
           (status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
-              className={`p-4 rounded-lg border text-left transition-colors ${
+              className={`p-3.5 rounded-xl border text-left transition-all ${
                 statusFilter === status
-                  ? "bg-green-50 border-green-500"
-                  : "bg-white hover:bg-gray-50"
+                  ? "bg-green-50 border-green-500 shadow-sm"
+                  : "bg-white border-gray-200 hover:bg-gray-50"
               }`}
             >
-              <p className="text-2xl font-bold">
+              <p className="text-xl font-bold">
                 {status === "all"
                   ? bookings.length
                   : bookings.filter((b) => b.status === status).length}
               </p>
-              <p className="text-sm text-muted-foreground capitalize">
+              <p className="text-xs text-muted-foreground capitalize mt-0.5 font-medium">
                 {status === "all" ? "All Bookings" : status}
               </p>
             </button>
