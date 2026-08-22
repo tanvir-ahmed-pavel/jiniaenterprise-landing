@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seo:audit": "npx tsx scripts/seo-audit.ts",
+    "seo:schema": "npx tsx scripts/schema-check.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

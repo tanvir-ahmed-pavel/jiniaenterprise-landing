@@ -18,6 +18,12 @@ import {
 import { siteConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
+import { createMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  getBreadcrumbSchema,
+  getVehicleSchema,
+} from "@/lib/seo/schema";
 
 interface VehiclePageProps {
   params: Promise<{ slug: string }>;
@@ -69,11 +75,16 @@ export async function generateMetadata({
     return { title: "Vehicle Not Found" };
   }
 
-  return {
-    title: `${vehicle.name} for Rent | Jinia Enterprise`,
-    description:
-      vehicle.description || `Rent a ${vehicle.name} with Jinia Enterprise.`,
-  };
+  const description =
+    vehicle.description ||
+    `Rent a ${vehicle.name} with a professional driver in Dhaka from Jinia Enterprise.`;
+
+  return createMetadata({
+    title: `${vehicle.name} Rental in Dhaka | With Driver`,
+    description,
+    path: `/vehicles/${vehicle.slug}`,
+    image: vehicle.image_url || vehicle.images?.[0] || undefined,
+  });
 }
 
 // Generate static params for build time optimization (optional but good for performance)
@@ -122,8 +133,29 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     }).format(price);
   };
 
+  const description =
+    vehicle.description ||
+    `Rent a ${vehicle.name} with a professional driver in Dhaka.`;
+
   return (
     <div className="py-12">
+      <JsonLd
+        data={[
+          getVehicleSchema({
+            name: vehicle.name,
+            description,
+            path: `/vehicles/${vehicle.slug}`,
+            image: vehicle.image_url || vehicle.images?.[0],
+            seats: vehicle.seats,
+            category: vehicle.category,
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Fleet", path: "/vehicles" },
+            { name: vehicle.name, path: `/vehicles/${vehicle.slug}` },
+          ]),
+        ]}
+      />
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left: Vehicle Info */}

@@ -33,9 +33,11 @@ export function Navbar() {
     { href: "/", label: "Home" },
     { href: "/vehicles", label: "Fleet" },
     { href: "/services", label: "Services" },
-    { href: "/booking", label: "Reserve" },
-    { href: "/about", label: "Story" },
+    { href: "/car-rental-dhaka", label: "Dhaka" },
     { href: "/blog", label: "Journal" },
+    { href: "/booking", label: "Reserve" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/about", label: "Story" },
     { href: "/contact", label: "Connect" },
   ];
 

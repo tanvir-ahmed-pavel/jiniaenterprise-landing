@@ -1,383 +1,388 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { 
-  Plane, 
-  Briefcase, 
-  ShieldAlert, 
-  ArrowRight, 
+import {
+  Plane,
+  Briefcase,
+  ShieldAlert,
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  MessageSquare,
+  ChevronRight,
+  Car,
+  CheckCircle2,
   ArrowLeft,
-  Check, 
-  Sparkles, 
-  ShieldCheck, 
-  Pause,
-  Play,
-  Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ConciergePackage {
   id: string;
+  number: string;
   title: string;
   badge: string;
   icon: React.ElementType;
   image: string;
   tagline: string;
-  description: string;
-  idealFor: string;
-  fleetOptions: string[];
-  features: string[];
+  quickSummary: string;
+  steps: string[];
+  metrics: { label: string; value: string }[];
+  fleet: string;
   pricingHint: string;
+  statusBadge: string;
 }
 
 const conciergePackages: ConciergePackage[] = [
   {
     id: "airport",
+    number: "01",
     title: "Airport VIP Transfer",
     badge: "Hazrat Shahjalal (DAC)",
     icon: Plane,
     image: "/images/concierge/airport-vip.jpg",
-    tagline: "Runway-to-Hotel Seamless Transit",
-    description: "Zero waiting. Inbound flight tracking, signboard terminal greeting, and luxury luggage escort straight to your pre-cooled vehicle.",
-    idealFor: "International Executives, Dignitaries & Expats",
-    fleetOptions: ["Prado TX", "Alphard Royal", "Premio / Allion", "Hiace VIP"],
-    features: [
-      "Live flight delay tracking",
-      "Signboard gate greeting & luggage escort",
-      "60 mins complimentary waiting",
-      "Chilled water & onboard WiFi",
+    tagline: "Flight lands. Chauffeur is already waiting at arrival gate.",
+    quickSummary: "Automated flight tracking, arrival meet & greet with custom nameboard, and pre-cooled luxury vehicle with pre-paid expressway tolls.",
+    steps: [
+      "1. Automated Inbound Flight Tracking",
+      "2. Gate Meet & Greet with Nameboard",
+      "3. Expressway Fast-Track to Hotel/Home",
     ],
-    pricingHint: "Fixed transparent rates",
+    metrics: [
+      { label: "Punctuality", value: "100% On-Time" },
+      { label: "Signboard", value: "Included" },
+      { label: "Expressway", value: "Pre-Paid Tolls" },
+      { label: "Delays", value: "Auto-Tracked" },
+    ],
+    fleet: "Prado TX · Alphard Lounge · Premio · Hiace GL",
+    pricingHint: "Fixed All-Inclusive Rate",
+    statusBadge: "Live Radar Tracking",
   },
   {
     id: "corporate",
+    number: "02",
     title: "Executive Daily Chauffeur",
-    badge: "10-12 Hour Dedicated",
+    badge: "10–12 Hr Dedicated Retainer",
     icon: Briefcase,
     image: "/images/concierge/corporate-chauffeur.jpg",
-    tagline: "Dedicated Mobility for Leadership",
-    description: "Seamless all-day transit across Gulshan, Banani, Motijheel, and industrial corridors with an English-fluent, discreet chauffeur.",
-    idealFor: "CEOs, Directors & Delegation Teams",
-    fleetOptions: ["Toyota Premio", "Corolla Cross", "Hiace Super GL"],
-    features: [
-      "10-12 hour dedicated driver & vehicle",
-      "English-proficient, suited chauffeurs",
-      "Dhaka peak congestion bypass routes",
-      "Monthly corporate billing & VAT receipts",
+    tagline: "One dedicated driver. One luxury car. Your whole workday.",
+    quickSummary: "Retain the same vetted chauffeur and premium sedan or SUV for seamless multi-stop city meetings, factory EPZ visits, and commutes.",
+    steps: [
+      "1. Morning Chauffeur Standby at Residence",
+      "2. Unlimited Multi-Stop City & EPZ Routing",
+      "3. Evening Return with Single Monthly VAT Bill",
     ],
-    pricingHint: "Flexible daily & monthly terms",
+    metrics: [
+      { label: "Availability", value: "10–12 Hr Standby" },
+      { label: "Routing", value: "Dhaka & Factory EPZ" },
+      { label: "Chauffeur", value: "BRTA Licensed" },
+      { label: "Billing", value: "Monthly VAT Invoice" },
+    ],
+    fleet: "Premio Executive · Corolla Cross · Harrier · Hiace",
+    pricingHint: "Daily & Monthly Packages",
+    statusBadge: "100% Dedicated Standby",
   },
   {
     id: "delegation",
-    title: "Embassy & Motorcade Convoys",
-    badge: "Diplomatic Protocol",
+    number: "03",
+    title: "Embassy & Delegation Convoys",
+    badge: "Multi-Vehicle Protocol",
     icon: ShieldAlert,
     image: "/images/concierge/delegation-convoy.jpg",
-    tagline: "Multi-Vehicle Escort & High Security",
-    description: "Complete transport logistics for international trade delegations, VIP summits, and diplomatic convoys with dedicated coordinators.",
-    idealFor: "Embassies, Global NGOs & VIP Summits",
-    fleetOptions: ["Land Cruiser Prado", "Toyota Coaster (29 Seat)", "Multi-Car Convoy"],
-    features: [
-      "Dedicated senior coordinator on-site",
-      "Synchronized convoy radio dispatch",
-      "NDA guaranteed professional drivers",
-      "Custom security protocol integration",
+    tagline: "Synchronized tactical mobility for VIP delegations.",
+    quickSummary: "High-protocol synchronized motorcades overseen by a senior coordinator for summits, diplomatic missions, and state VIPs.",
+    steps: [
+      "1. Advance Route Recon & Convoy Planning",
+      "2. Pilot Escort + VIP Cabin + Support Sync",
+      "3. Live GPS Grid Lock & Desk Telemetry",
     ],
-    pricingHint: "Bespoke quotations on request",
+    metrics: [
+      { label: "Fleet Sync", value: "Multi-Car Protocol" },
+      { label: "Coordination", value: "Senior Desk Lead" },
+      { label: "Drivers", value: "Police Vetted" },
+      { label: "Telemetry", value: "Live GPS Fleet Grid" },
+    ],
+    fleet: "Prado TXL Escort · Alphard Cabin · Coaster Bus",
+    pricingHint: "Custom Itinerary Quote",
+    statusBadge: "Synchronized Convoy",
   },
 ];
 
-const AUTOPLAY_INTERVAL = 6000; // 6 seconds per slide
-
 export function ConciergeShowcase() {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const activePackage = conciergePackages[activeIndex];
-  const Icon = activePackage.icon;
-
-  // Auto-advance carousel timer with smooth progress bar
-  useEffect(() => {
-    if (isPaused) {
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-      return;
-    }
-
-    const stepMs = 50;
-    const increment = (stepMs / AUTOPLAY_INTERVAL) * 100;
-
-    progressIntervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setActiveIndex((current) => (current + 1) % conciergePackages.length);
-          return 0;
-        }
-        return prev + increment;
-      });
-    }, stepMs);
-
-    return () => {
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-    };
-  }, [activeIndex, isPaused]);
-
-  const selectSlide = (index: number) => {
+  // Scroll to center a specific card
+  const scrollToCard = useCallback((index: number) => {
     setActiveIndex(index);
-    setProgress(0);
+    const card = cardRefs.current[index];
+    const track = trackRef.current;
+    if (card && track) {
+      const trackRect = track.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const scrollOffset = card.offsetLeft - (trackRect.width / 2) + (cardRect.width / 2);
+      track.scrollTo({
+        left: scrollOffset,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  const handleNext = () => {
+    const next = (activeIndex + 1) % conciergePackages.length;
+    scrollToCard(next);
   };
 
-  const nextSlide = () => {
-    setActiveIndex((current) => (current + 1) % conciergePackages.length);
-    setProgress(0);
+  const handlePrev = () => {
+    const prev = (activeIndex - 1 + conciergePackages.length) % conciergePackages.length;
+    scrollToCard(prev);
   };
 
-  const prevSlide = () => {
-    setActiveIndex((current) => (current - 1 + conciergePackages.length) % conciergePackages.length);
-    setProgress(0);
+  // Auto-scroll loop
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => {
+        const next = (prev + 1) % conciergePackages.length;
+        scrollToCard(next);
+        return next;
+      });
+    }, 6500);
+    return () => clearInterval(timer);
+  }, [isPaused, scrollToCard]);
+
+  // Sync activeIndex on manual user swipe/scroll
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+
+    let closestIdx = 0;
+    let minDistance = Infinity;
+
+    cardRefs.current.forEach((card, idx) => {
+      if (!card) return;
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(trackCenter - cardCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIdx = idx;
+      }
+    });
+
+    if (closestIdx !== activeIndex) {
+      setActiveIndex(closestIdx);
+    }
   };
 
   return (
-    <section className="py-16 sm:py-24 bg-linear-to-b from-emerald-950/5 via-emerald-950/2 to-transparent relative overflow-hidden">
-      {/* Subtle Dot Grid */}
-      <div className="absolute inset-0 bg-dot-subtle pointer-events-none opacity-30" />
-
-      <div className="container relative z-10 space-y-8 sm:space-y-12">
-        {/* ── Section Header ── */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-800 bg-emerald-100/90 border border-emerald-300/80 shadow-xs">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Flagship Solutions</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-[1.1]">
-              Concierge Services. <span className="text-gradient-emerald">Flawlessly Executed.</span>
-            </h2>
-            <p className="text-sm sm:text-base text-gray-600 font-medium max-w-xl">
-              Engineered for embassies, international organizations, and corporate leadership who require zero margin for error.
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-            {/* Auto-carousel Controls */}
-            <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-gray-200 shadow-xs">
-              <button
-                onClick={prevSlide}
-                aria-label="Previous Service"
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-emerald-50 text-emerald-950 transition-colors cursor-pointer"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setIsPaused(!isPaused)}
-                aria-label={isPaused ? "Resume auto play" : "Pause auto play"}
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-emerald-50 text-emerald-950 transition-colors cursor-pointer"
-                title={isPaused ? "Play" : "Pause"}
-              >
-                {isPaused ? <Play className="h-3.5 w-3.5 fill-current" /> : <Pause className="h-3.5 w-3.5 fill-current" />}
-              </button>
-              <button
-                onClick={nextSlide}
-                aria-label="Next Service"
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-emerald-50 text-emerald-950 transition-colors cursor-pointer"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
+    <section 
+      className="py-16 sm:py-24 relative overflow-hidden w-full"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="space-y-8">
+        
+        {/* Section Header (Contained in Max-Width Container) */}
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-2 border-b border-emerald-900/10">
+            <div className="max-w-2xl space-y-2.5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-800 bg-emerald-100/80 border border-emerald-200/80 shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                <span>Flagship Solutions</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-tight">
+                Three Ways We <span className="text-gradient-emerald">Move Dhaka.</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 font-medium">
+                Curated chauffeur protocols designed for airport arrivals, corporate workdays, and diplomatic delegations.
+              </p>
             </div>
 
-            <Link href="/services" className="shrink-0">
-              <Button variant="outline" className="h-11 px-5 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider group shadow-xs">
-                <span>View All Services</span>
-                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            {/* Navigation Controls */}
+            <div className="flex items-center gap-3 self-end md:self-auto">
+              <span className="text-xs font-black text-emerald-900/60 tracking-widest tabular-nums px-2">
+                0{activeIndex + 1} / 0{conciergePackages.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrev}
+                  aria-label="Previous solution"
+                  className="w-10 h-10 rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-950 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  aria-label="Next solution"
+                  className="w-10 h-10 rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-950 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* ── Responsive & Easy-to-Trace Carousel Tabs ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {conciergePackages.map((item, index) => {
-            const isSelected = activeIndex === index;
-            const ItemIcon = item.icon;
+        {/* Full-Width Edge-to-Edge Center-Snapping Horizontal Track */}
+        <div
+          ref={trackRef}
+          onScroll={handleScroll}
+          className="w-full flex gap-6 sm:gap-8 overflow-x-auto py-6 px-4 sm:px-8 lg:px-[max(2rem,calc((100vw-1160px)/2))] snap-x snap-mandatory scrollbar-none scroll-smooth"
+          style={{ scrollSnapType: "x mandatory" }}
+        >
+          {conciergePackages.map((pkg, idx) => {
+            const PkgIcon = pkg.icon;
+            const isActive = idx === activeIndex;
+
             return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => selectSlide(index)}
+              <div
+                key={pkg.id}
+                ref={(el) => { cardRefs.current[idx] = el; }}
+                onClick={() => scrollToCard(idx)}
+                style={{ scrollSnapAlign: "center" }}
                 className={cn(
-                  "relative text-left p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden group",
-                  isSelected
-                    ? "bg-white border-emerald-600 shadow-xl shadow-emerald-950/10 ring-2 ring-emerald-500/20"
-                    : "bg-white/70 hover:bg-white border-gray-200 hover:border-emerald-300 shadow-xs"
+                  "w-[90vw] sm:w-[580px] md:w-[720px] lg:w-[860px] xl:w-[940px] shrink-0 rounded-3xl overflow-hidden border transition-all duration-500 cursor-pointer snap-center relative shadow-xl grid md:grid-cols-12",
+                  isActive
+                    ? "border-emerald-500/60 bg-emerald-950 text-white shadow-[0_24px_60px_-15px_rgba(2,24,16,0.65)] scale-[1.0] opacity-100 ring-2 ring-emerald-400/25"
+                    : "border-emerald-900/40 bg-emerald-950/85 text-white/80 scale-[0.98] opacity-75 hover:opacity-95"
                 )}
               >
-                {/* Active Progress Bar Underlay */}
-                {isSelected && !isPaused && (
-                  <div 
-                    className="absolute top-0 left-0 bottom-0 bg-emerald-50/70 -z-1 transition-all duration-75 ease-linear pointer-events-none"
-                    style={{ width: `${progress}%` }}
-                  />
-                )}
+                {/* Left (60%): Clean Specs & Guided Timeline */}
+                <div className="md:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between space-y-6 relative z-10">
+                  <div className="space-y-4">
+                    {/* Badge Strip */}
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300 flex items-center gap-1.5">
+                        <PkgIcon className="h-3.5 w-3.5" />
+                        {pkg.badge}
+                      </span>
+                      <span className="text-xs font-semibold text-emerald-200/60">•</span>
+                      <span className="text-xs font-bold text-amber-300">{pkg.pricingHint}</span>
+                    </div>
 
-                {/* Top Accent Line on Active */}
-                <div 
-                  className={cn(
-                    "absolute top-0 left-0 right-0 h-1 transition-all duration-300",
-                    isSelected ? "bg-emerald-600" : "bg-transparent group-hover:bg-emerald-200"
-                  )}
-                />
+                    {/* Title & Tagline */}
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl font-heading font-black text-white leading-tight">
+                        {pkg.title}
+                      </h3>
+                      <p className="mt-1.5 text-xs sm:text-sm font-semibold text-emerald-100/90 leading-relaxed">
+                        {pkg.tagline}
+                      </p>
+                    </div>
 
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className={cn(
-                    "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md transition-colors",
-                    isSelected 
-                      ? "bg-emerald-900 text-white" 
-                      : "bg-gray-100 text-gray-500 group-hover:bg-emerald-100 group-hover:text-emerald-800"
-                  )}>
-                    0{index + 1}
-                  </span>
-                  <span className={cn(
-                    "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                    isSelected ? "bg-emerald-100 text-emerald-900" : "bg-gray-50 text-gray-400 group-hover:text-emerald-700"
-                  )}>
-                    <ItemIcon className="h-4 w-4" />
-                  </span>
+                    {/* Step-by-Step Flow (Clear Guidance) */}
+                    <div className="p-3.5 rounded-2xl bg-white/5 border border-white/8 space-y-1.5">
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-1">
+                        How It Works
+                      </p>
+                      {pkg.steps.map((step, sIdx) => (
+                        <div key={sIdx} className="flex items-center gap-2 text-xs text-emerald-100/85 font-medium">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                          <span className="truncate">{step}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* 4 Clean Specs Chips */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-white/10">
+                      {pkg.metrics.map((m) => (
+                        <div key={m.label} className="p-2 rounded-xl bg-white/5 border border-white/6 text-center">
+                          <span className="text-[8px] uppercase tracking-widest text-emerald-300/80 font-bold block">
+                            {m.label}
+                          </span>
+                          <span className="text-xs font-bold text-white block mt-0.5 truncate">
+                            {m.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Dedicated Fleet Line */}
+                    <div className="text-xs text-emerald-200/75 flex items-center gap-1.5">
+                      <Car className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                      <span className="font-semibold text-white/90">Dedicated Fleet:</span>
+                      <span className="truncate">{pkg.fleet}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-2 flex items-center gap-3">
+                    <Link href={`/booking?type=${pkg.id}`} className="flex-1">
+                      <Button className="w-full h-11 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-md transition-all cursor-pointer">
+                        Reserve Solution
+                        <ChevronRight className="ml-1 h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+
+                    <a
+                      href={`https://wa.me/8801716633445?text=${encodeURIComponent(
+                        `Hi Jinia — Quote for ${pkg.title}.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="h-11 px-4 rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
+                    >
+                      <MessageSquare className="h-4 w-4 text-emerald-400" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </div>
                 </div>
 
-                <h3 className={cn(
-                  "font-heading font-black text-sm sm:text-base transition-colors line-clamp-1",
-                  isSelected ? "text-emerald-950" : "text-gray-700 group-hover:text-emerald-950"
-                )}>
-                  {item.title}
-                </h3>
-                <p className="text-xs text-gray-500 font-medium mt-0.5 line-clamp-1">
-                  {item.tagline}
-                </p>
-              </button>
+                {/* Right (40%): Cinematic Image Showcase */}
+                <div className="md:col-span-5 relative min-h-[260px] md:min-h-[440px] bg-emerald-900/40 overflow-hidden">
+                  <img
+                    src={pkg.image}
+                    alt={pkg.title}
+                    className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-emerald-950 via-emerald-950/20 to-transparent md:bg-linear-to-l md:from-transparent md:to-emerald-950/90" />
+                  
+                  {/* Floating Status Badge */}
+                  <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-emerald-950/85 backdrop-blur-md border border-emerald-400/30 text-[10px] font-bold text-emerald-300 flex items-center gap-2 shadow-lg">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{pkg.statusBadge}</span>
+                  </div>
+
+                  {/* Bottom Assurance */}
+                  <div className="absolute bottom-4 left-4 right-4 z-10 p-3 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-between text-xs text-white/90">
+                    <span className="flex items-center gap-1.5 font-bold text-emerald-300">
+                      <ShieldCheck className="h-4 w-4" />
+                      BRTA Licensed Driver
+                    </span>
+                    <span className="text-[10px] font-semibold text-white/60">Fixed Rate</span>
+                  </div>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* ── Main Showcase Stage Card ── */}
-        <div 
-          className="rounded-3xl overflow-hidden bg-white border border-gray-200/90 shadow-2xl shadow-emerald-950/8 transition-all duration-300"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <div className="grid lg:grid-cols-12 items-stretch min-h-[520px]">
-            {/* Left Content Side */}
-            <div className="lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-between space-y-6">
-              <div className="space-y-5 animate-fade-in" key={`content-${activePackage.id}`}>
-                {/* Header Meta */}
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-900 flex items-center justify-center border border-emerald-300/60 shadow-xs">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80 inline-block">
-                      {activePackage.badge}
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-heading font-black text-emerald-950 tracking-tight mt-0.5">
-                      {activePackage.title}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed">
-                  {activePackage.description}
-                </p>
-
-                {/* 4 Feature Checklist Capsules */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  {activePackage.features.map((feat, i) => (
-                    <div 
-                      key={i} 
-                      className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-950/2 hover:bg-emerald-950/4 border border-gray-100 transition-colors"
-                    >
-                      <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                      </div>
-                      <span className="text-xs font-bold text-gray-800 leading-snug">{feat}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Recommended Fleet Tags */}
-                <div className="pt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">
-                    Available Fleet:
-                  </span>
-                  {activePackage.fleetOptions.map((fleet, i) => (
-                    <span 
-                      key={i} 
-                      className="px-3 py-1 rounded-lg bg-emerald-50 text-[11px] font-bold text-emerald-900 border border-emerald-200/80 shadow-2xs"
-                    >
-                      {fleet}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons & Trace Indicators */}
-              <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Link href={`/booking?type=${activePackage.id}`} className="w-full sm:w-auto">
-                    <Button size="lg" className="w-full sm:w-auto h-12 px-7 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-white font-black text-xs uppercase tracking-wider gap-2 shadow-lg shadow-emerald-950/15 cursor-pointer">
-                      <span>Reserve Package</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <a 
-                    href={`https://wa.me/8801716633445?text=Hello%20Jinia%20Enterprise,%20I%20would%20like%20to%20inquire%20about%20the%20${encodeURIComponent(activePackage.title)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
-                  >
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto h-12 px-5 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider cursor-pointer">
-                      <span>WhatsApp Quote</span>
-                    </Button>
-                  </a>
-                </div>
-
-                {/* Slide index & auto status */}
-                <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-gray-400 font-bold">
-                  <span className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>0{activeIndex + 1} / 0{conciergePackages.length}</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Photography Art Frame */}
-            <div className="lg:col-span-5 relative min-h-[320px] sm:min-h-[380px] lg:min-h-full overflow-hidden bg-emerald-950">
-              <img
-                key={`img-${activePackage.id}`}
-                src={activePackage.image}
-                alt={activePackage.title}
-                className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-105 animate-fade-in"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-emerald-950/90 via-emerald-950/20 to-transparent pointer-events-none" />
-              
-              {/* Floating Protocol Badge */}
-              <div className="absolute bottom-5 left-5 right-5 p-4 rounded-2xl bg-black/50 backdrop-blur-md border border-white/20 text-white flex items-center justify-between shadow-xl">
-                <div>
-                  <p className="text-[10px] uppercase font-black tracking-widest text-emerald-400">Jinia Protocol Verified</p>
-                  <p className="text-xs sm:text-sm font-bold text-white/95 mt-0.5">{activePackage.tagline}</p>
-                </div>
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-300 border border-emerald-400/30 shrink-0">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-              </div>
-            </div>
+        {/* Bottom Pagination Selector Pills */}
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-3 pt-2">
+            {conciergePackages.map((pkg, i) => (
+              <button
+                key={pkg.id}
+                onClick={() => scrollToCard(i)}
+                aria-label={`Go to ${pkg.title}`}
+                className={cn(
+                  "px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 cursor-pointer flex items-center gap-2",
+                  i === activeIndex
+                    ? "bg-emerald-900 text-white shadow-md shadow-emerald-900/20 ring-1 ring-emerald-500"
+                    : "bg-emerald-900/10 text-emerald-950/60 hover:bg-emerald-900/20"
+                )}
+              >
+                <span className="text-[10px] font-black text-emerald-500">{pkg.number}</span>
+                <span>{pkg.title}</span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 }
-

@@ -1,15 +1,16 @@
 import { BookingForm } from "@/components/forms/BookingForm";
 import { siteConfig } from "@/lib/config";
 import { Phone, MessageSquare, MapPin, Clock, Sparkles, Shield, BookmarkCheck } from "lucide-react";
-import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Reserve Your Journey | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Book Car Rental in Dhaka",
   description:
-    "Book your car rental with Jinia Enterprise. Choose from our premium fleet of vehicles for daily, weekly, or monthly rentals in Dhaka.",
-};
+    "Request a chauffeur-driven car rental in Dhaka. Choose vehicle class, dates, and pickup details — or call and WhatsApp the desk.",
+  path: "/booking",
+});
 
 export default async function BookingPage() {
   const supabase = await createClient();

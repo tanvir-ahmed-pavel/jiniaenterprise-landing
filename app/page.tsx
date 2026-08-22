@@ -6,6 +6,8 @@ import { HeroBookingWidget } from "@/components/forms/HeroBookingWidget";
 import { UserJourneySection } from "@/components/home/UserJourneySection";
 import { ConciergeShowcase } from "@/components/home/ConciergeShowcase";
 import { ProtocolSpotlight } from "@/components/home/ProtocolSpotlight";
+import { ExpandingFinalCTA } from "@/components/home/ExpandingFinalCTA";
+import { HomeBlogSection } from "@/components/home/HomeBlogSection";
 import { SilkyHeroCanvas } from "@/components/home/SilkyHeroCanvas";
 import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 import {
@@ -13,16 +15,29 @@ import {
   corporateClients,
 } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
+import { createMetadata } from "@/lib/seo/metadata";
 import {
   Phone,
   Calendar,
   MessageSquare,
   ArrowRight,
-  Sparkles,
-  ShieldCheck,
-  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+export const metadata = createMetadata({
+  title: "Car Rental in Dhaka with Driver",
+  description:
+    "Book chauffeur-driven car and bus rental in Dhaka. Daily, monthly, corporate, and airport transfer service from Jinia Enterprise.",
+  path: "/",
+  keywords: [
+    "car rental Dhaka",
+    "car rental with driver Dhaka",
+    "airport transfer Dhaka",
+    "corporate car rental Bangladesh",
+    "monthly car rental Dhaka",
+    "Jinia Enterprise",
+  ],
+});
 
 interface Vehicle {
   id: string;
@@ -41,18 +56,6 @@ interface Vehicle {
   is_active: boolean;
   sort_order: number;
   is_featured: boolean;
-}
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  cover_image: string | null;
-  author: string;
-  is_published: boolean;
-  created_at: string;
 }
 
 async function getFeaturedVehicles(): Promise<Vehicle[]> {
@@ -80,20 +83,8 @@ async function getFeaturedVehicles(): Promise<Vehicle[]> {
   return (data as Vehicle[]) || [];
 }
 
-async function getLatestBlogPosts(): Promise<BlogPost[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(3);
-  return (data as BlogPost[]) || [];
-}
-
 export default async function Home() {
   const featuredVehicles = await getFeaturedVehicles();
-  const latestBlogPosts = await getLatestBlogPosts();
 
   const trustStats = [
     { value: "10+", label: "Years in Service" },
@@ -202,10 +193,12 @@ export default async function Home() {
       {/* ════════ CONCIERGE CAPABILITY SHOWCASE ════════ */}
       <ConciergeShowcase />
 
-      {/* ════════ FEATURED VEHICLES ════════ */}
+      {/* ════════ HOW A BOOKING FEELS ════════ */}
+      <UserJourneySection />
+
+      {/* ════════ FEATURED FLEET — after intent is clear ════════ */}
       {featuredVehicles.length > 0 && (
         <section className="py-24 sm:py-32 bg-linear-to-b from-transparent via-emerald-950/[0.035] to-transparent relative overflow-hidden">
-          {/* Subtle Silk Ribbon Flow */}
           <SilkRibbonBackdrop className="opacity-40" />
 
           <div className="container space-y-14 relative z-10">
@@ -215,16 +208,16 @@ export default async function Home() {
                   Featured Fleet
                 </span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 leading-tight">
-                  Our Top Rental Cars <br />
-                  <span className="text-gradient-emerald">Ready When You Are.</span>
+                  Pick the car that fits{" "}
+                  <span className="text-gradient-emerald">the trip you just planned.</span>
                 </h2>
                 <p className="text-sm sm:text-base text-gray-600 font-medium">
-                  Sedans, VIP SUVs, family microbuses, and AC coaches available for immediate booking with professional drivers.
+                  Sedans, VIP SUVs, family microbuses, and AC coaches—with professional drivers.
                 </p>
               </div>
               <Link href="/vehicles">
                 <Button variant="outline" className="px-6 h-12 rounded-xl border-emerald-200 text-emerald-900 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider group">
-                  View All Vehicles ({featuredVehicles.length}+ Models) <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                  View all vehicles <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
@@ -234,31 +227,15 @@ export default async function Home() {
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))}
             </div>
-
-            <div className="flex justify-center pt-4 sm:pt-6">
-              <Link href="/vehicles">
-                <Button
-                  size="lg"
-                  className="px-8 h-14 rounded-2xl bg-emerald-900 hover:bg-emerald-800 text-white font-black text-xs uppercase tracking-wider gap-3 shadow-xl shadow-emerald-950/15 hover:scale-105 transition-all duration-300 group"
-                >
-                  <span>View All Vehicles ({featuredVehicles.length}+ Models)</span>
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
       )}
 
-      {/* ════════ EXECUTIVE USER JOURNEY (HOW IT WORKS) ════════ */}
-      <UserJourneySection />
-
       {/* ════════ PROTOCOL & SAFETY STANDARDS ════════ */}
       <ProtocolSpotlight />
 
-      {/* ════════ CORPORATE CLIENTS — ARTISTIC MARQUEE ════════ */}
+      {/* ════════ TRUSTED CLIENTS — MARQUEE ════════ */}
       <section className="py-24 sm:py-32 overflow-hidden bg-emerald-950/5 relative">
-        {/* Subtle Silk Ribbon Flow (Flipped) */}
         <SilkRibbonBackdrop flip className="opacity-30" />
 
         <div className="container mb-12 text-center space-y-3 max-w-3xl relative z-10">
@@ -273,7 +250,6 @@ export default async function Home() {
           </p>
         </div>
 
-        {/* Marquee Row 1 */}
         <div className="relative mb-4 pause-on-hover z-10">
           <div className="flex animate-marquee gap-4 w-max">
             {[...corporateClients, ...corporateClients].map((client, i) => (
@@ -292,7 +268,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Marquee Row 2 */}
         <div className="relative pause-on-hover z-10">
           <div className="flex animate-marquee-reverse gap-4 w-max">
             {[...corporateClients.slice().reverse(), ...corporateClients.slice().reverse()].map((client, i) => (
@@ -312,106 +287,49 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ════════ ARTICLES — THE JOURNAL ════════ */}
-      {latestBlogPosts.length > 0 && (
-        <section className="py-20 sm:py-28 bg-linear-to-b from-transparent via-emerald-950/[0.03] to-transparent relative overflow-hidden">
-          {/* Subtle Silk Ribbon Flow */}
-          <SilkRibbonBackdrop className="opacity-35" />
-
-          <div className="container space-y-12 relative z-10">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-              <div className="space-y-2">
-                <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em]">Insights & Guides</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-emerald-950">
-                  Dhaka Travel & Mobility Journal
-                </h2>
-              </div>
-              <Link href="/blog">
-                <Button variant="outline" className="px-5 h-11 rounded-xl border-emerald-200 text-emerald-900 hover:bg-emerald-50 text-xs font-bold uppercase tracking-wider">
-                  All Articles <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {latestBlogPosts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-                  <div className="glass-card overflow-hidden h-full flex flex-col bg-white border-white/80 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
-                    <div className="aspect-[16/10] overflow-hidden bg-emerald-950/5 relative">
-                      {post.cover_image ? (
-                        <img
-                          src={post.cover_image}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-4xl grayscale opacity-20">📰</div>
-                      )}
-                    </div>
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
-                          {new Date(post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                        </span>
-                        <h3 className="text-lg font-heading font-extrabold text-emerald-950 group-hover:text-emerald-700 transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                        <p className="text-xs text-gray-500 font-medium line-clamp-2 leading-relaxed">
-                          {post.excerpt}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-950 group-hover:text-emerald-700 transition-colors">
-                        <span>Read Full Guide</span>
-                        <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ════════ FINAL CTA ════════ */}
-      <section className="py-20 sm:py-28 relative overflow-hidden">
+      {/* ════════ SEO SERVICE PILLARS ════════ */}
+      <section className="py-16 sm:py-20">
         <div className="container">
-          <div className="rounded-3xl sm:rounded-[3rem] p-8 sm:p-14 md:p-20 text-center relative overflow-hidden shadow-2xl border border-white/20 bg-emerald-950">
-            {/* Interactive Silky Green & Golden Canvas for CTA */}
-            <SilkyHeroCanvas className="rounded-3xl sm:rounded-[3rem]" />
-            <div className="absolute inset-0 bg-linear-to-b from-emerald-950/50 via-emerald-950/20 to-emerald-950/60 pointer-events-none z-1" />
-
-            <div className="space-y-6 max-w-3xl mx-auto relative z-10">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
-                Ready to Experience Difference?
-              </span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white leading-tight">
-                Reserve Your Executive Ride or Corporate Fleet Today.
-              </h2>
-              <p className="text-sm sm:text-base text-emerald-100/70 font-medium max-w-xl mx-auto">
-                Speak directly with our concierge desk or request an instant bespoke quotation on WhatsApp.
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-4 pt-4">
-                <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-xl">
-                    <Phone className="mr-2.5 h-4 w-4 text-emerald-700" /> Call Hotline: {siteConfig.phone}
-                  </Button>
-                </a>
-                <a
-                  href={`https://wa.me/${siteConfig.whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black uppercase tracking-wider text-xs shadow-xl">
-                    <MessageSquare className="mr-2.5 h-4 w-4" /> Instant WhatsApp
-                  </Button>
-                </a>
-              </div>
-            </div>
+          <div className="max-w-2xl mb-10 space-y-3">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-700">
+              Popular searches
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-heading font-black text-emerald-950 tracking-tight">
+              Car rental services in Dhaka.
+            </h2>
+            <p className="text-gray-600 font-medium">
+              Straight answers for chauffeur hire, airport transfers, corporate fleets, and monthly packages.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { href: "/car-rental-dhaka", label: "Car rental in Dhaka", desc: "City & outstation with driver" },
+              { href: "/car-rental-with-driver", label: "With driver", desc: "Licensed chauffeur packages" },
+              { href: "/airport-car-rental", label: "Airport transfer", desc: "DAC pickup & drop" },
+              { href: "/corporate-car-rental", label: "Corporate rental", desc: "Embassy & company fleets" },
+              { href: "/monthly-car-rental", label: "Monthly rental", desc: "Long-term commute hire" },
+              { href: "/faq", label: "FAQ", desc: "Fuel, hours, booking answers" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group rounded-2xl border border-emerald-100 bg-white/70 p-6 hover:border-emerald-300 hover:bg-white transition-colors"
+              >
+                <p className="font-heading font-bold text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                  {item.label}
+                </p>
+                <p className="mt-1 text-sm text-gray-500">{item.desc}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* ════════ FINAL CTA WITH SCROLL-DRIVEN EXPAND ANIMATION ════════ */}
+      <ExpandingFinalCTA />
+
+      {/* ════════ LATEST BLOG ARTICLES & GUIDES ════════ */}
+      <HomeBlogSection />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { createMetadata } from "@/lib/seo/metadata";
 import {
   companyHistory,
   whyChooseUs,
@@ -10,11 +10,12 @@ import { CheckCircle, Target, Eye, Heart, Award, User, Sparkles, Quote } from "l
 import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "About Us | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "About Jinia Enterprise — Car Rental in Dhaka",
   description:
-    "Learn about Jinia Enterprise - over 10 years of trusted car rental service in Dhaka. Our mission, vision, and commitment to customer satisfaction.",
-};
+    "Jinia Enterprise has provided chauffeur-driven car and bus rental in Dhaka since 2014. Learn our story, fleet, and how we serve corporates and embassies.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

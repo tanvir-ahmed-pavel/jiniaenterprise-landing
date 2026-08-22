@@ -21,6 +21,12 @@ import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 import { siteConfig } from "@/lib/config";
+import { createMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  getArticleSchema,
+  getBreadcrumbSchema,
+} from "@/lib/seo/schema";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -98,22 +104,16 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "Post Not Found | Jinia Enterprise",
+      title: "Post Not Found",
     };
   }
 
-  return {
-    title: `${post.title} | Jinia Enterprise Journal`,
+  return createMetadata({
+    title: post.title,
     description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: "article",
-      publishedTime: post.created_at,
-      authors: [post.author],
-      images: post.cover_image ? [post.cover_image] : [],
-    },
-  };
+    path: `/blog/${post.slug}`,
+    image: post.cover_image || undefined,
+  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -240,6 +240,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="pb-24 overflow-hidden relative">
+      <JsonLd
+        data={[
+          getArticleSchema({
+            title: post.title,
+            description: post.excerpt,
+            path: `/blog/${post.slug}`,
+            image: post.cover_image,
+            datePublished: post.created_at,
+            dateModified: post.updated_at || post.created_at,
+            author: post.author,
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
       {/* ── Signature Diagonal Silk Ribbon Backdrop (Full Page Depth) ── */}
       <SilkRibbonBackdrop className="opacity-50" />
       <SilkRibbonBackdrop flip className="opacity-35 top-[600px]" />
