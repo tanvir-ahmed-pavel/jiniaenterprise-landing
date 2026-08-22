@@ -1,6 +1,6 @@
-import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { services, groupTransportOptions, siteConfig } from "@/lib/config";
+import { createMetadata } from "@/lib/seo/metadata";
 import {
   Car,
   Calendar,
@@ -21,11 +21,12 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Bespoke Services | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Car Rental Services in Dhaka",
   description:
-    "Comprehensive car rental services in Dhaka including daily rental, monthly rental, corporate fleet, bus rental, chauffeur service, and airport transfers.",
-};
+    "Daily, monthly, corporate, chauffeur, bus rental, and airport transfer services in Dhaka from Jinia Enterprise.",
+  path: "/services",
+});
 
 const iconMap: { [key: string]: React.ElementType } = {
   car: Car,
@@ -89,6 +90,23 @@ export default function ServicesPage() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mb-24 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { href: "/car-rental-dhaka", label: "Car rental Dhaka" },
+            { href: "/airport-car-rental", label: "Airport transfer" },
+            { href: "/corporate-car-rental", label: "Corporate rental" },
+            { href: "/monthly-car-rental", label: "Monthly rental" },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="rounded-2xl border border-emerald-100 bg-white/60 px-5 py-4 text-sm font-bold text-emerald-950 hover:bg-emerald-50 transition-colors"
+            >
+              {link.label} →
+            </Link>
+          ))}
         </div>
 
         {/* Group & Corporate — Cinematic Dark Section */}

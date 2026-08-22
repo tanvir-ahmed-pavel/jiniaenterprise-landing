@@ -1,44 +1,86 @@
-import { Metadata } from "next";
 import { InquiryForm } from "@/components/forms/InquiryForm";
-import { Phone, Mail, MapPin, Clock, MessageSquare, Globe, Sparkles } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  MessageSquare,
+  Globe,
+  Sparkles,
+} from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { createMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbSchema, getLocalBusinessSchema } from "@/lib/seo/schema";
+import {
+  businessIdentity,
+  getFormattedAddress,
+  getTelHref,
+  getWhatsAppHref,
+} from "@/lib/business/identity";
 
-export const metadata: Metadata = {
-  title: "Contact Us | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Contact Jinia Enterprise — Dhaka Car Rental Desk",
   description:
-    "Get in touch with Jinia Enterprise for car rental inquiries. Call us, WhatsApp, or send a message. Located in Gulshan-2, Dhaka.",
-};
+    "Call, WhatsApp, or visit Jinia Enterprise in Gulshan, Dhaka. Request car rental quotes, airport transfers, and corporate fleet support.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
     <div className="pb-24">
-      <PageHeader 
+      <JsonLd
+        data={[
+          getLocalBusinessSchema(),
+          getBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Contact", path: "/contact" },
+          ]),
+        ]}
+      />
+      <PageHeader
         title="Connect."
-        subtitle="Global Concierge Axis"
-        description="Whether you're planning a diplomatic mission or a personal journey, our team is ready to facilitate your mobility in Dhaka."
+        subtitle="Dhaka concierge desk"
+        description="Call, WhatsApp, email, or visit our Gulshan office for car rental quotes and bookings."
         breadcrumbs={[{ label: "Connect" }]}
       />
 
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          {/* Contact Information Axis */}
           <div className="space-y-12 animate-fade-in-up">
             <div className="space-y-4">
-              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">Direct Channels</span>
+              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">
+                Direct Channels
+              </span>
               <h2 className="text-4xl font-heading font-black text-green-950 leading-none italic">
                 Get in Touch.
               </h2>
+              <p className="text-sm text-gray-600 font-medium">
+                {businessIdentity.brandName} · {getFormattedAddress()}
+              </p>
             </div>
 
-            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8">
+            <div className="grid gap-8">
               {[
                 {
                   icon: Phone,
-                  title: "Phone Axis",
+                  title: "Phone",
                   content: (
                     <div className="flex flex-col gap-1 font-bold text-gray-600">
-                      <a href="tel:+8801716633445" className="hover:text-green-600 transition-colors">+88 01716 633445</a>
-                      <a href="tel:+8801976633445" className="hover:text-green-600 transition-colors">+88 01976 633445</a>
+                      <a
+                        href={getTelHref()}
+                        className="hover:text-green-600 transition-colors"
+                      >
+                        {businessIdentity.phone}
+                      </a>
+                      {businessIdentity.phoneSecondary && (
+                        <a
+                          href={getTelHref(businessIdentity.phoneSecondary)}
+                          className="hover:text-green-600 transition-colors"
+                        >
+                          {businessIdentity.phoneSecondary}
+                        </a>
+                      )}
                     </div>
                   ),
                 },
@@ -47,52 +89,71 @@ export default function ContactPage() {
                   title: "WhatsApp",
                   content: (
                     <a
-                      href="https://wa.me/8801716633445"
+                      href={getWhatsAppHref()}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-bold text-gray-600 hover:text-green-600 transition-colors"
                     >
-                      +88 01716 633445 (Online)
+                      {businessIdentity.phone}
                     </a>
                   ),
                 },
                 {
                   icon: Mail,
-                  title: "Digital Mail",
+                  title: "Email",
                   content: (
                     <a
-                      href="mailto:jiniaenterprise.com@gmail.com"
-                      className="font-bold text-gray-600 hover:text-green-600 transition-colors"
+                      href={`mailto:${businessIdentity.email}`}
+                      className="font-bold text-gray-600 hover:text-green-600 transition-colors break-all"
                     >
-                      jiniaenterprise.com@gmail.com
+                      {businessIdentity.email}
                     </a>
                   ),
                 },
                 {
                   icon: MapPin,
-                  title: "Headquarters",
+                  title: "Office",
                   content: (
-                    <address className="not-italic text-gray-500 font-medium leading-relaxed">
-                      40/2, Unicorn Plaza (Level-2), <br />
-                      Shop-9,10, <br />
-                      Dhaka 1212.
+                    <address className="not-italic font-medium text-gray-600 leading-relaxed">
+                      {getFormattedAddress()}
                     </address>
                   ),
                 },
-              ].map(({ icon: Icon, title, content }) => (
-                <div key={title} className="flex gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl icon-glow flex items-center justify-center shrink-0 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
-                    <Icon className="h-6 w-6 text-green-600 group-hover:text-white transition-colors" />
+                {
+                  icon: Clock,
+                  title: "Hours",
+                  content: (
+                    <div className="font-bold text-gray-600 space-y-1">
+                      <p>Sat–Thu: 9:00 AM – 8:00 PM</p>
+                      <p>Friday: 10:00 AM – 6:00 PM</p>
+                    </div>
+                  ),
+                },
+                {
+                  icon: Globe,
+                  title: "Service areas",
+                  content: (
+                    <p className="font-medium text-gray-600 leading-relaxed">
+                      Dhaka (Gulshan, Banani, Uttara, Dhanmondi, and more), DAC
+                      airport, and outstation Bangladesh routes.
+                    </p>
+                  ),
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                    <item.icon className="h-5 w-5 text-emerald-700" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-green-900/40">{title}</h3>
-                    <div className="text-base">{content}</div>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-emerald-950">
+                      {item.title}
+                    </h3>
+                    {item.content}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Premium Map Frame */}
             <div className="relative glass-card p-2 bg-white/40 border-white/60 overflow-hidden group">
               <div className="aspect-video rounded-2xl overflow-hidden grayscale contrast-125 opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700">
                 <iframe
@@ -102,36 +163,26 @@ export default function ContactPage() {
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
-                  title="Jinia Enterprise Location"
+                  title="Jinia Enterprise Location — Gulshan, Dhaka"
                 />
               </div>
             </div>
           </div>
 
-          {/* Artistic Form Container */}
-          <div className="relative lg:sticky lg:top-32">
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-green-500/5 rounded-full blur-3xl -z-10" />
+          <div className="relative lg:sticky lg:top-32 animate-fade-in-up animation-delay-100">
             <div className="glass-card p-8 md:p-12 bg-white/70 border-white/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]">
               <div className="mb-10 space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-[10px] font-black uppercase tracking-widest text-green-600">
                   <Sparkles className="h-3 w-3" /> Secure Submission
                 </div>
-                <h2 className="text-3xl font-heading font-black text-green-950 italic">Send a Message.</h2>
-                <p className="text-gray-400 font-medium text-sm">Our team typically responds within 30 minutes during business hours.</p>
+                <h2 className="text-3xl font-heading font-black text-green-950 italic">
+                  Send a Message.
+                </h2>
+                <p className="text-gray-400 font-medium text-sm">
+                  Share pickup, dates, and vehicle preference for a faster quote.
+                </p>
               </div>
               <InquiryForm source="contact_page" />
-            </div>
-            
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="glass-card p-6 bg-green-50/50 text-center">
-                <div className="text-2xl font-heading font-black text-green-950 italic">98%</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-green-900/40">Response Rate</div>
-              </div>
-              <div className="glass-card p-6 bg-green-50/50 text-center">
-                <div className="text-2xl font-heading font-black text-green-950 italic">10+</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-green-900/40">Support Agents</div>
-              </div>
             </div>
           </div>
         </div>

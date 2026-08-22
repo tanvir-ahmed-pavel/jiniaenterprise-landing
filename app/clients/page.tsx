@@ -1,13 +1,14 @@
-import { Metadata } from "next";
 import { corporateClients } from "@/lib/config";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, Globe } from "lucide-react";
+import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Our Clients | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Corporate & Embassy Clients",
   description:
-    "Trusted by leading embassies, international organizations, and corporations in Bangladesh.",
-};
+    "Jinia Enterprise serves embassies, international organizations, and corporations with chauffeur-driven transport in Dhaka.",
+  path: "/clients",
+});
 
 export default function ClientsPage() {
   const embassies = corporateClients.filter((c) => c.type === "Embassy");

@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Luxury Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#082c20" />
+      <stop offset="50%" stop-color="#041a13" />
+      <stop offset="100%" stop-color="#020e0a" />
+    </linearGradient>
+
+    <!-- Outer Glow Ring -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+
+    <!-- Shield Fill Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+
+    <!-- Wing Gradient -->
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+
+    <!-- Inner Shield Inset Gradient -->
+    <linearGradient id="innerShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#0f5132" />
+    </linearGradient>
+
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with clean emerald border -->
+  <rect x="20" y="20" width="472" height="472" rx="108" fill="url(#bgGrad)" stroke="url(#ringGrad)" stroke-width="14" />
+
+  <!-- Shield & Wing Group (Optically Centered at (256, 256)) -->
+  <g filter="url(#shadow)" transform="translate(0, -6)">
+    <!-- Top Aerodynamic Wings / Bar -->
+    <path d="M 68 122 L 444 122 L 424 146 L 88 146 Z" fill="url(#wingGrad)" />
+
+    <!-- Outer Shield Badge -->
+    <path d="M 108 152 
+             L 404 152 
+             L 404 186 
+             L 348 274 
+             L 256 370 
+             L 164 274 
+             L 108 186 Z" 
+          fill="url(#shieldGrad)" 
+          stroke="#86efac" 
+          stroke-width="7" 
+          stroke-linejoin="round" />
+
+    <!-- Inner Shield Contrast -->
+    <path d="M 132 168 
+             L 380 168 
+             L 380 190 
+             L 332 264 
+             L 256 342 
+             L 180 264 
+             L 132 190 Z" 
+          fill="url(#innerShieldGrad)" />
+
+    <!-- Lower Chevron Arrow Accent -->
+    <path d="M 148 296 
+             L 256 410 
+             L 364 296 
+             L 386 314 
+             L 256 450 
+             L 126 314 Z" 
+          fill="url(#wingGrad)" 
+          stroke="#86efac" 
+          stroke-width="5" 
+          stroke-linejoin="round" />
+
+    <!-- JE Monogram using exact vector paths for perfect cross-platform rendering -->
+    <!-- Letter J -->
+    <path d="M 218 206 
+             L 246 206 
+             L 246 266 
+             C 246 284 238 294 220 294 
+             C 204 294 194 286 188 274 
+             L 210 260 
+             C 214 266 218 270 223 270 
+             C 229 270 232 266 232 258 
+             L 232 206 Z" 
+          fill="#ffffff" />
+
+    <!-- Letter E -->
+    <path d="M 264 206 
+             L 324 206 
+             L 324 228 
+             L 278 228 
+             L 278 244 
+             L 318 244 
+             L 318 266 
+             L 278 266 
+             L 278 272 
+             L 326 272 
+             L 326 294 
+             L 264 294 Z" 
+          fill="#ffffff" />
+  </g>
+</svg>

@@ -53,12 +53,10 @@ export function ProtocolSpotlight() {
 
   return (
     <section className="py-20 sm:py-28 bg-linear-to-b from-emerald-950/[0.04] via-emerald-950/[0.02] to-emerald-950/[0.05] relative overflow-hidden">
-      {/* Subtle Silk Ribbon Flow (Flipped) */}
       <SilkRibbonBackdrop flip className="opacity-35" />
       <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-30" />
 
       <div className="container relative z-10 space-y-12">
-        {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="max-w-2xl space-y-2">
             <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/80 px-3.5 py-1.5 rounded-full border border-emerald-200/80 inline-flex items-center gap-2">
@@ -74,7 +72,6 @@ export function ProtocolSpotlight() {
           </p>
         </div>
 
-        {/* 3 Pillars Grid - High Scannability */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {protocolPillars.map((pillar, idx) => {
             const PillarIcon = pillar.icon;
@@ -119,31 +116,35 @@ export function ProtocolSpotlight() {
           })}
         </div>
 
-        {/* Corporate Trust Strip */}
-        <div className="editorial-card rounded-3xl p-7 sm:p-9 bg-emerald-950 text-white border border-emerald-800 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div className="space-y-1.5 text-center lg:text-left max-w-xl">
-            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Corporate & Monthly Rentals</span>
-            <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
-              Need Long-Term Cars or Regular Staff Pickup?
-            </h3>
-            <p className="text-xs text-emerald-200/80">
-              Get special monthly rates, customized vehicle options, and monthly VAT invoicing.
-            </p>
-          </div>
+        <div className="relative editorial-card rounded-3xl p-7 sm:p-9 bg-emerald-950 text-white border border-emerald-800 shadow-xl overflow-hidden">
+          <SilkRibbonBackdrop variant="dark" className="opacity-30" />
+          <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-amber-400/35 to-transparent" />
 
-          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
-            <Link href="/contact">
-              <Button size="sm" className="h-11 px-6 rounded-xl bg-white hover:bg-emerald-50 text-emerald-950 font-bold text-xs uppercase tracking-wider gap-2">
-                <span>Contact Our Team</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
-            <a href="tel:+8801716633445">
-              <Button variant="outline" size="sm" className="h-11 px-5 rounded-xl border-white/20 text-white hover:bg-white/10 gap-2 font-bold text-xs uppercase tracking-wider">
-                <PhoneCall className="h-3.5 w-3.5 text-emerald-400" />
-                <span>+88 01716 633445</span>
-              </Button>
-            </a>
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="space-y-1.5 text-center lg:text-left max-w-xl">
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Corporate & Monthly Rentals</span>
+              <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
+                Need Long-Term Cars or Regular Staff Pickup?
+              </h3>
+              <p className="text-xs text-emerald-200/80">
+                Get special monthly rates, customized vehicle options, and monthly VAT invoicing.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
+              <Link href="/contact">
+                <Button size="sm" className="h-11 px-6 rounded-xl bg-white hover:bg-emerald-50 text-emerald-950 font-bold text-xs uppercase tracking-wider gap-2">
+                  <span>Contact Our Team</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+              <a href="tel:+8801716633445">
+                <Button variant="outline" size="sm" className="h-11 px-5 rounded-xl border-white/20 text-white hover:bg-white/10 gap-2 font-bold text-xs uppercase tracking-wider">
+                  <PhoneCall className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>+88 01716 633445</span>
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </div>

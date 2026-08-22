@@ -2,16 +2,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar, Clock, ArrowRight, User, MousePointer2 } from "lucide-react";
-import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
 import { cn } from "@/lib/utils";
+import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "The Journal | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Car Rental Guides & Travel Notes",
   description:
-    "Stay updated with the latest car rental tips, industry news, and travel guides from Jinia Enterprise — your trusted car rental partner in Dhaka.",
-};
+    "Practical guides on monthly rental, airport transfers, and chauffeur travel in Dhaka from Jinia Enterprise.",
+  path: "/blog",
+});
 
 interface BlogPost {
   id: string;

@@ -20,7 +20,7 @@ export function PageHeader({ title, subtitle, description, breadcrumbs }: PageHe
       {/* Signature Diagonal Silk Ribbon Backdrop */}
       <SilkRibbonBackdrop className="opacity-55" />
       
-      <div className="container relative z-10">
+      <div className="container max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
         <div className="max-w-4xl space-y-6">
           {/* Breadcrumbs — Minimalist */}
           {breadcrumbs && (
