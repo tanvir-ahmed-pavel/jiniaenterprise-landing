@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/config";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { VehicleDetailsModal } from "./VehicleDetailsModal";
 
 export interface Vehicle {
   id: string;
@@ -369,135 +370,10 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
       )}
 
       {/* ── Interactive Quick Specs Modal ── */}
-      <AnimatePresence>
-        {inspectVehicle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setInspectVehicle(null)}
-              className="absolute inset-0 bg-emerald-950/70 backdrop-blur-md"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.25 }}
-              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white border border-emerald-900/20 shadow-2xl z-10 scrollbar-none"
-            >
-              <button
-                onClick={() => setInspectVehicle(null)}
-                aria-label="Close modal"
-                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-
-              <div className="relative aspect-[16/9] overflow-hidden bg-emerald-950">
-                <img
-                  src={inspectVehicle.image_url || inspectVehicle.images?.[0] || "/images/hero-car.jpg"}
-                  alt={inspectVehicle.name}
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-emerald-950 via-emerald-950/30 to-transparent" />
-                <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
-                  <div>
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-400/40 text-[10px] font-black uppercase tracking-wider text-emerald-300">
-                      {inspectVehicle.category}
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-heading font-black text-white mt-1">
-                      {inspectVehicle.name}
-                    </h3>
-                  </div>
-                  {inspectVehicle.starting_price && (
-                    <div className="text-right">
-                      <span className="text-[10px] uppercase text-emerald-300/80 font-bold block">Starting From</span>
-                      <span className="text-xl sm:text-2xl font-black text-amber-300">
-                        ৳{inspectVehicle.starting_price.toLocaleString("en-BD")}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-6">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
-                    <Users className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                    <span className="text-[10px] uppercase text-gray-500 font-bold block">Capacity</span>
-                    <span className="text-xs font-black text-emerald-950">{inspectVehicle.seats} Passengers</span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
-                    <Snowflake className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                    <span className="text-[10px] uppercase text-gray-500 font-bold block">Climate</span>
-                    <span className="text-xs font-black text-emerald-950">Pre-Cooled AC</span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
-                    <ShieldCheck className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                    <span className="text-[10px] uppercase text-gray-500 font-bold block">Chauffeur</span>
-                    <span className="text-xs font-black text-emerald-950">BRTA Licensed</span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
-                    <Fuel className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                    <span className="text-[10px] uppercase text-gray-500 font-bold block">Engine / Fuel</span>
-                    <span className="text-xs font-black text-emerald-950">
-                      {inspectVehicle.engine_cc ? `${inspectVehicle.engine_cc}cc` : "Octane / Hybrid"}
-                    </span>
-                  </div>
-                </div>
-
-                {inspectVehicle.description && (
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
-                    {inspectVehicle.description}
-                  </p>
-                )}
-
-                <div className="space-y-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
-                    Available Rental Types
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {inspectVehicle.rental_types.map((type) => (
-                      <span
-                        key={type}
-                        className="px-3 py-1 rounded-xl bg-gray-100 text-gray-800 text-xs font-semibold flex items-center gap-1.5"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        {type}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                  <Link href={`/booking?vehicle=${inspectVehicle.slug || inspectVehicle.id}`} className="w-full sm:flex-1">
-                    <Button className="w-full h-12 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-white font-black uppercase tracking-wider text-xs shadow-md cursor-pointer">
-                      <span>Reserve {inspectVehicle.name}</span>
-                      <ChevronRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </Link>
-
-                  <a
-                    href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(
-                      `Hi Jinia Enterprise — I would like a quote and availability for the ${inspectVehicle.name}.`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
-                  >
-                    <Button variant="outline" className="w-full sm:w-auto h-12 px-6 rounded-xl border-emerald-300 text-emerald-950 hover:bg-emerald-50 text-xs font-bold flex items-center gap-2 cursor-pointer">
-                      <MessageSquare className="h-4 w-4 text-emerald-600" />
-                      <span>WhatsApp Quote</span>
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <VehicleDetailsModal
+        vehicle={inspectVehicle}
+        onClose={() => setInspectVehicle(null)}
+      />
     </div>
   );
 }

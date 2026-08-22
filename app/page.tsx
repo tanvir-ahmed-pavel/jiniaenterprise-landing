@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
+import { HomeFeaturedFleet } from "@/components/home/HomeFeaturedFleet";
 import { HeroBookingWidget } from "@/components/forms/HeroBookingWidget";
 import { UserJourneySection } from "@/components/home/UserJourneySection";
 import { ConciergeShowcase } from "@/components/home/ConciergeShowcase";
@@ -222,11 +223,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {featuredVehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
+            <HomeFeaturedFleet vehicles={featuredVehicles} />
           </div>
         </section>
       )}
@@ -282,44 +279,6 @@ export default async function Home() {
                 <span>{client.name}</span>
                 <span className="text-[10px] opacity-60 font-semibold lowercase">({client.type})</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════ SEO SERVICE PILLARS ════════ */}
-      <section className="py-16 sm:py-20">
-        <div className="container">
-          <div className="max-w-2xl mb-10 space-y-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-700">
-              Popular searches
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-heading font-black text-emerald-950 tracking-tight">
-              Car rental services in Dhaka.
-            </h2>
-            <p className="text-gray-600 font-medium">
-              Straight answers for chauffeur hire, airport transfers, corporate fleets, and monthly packages.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { href: "/car-rental-dhaka", label: "Car rental in Dhaka", desc: "City & outstation with driver" },
-              { href: "/car-rental-with-driver", label: "With driver", desc: "Licensed chauffeur packages" },
-              { href: "/airport-car-rental", label: "Airport transfer", desc: "DAC pickup & drop" },
-              { href: "/corporate-car-rental", label: "Corporate rental", desc: "Embassy & company fleets" },
-              { href: "/monthly-car-rental", label: "Monthly rental", desc: "Long-term commute hire" },
-              { href: "/faq", label: "FAQ", desc: "Fuel, hours, booking answers" },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group rounded-2xl border border-emerald-100 bg-white/70 p-6 hover:border-emerald-300 hover:bg-white transition-colors"
-              >
-                <p className="font-heading font-bold text-emerald-950 group-hover:text-emerald-700 transition-colors">
-                  {item.label}
-                </p>
-                <p className="mt-1 text-sm text-gray-500">{item.desc}</p>
-              </Link>
             ))}
           </div>
         </div>

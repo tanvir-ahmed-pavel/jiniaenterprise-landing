@@ -24,15 +24,15 @@ export function ExpandingFinalCTA() {
     restDelta: 0.001,
   });
 
-  // ── Bi-Directional Full-Lifecycle Expansion & Earlier Shrinking ──
-  // 1. Approaches (0 -> 0.30): Expands from 82% to 100% full viewport
-  // 2. Centered (0.30 -> 0.48): Stays 100% full-screen
-  // 3. Leaves (0.48 -> 0.80): Starts shrinking earlier back to original compact card (82%)
-  const width = useTransform(smoothProgress, [0, 0.30, 0.48, 0.80], ["82%", "100%", "100%", "82%"]);
-  const height = useTransform(smoothProgress, [0, 0.30, 0.48, 0.80], ["76%", "100%", "100%", "76%"]);
-  const borderRadius = useTransform(smoothProgress, [0, 0.30, 0.48, 0.80], [44, 0, 0, 44]);
-  const glowOpacity = useTransform(smoothProgress, [0, 0.30, 0.48, 0.80], [0.3, 1, 1, 0.3]);
-  const borderOpacity = useTransform(smoothProgress, [0, 0.20, 0.30, 0.48, 0.60, 0.80], [0.4, 0.2, 0, 0, 0.2, 0.4]);
+  // ── Scroll Expansion (No Shrinking) ──
+  // 1. Initial view (0 -> 0.06): Holds compact card size as section enters
+  // 2. Expands (0.06 -> 0.35): Expands smoothly from 82% to 100% full viewport
+  // 3. Stays Full (0.35 -> 1.0): Remains 100% full-screen without shrinking
+  const width = useTransform(smoothProgress, [0, 0.06, 0.35, 1], ["82%", "82%", "100%", "100%"]);
+  const height = useTransform(smoothProgress, [0, 0.06, 0.35, 1], ["76%", "76%", "100%", "100%"]);
+  const borderRadius = useTransform(smoothProgress, [0, 0.06, 0.35, 1], [44, 44, 0, 0]);
+  const glowOpacity = useTransform(smoothProgress, [0, 0.06, 0.35, 1], [0.3, 0.3, 1, 1]);
+  const borderOpacity = useTransform(smoothProgress, [0, 0.06, 0.24, 0.35, 1], [0.4, 0.4, 0.2, 0, 0]);
 
   return (
     <section 

@@ -188,7 +188,7 @@ export const VehicleCard = memo(function VehicleCard({
                   className="h-11 px-4 rounded-xl border border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 text-emerald-950 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5 text-emerald-700" />
-                  <span>Specs</span>
+                  <span>View Details</span>
                 </button>
               )}
             </div>
@@ -337,10 +337,10 @@ export const VehicleCard = memo(function VehicleCard({
               <button
                 type="button"
                 onClick={onQuickInspect}
-                className="h-11 px-3.5 rounded-xl border border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 text-emerald-950 text-xs font-bold flex items-center gap-1 transition-all duration-200 cursor-pointer"
+                className="h-11 px-3.5 rounded-xl border border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 text-emerald-950 text-xs font-bold flex items-center gap-1.5 transition-all duration-200 cursor-pointer"
               >
                 <Eye className="h-3.5 w-3.5 text-emerald-700" />
-                <span>Specs</span>
+                <span>View Details</span>
               </button>
             )}
           </div>

@@ -14,6 +14,7 @@ import {
   Car,
   CheckCircle2,
   ArrowLeft,
+  CalendarClock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -60,10 +61,34 @@ const conciergePackages: ConciergePackage[] = [
     statusBadge: "Live Radar Tracking",
   },
   {
-    id: "corporate",
+    id: "monthly",
     number: "02",
+    title: "Monthly & Expat Retainer",
+    badge: "30-Day+ Dedicated Contract",
+    icon: CalendarClock,
+    image: "/images/concierge/monthly-contract.jpg",
+    tagline: "Dedicated vehicle and full-time chauffeur without fleet ownership hassles.",
+    quickSummary: "Assigned vetted chauffeur, complete vehicle maintenance & fitness handled, instant replacement vehicle backup, and consolidated monthly VAT invoicing.",
+    steps: [
+      "1. Assigned Dedicated Vetted Driver",
+      "2. Instant SLA Replacement Backup Car",
+      "3. Consolidated Monthly VAT Invoice",
+    ],
+    metrics: [
+      { label: "Contract", value: "Monthly / Yearly" },
+      { label: "Backup SLA", value: "Guaranteed Car" },
+      { label: "Maintenance", value: "100% Covered" },
+      { label: "Billing", value: "Monthly VAT Bill" },
+    ],
+    fleet: "Premio · Allion · Corolla Cross · Harrier · Alphard",
+    pricingHint: "Custom Monthly Package",
+    statusBadge: "Dedicated Driver & Car",
+  },
+  {
+    id: "corporate",
+    number: "03",
     title: "Executive Daily Chauffeur",
-    badge: "10–12 Hr Dedicated Retainer",
+    badge: "10–12 Hr Dedicated Daily",
     icon: Briefcase,
     image: "/images/concierge/corporate-chauffeur.jpg",
     tagline: "One dedicated driver. One luxury car. Your whole workday.",
@@ -71,21 +96,21 @@ const conciergePackages: ConciergePackage[] = [
     steps: [
       "1. Morning Chauffeur Standby at Residence",
       "2. Unlimited Multi-Stop City & EPZ Routing",
-      "3. Evening Return with Single Monthly VAT Bill",
+      "3. Evening Return with Hassle-Free Bill",
     ],
     metrics: [
       { label: "Availability", value: "10–12 Hr Standby" },
       { label: "Routing", value: "Dhaka & Factory EPZ" },
       { label: "Chauffeur", value: "BRTA Licensed" },
-      { label: "Billing", value: "Monthly VAT Invoice" },
+      { label: "Billing", value: "Daily / Weekly" },
     ],
     fleet: "Premio Executive · Corolla Cross · Harrier · Hiace",
-    pricingHint: "Daily & Monthly Packages",
+    pricingHint: "Daily & Outstation Rates",
     statusBadge: "100% Dedicated Standby",
   },
   {
     id: "delegation",
-    number: "03",
+    number: "04",
     title: "Embassy & Delegation Convoys",
     badge: "Multi-Vehicle Protocol",
     icon: ShieldAlert,
@@ -195,10 +220,10 @@ export function ConciergeShowcase() {
                 <span>Flagship Solutions</span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-tight">
-                Three Ways We <span className="text-gradient-emerald">Move Dhaka.</span>
+                How We <span className="text-gradient-emerald">Move Dhaka.</span>
               </h2>
               <p className="text-sm sm:text-base text-gray-600 font-medium">
-                Curated chauffeur protocols designed for airport arrivals, corporate workdays, and diplomatic delegations.
+                Curated chauffeur protocols for airport VIPs, monthly expat contracts, corporate workdays, and diplomatic delegations.
               </p>
             </div>
 
