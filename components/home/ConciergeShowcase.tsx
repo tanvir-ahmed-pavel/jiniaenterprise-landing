@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Plane,
   Briefcase,
@@ -11,10 +12,7 @@ import {
   ShieldCheck,
   MessageSquare,
   ChevronRight,
-  Car,
-  CheckCircle2,
   ArrowLeft,
-  CalendarClock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -61,34 +59,10 @@ const conciergePackages: ConciergePackage[] = [
     statusBadge: "Live Radar Tracking",
   },
   {
-    id: "monthly",
-    number: "02",
-    title: "Monthly & Expat Retainer",
-    badge: "30-Day+ Dedicated Contract",
-    icon: CalendarClock,
-    image: "/images/concierge/monthly-contract.jpg",
-    tagline: "Dedicated vehicle and full-time chauffeur without fleet ownership hassles.",
-    quickSummary: "Assigned vetted chauffeur, complete vehicle maintenance & fitness handled, instant replacement vehicle backup, and consolidated monthly VAT invoicing.",
-    steps: [
-      "1. Assigned Dedicated Vetted Driver",
-      "2. Instant SLA Replacement Backup Car",
-      "3. Consolidated Monthly VAT Invoice",
-    ],
-    metrics: [
-      { label: "Contract", value: "Monthly / Yearly" },
-      { label: "Backup SLA", value: "Guaranteed Car" },
-      { label: "Maintenance", value: "100% Covered" },
-      { label: "Billing", value: "Monthly VAT Bill" },
-    ],
-    fleet: "Premio · Allion · Corolla Cross · Harrier · Alphard",
-    pricingHint: "Custom Monthly Package",
-    statusBadge: "Dedicated Driver & Car",
-  },
-  {
     id: "corporate",
-    number: "03",
+    number: "02",
     title: "Executive Daily Chauffeur",
-    badge: "10–12 Hr Dedicated Daily",
+    badge: "10–12 Hr Dedicated Retainer",
     icon: Briefcase,
     image: "/images/concierge/corporate-chauffeur.jpg",
     tagline: "One dedicated driver. One luxury car. Your whole workday.",
@@ -96,21 +70,21 @@ const conciergePackages: ConciergePackage[] = [
     steps: [
       "1. Morning Chauffeur Standby at Residence",
       "2. Unlimited Multi-Stop City & EPZ Routing",
-      "3. Evening Return with Hassle-Free Bill",
+      "3. Evening Return with Single Monthly VAT Bill",
     ],
     metrics: [
       { label: "Availability", value: "10–12 Hr Standby" },
       { label: "Routing", value: "Dhaka & Factory EPZ" },
       { label: "Chauffeur", value: "BRTA Licensed" },
-      { label: "Billing", value: "Daily / Weekly" },
+      { label: "Billing", value: "Monthly VAT Invoice" },
     ],
     fleet: "Premio Executive · Corolla Cross · Harrier · Hiace",
-    pricingHint: "Daily & Outstation Rates",
+    pricingHint: "Daily & Monthly Packages",
     statusBadge: "100% Dedicated Standby",
   },
   {
     id: "delegation",
-    number: "04",
+    number: "03",
     title: "Embassy & Delegation Convoys",
     badge: "Multi-Vehicle Protocol",
     icon: ShieldAlert,
@@ -215,21 +189,18 @@ export function ConciergeShowcase() {
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-2 border-b border-emerald-900/10">
             <div className="max-w-2xl space-y-2.5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-800 bg-emerald-100/80 border border-emerald-200/80 shadow-2xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium uppercase tracking-[0.08em] text-emerald-800 bg-emerald-100/80 border border-emerald-200/80 shadow-2xs">
                 <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                <span>Flagship Solutions</span>
+                <span>Services</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-tight">
-                How We <span className="text-gradient-emerald">Move Dhaka.</span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-medium text-emerald-950 tracking-tight leading-tight">
+                Choose your kind of ride.
               </h2>
-              <p className="text-sm sm:text-base text-gray-600 font-medium">
-                Curated chauffeur protocols for airport VIPs, monthly expat contracts, corporate workdays, and diplomatic delegations.
-              </p>
             </div>
 
             {/* Navigation Controls */}
             <div className="flex items-center gap-3 self-end md:self-auto">
-              <span className="text-xs font-black text-emerald-900/60 tracking-widest tabular-nums px-2">
+              <span className="text-xs font-medium text-emerald-900/60 tracking-widest tabular-nums px-2">
                 0{activeIndex + 1} / 0{conciergePackages.length}
               </span>
               <div className="flex items-center gap-2">
@@ -270,74 +241,55 @@ export function ConciergeShowcase() {
                 onClick={() => scrollToCard(idx)}
                 style={{ scrollSnapAlign: "center" }}
                 className={cn(
-                  "w-[90vw] sm:w-[580px] md:w-[720px] lg:w-[860px] xl:w-[940px] shrink-0 rounded-3xl overflow-hidden border transition-all duration-500 cursor-pointer snap-center relative shadow-xl grid md:grid-cols-12",
+                  "w-[90vw] sm:w-[580px] md:w-[720px] lg:w-[860px] xl:w-[940px] shrink-0 rounded-3xl overflow-hidden border transition-all duration-500 cursor-pointer snap-center relative shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] grid md:grid-cols-12",
                   isActive
                     ? "border-emerald-500/60 bg-emerald-950 text-white shadow-[0_24px_60px_-15px_rgba(2,24,16,0.65)] scale-[1.0] opacity-100 ring-2 ring-emerald-400/25"
                     : "border-emerald-900/40 bg-emerald-950/85 text-white/80 scale-[0.98] opacity-75 hover:opacity-95"
                 )}
               >
                 {/* Left (60%): Clean Specs & Guided Timeline */}
-                <div className="md:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between space-y-6 relative z-10">
+                <div className="order-2 md:order-1 md:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between space-y-6 relative z-10">
                   <div className="space-y-4">
                     {/* Badge Strip */}
                     <div className="flex flex-wrap items-center gap-2.5">
-                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300 flex items-center gap-1.5">
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-300 flex items-center gap-1.5">
                         <PkgIcon className="h-3.5 w-3.5" />
                         {pkg.badge}
                       </span>
-                      <span className="text-xs font-semibold text-emerald-200/60">•</span>
-                      <span className="text-xs font-bold text-amber-300">{pkg.pricingHint}</span>
+                      <span className="text-xs font-normal text-emerald-200/60">•</span>
+                      <span className="text-xs font-medium text-amber-300">{pkg.pricingHint}</span>
                     </div>
 
                     {/* Title & Tagline */}
                     <div>
-                      <h3 className="text-2xl sm:text-3xl font-heading font-black text-white leading-tight">
+                      <h3 className="text-2xl sm:text-3xl font-heading font-medium text-white leading-tight">
                         {pkg.title}
                       </h3>
-                      <p className="mt-1.5 text-xs sm:text-sm font-semibold text-emerald-100/90 leading-relaxed">
+                      <p className="mt-1.5 text-xs sm:text-sm font-normal text-emerald-100/90 leading-relaxed">
                         {pkg.tagline}
                       </p>
                     </div>
 
-                    {/* Step-by-Step Flow (Clear Guidance) */}
-                    <div className="p-3.5 rounded-2xl bg-white/5 border border-white/8 space-y-1.5">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-1">
-                        How It Works
-                      </p>
-                      {pkg.steps.map((step, sIdx) => (
-                        <div key={sIdx} className="flex items-center gap-2 text-xs text-emerald-100/85 font-medium">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                          <span className="truncate">{step}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* 4 Clean Specs Chips */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-white/10">
-                      {pkg.metrics.map((m) => (
+                    {/* Three proof points keep the service scannable. */}
+                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/10">
+                      {pkg.metrics.slice(0, 3).map((m) => (
                         <div key={m.label} className="p-2 rounded-xl bg-white/5 border border-white/6 text-center">
-                          <span className="text-[8px] uppercase tracking-widest text-emerald-300/80 font-bold block">
+                          <span className="text-[8px] uppercase tracking-widest text-emerald-300/80 font-medium block">
                             {m.label}
                           </span>
-                          <span className="text-xs font-bold text-white block mt-0.5 truncate">
+                          <span className="text-xs font-medium text-white block mt-0.5 truncate">
                             {m.value}
                           </span>
                         </div>
                       ))}
                     </div>
 
-                    {/* Dedicated Fleet Line */}
-                    <div className="text-xs text-emerald-200/75 flex items-center gap-1.5">
-                      <Car className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                      <span className="font-semibold text-white/90">Dedicated Fleet:</span>
-                      <span className="truncate">{pkg.fleet}</span>
-                    </div>
                   </div>
 
                   {/* Actions */}
                   <div className="pt-2 flex items-center gap-3">
                     <Link href={`/booking?type=${pkg.id}`} className="flex-1">
-                      <Button className="w-full h-11 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-md transition-all cursor-pointer">
+                      <Button className="w-full h-11 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 font-medium uppercase tracking-wider text-xs shadow-[0_6px_18px_-14px_rgba(6,52,38,.30)] transition-all cursor-pointer">
                         Reserve Solution
                         <ChevronRight className="ml-1 h-3.5 w-3.5" />
                       </Button>
@@ -349,7 +301,7 @@ export function ConciergeShowcase() {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="h-11 px-4 rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
+                      className="h-11 px-4 rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 text-xs font-medium flex items-center gap-1.5 transition-colors shrink-0"
                     >
                       <MessageSquare className="h-4 w-4 text-emerald-400" />
                       <span>WhatsApp</span>
@@ -358,27 +310,29 @@ export function ConciergeShowcase() {
                 </div>
 
                 {/* Right (40%): Cinematic Image Showcase */}
-                <div className="md:col-span-5 relative min-h-[260px] md:min-h-[440px] bg-emerald-900/40 overflow-hidden">
-                  <img
+                <div className="order-1 md:order-2 md:col-span-5 relative min-h-[240px] md:min-h-[440px] bg-emerald-900/40 overflow-hidden">
+                  <Image
                     src={pkg.image}
                     alt={pkg.title}
+                    fill
+                    sizes="(max-width: 768px) 90vw, 40vw"
                     className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-emerald-950 via-emerald-950/20 to-transparent md:bg-linear-to-l md:from-transparent md:to-emerald-950/90" />
                   
                   {/* Floating Status Badge */}
-                  <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-emerald-950/85 backdrop-blur-md border border-emerald-400/30 text-[10px] font-bold text-emerald-300 flex items-center gap-2 shadow-lg">
+                  <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-emerald-950/85 backdrop-blur-md border border-emerald-400/30 text-[10px] font-medium text-emerald-300 flex items-center gap-2 shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)]">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>{pkg.statusBadge}</span>
                   </div>
 
                   {/* Bottom Assurance */}
                   <div className="absolute bottom-4 left-4 right-4 z-10 p-3 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-between text-xs text-white/90">
-                    <span className="flex items-center gap-1.5 font-bold text-emerald-300">
+                    <span className="flex items-center gap-1.5 font-medium text-emerald-300">
                       <ShieldCheck className="h-4 w-4" />
                       BRTA Licensed Driver
                     </span>
-                    <span className="text-[10px] font-semibold text-white/60">Fixed Rate</span>
+                    <span className="text-[10px] font-normal text-white/60">Fixed Rate</span>
                   </div>
                 </div>
               </div>
@@ -395,13 +349,13 @@ export function ConciergeShowcase() {
                 onClick={() => scrollToCard(i)}
                 aria-label={`Go to ${pkg.title}`}
                 className={cn(
-                  "px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 cursor-pointer flex items-center gap-2",
+                  "px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer flex items-center gap-2",
                   i === activeIndex
-                    ? "bg-emerald-900 text-white shadow-md shadow-emerald-900/20 ring-1 ring-emerald-500"
+                    ? "bg-emerald-900 text-white shadow-[0_6px_18px_-14px_rgba(6,52,38,.30)] shadow-emerald-900/20 ring-1 ring-emerald-500"
                     : "bg-emerald-900/10 text-emerald-950/60 hover:bg-emerald-900/20"
                 )}
               >
-                <span className="text-[10px] font-black text-emerald-500">{pkg.number}</span>
+                <span className="text-[10px] font-medium text-emerald-500">{pkg.number}</span>
                 <span>{pkg.title}</span>
               </button>
             ))}

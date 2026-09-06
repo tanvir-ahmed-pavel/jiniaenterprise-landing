@@ -89,8 +89,7 @@ export default function RootLayout({
             <div
               className="fixed inset-0 pointer-events-none -z-10"
               style={{
-                background:
-                  "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(167,243,208,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 30%, rgba(153,246,228,0.2) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 80%, rgba(167,243,208,0.15) 0%, transparent 50%), hsl(145, 20%, 96%)",
+                background: "#ffffff",
               }}
             />
           }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Sparkles, Users, Fuel, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { orderVehicleImages } from "@/lib/vehicles/images";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Vehicle {
@@ -55,16 +56,16 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
   if (featured.length < 2) return null;
 
   const vehicle = featured[index];
-  const image = vehicle.images?.[0] || vehicle.image_url || "";
+  const image = orderVehicleImages(vehicle.images, vehicle.image_url)[0] || "";
 
   return (
     <section className="w-full bg-[#0a0f0c] overflow-hidden mb-20">
       {/* Top label row */}
       <div className="flex items-center justify-between px-8 md:px-20 py-6 border-b border-white/8">
-        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400">
+        <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-400">
           Flagship Collection
         </span>
-        <span className="text-[10px] font-semibold text-white/25 tabular-nums">
+        <span className="text-[10px] font-normal text-white/25 tabular-nums">
           {String(index + 1).padStart(2, "0")} / {String(featured.length).padStart(2, "0")}
         </span>
       </div>
@@ -86,14 +87,14 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
               className="space-y-7"
             >
               {/* Category */}
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-400 flex items-center gap-2">
+              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-amber-400 flex items-center gap-2">
                 <Sparkles className="h-3 w-3" />
                 {vehicle.category}
               </span>
 
               {/* Name */}
               <div>
-                <h2 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-white leading-[1.05] tracking-tight">
+                <h2 className="text-4xl md:text-5xl xl:text-6xl font-heading font-medium text-white leading-[1.05] tracking-tight">
                   {vehicle.name}
                 </h2>
                 <p className="mt-3 text-sm text-white/45 leading-relaxed max-w-sm">
@@ -104,19 +105,25 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
               {/* Specs */}
               <div className="flex items-center gap-8 py-5 border-y border-white/8">
                 <div>
-                  <span className="text-2xl font-heading font-black text-white">{vehicle.seats}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4 text-emerald-400" />
+                    <span className="text-2xl font-heading font-medium text-white">{vehicle.seats}</span>
+                  </div>
                   <span className="text-[9px] uppercase tracking-widest text-white/30 font-medium block mt-0.5">Seats</span>
                 </div>
                 {vehicle.engine_cc && (
                   <div>
-                    <span className="text-2xl font-heading font-black text-white">{vehicle.engine_cc}</span>
+                    <div className="flex items-center gap-1.5">
+                      <Fuel className="h-4 w-4 text-emerald-400" />
+                      <span className="text-2xl font-heading font-medium text-white">{vehicle.engine_cc}</span>
+                    </div>
                     <span className="text-[9px] uppercase tracking-widest text-white/30 font-medium block mt-0.5">CC</span>
                   </div>
                 )}
                 {vehicle.starting_price && (
                   <div>
                     <span className="text-[9px] uppercase tracking-widest text-amber-400/60 font-medium block mb-0.5">From</span>
-                    <span className="text-2xl font-heading font-black text-white">
+                    <span className="text-2xl font-heading font-medium text-white">
                       {formatPrice(vehicle.starting_price)}
                       <span className="text-xs text-white/30 font-medium ml-1">/{vehicle.price_label || "day"}</span>
                     </span>
@@ -128,13 +135,13 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
               <div className="flex items-center gap-3">
                 <Link
                   href={`/booking?vehicle=${vehicle.slug}`}
-                  className="h-11 px-6 rounded-xl bg-white text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:bg-emerald-50 transition-colors shadow-lg"
+                  className="h-11 px-6 rounded-xl bg-white text-emerald-950 text-xs font-medium uppercase tracking-wider flex items-center gap-2 hover:bg-emerald-50 transition-colors shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)]"
                 >
                   Reserve
                 </Link>
                 <Link
                   href={`/vehicles/${vehicle.slug}`}
-                  className="h-11 px-4 rounded-xl border border-white/12 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-white/6 transition-colors group/btn"
+                  className="h-11 px-4 rounded-xl border border-white/12 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-white/6 transition-colors group/btn"
                 >
                   View details
                   <ArrowRight className="h-3.5 w-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
@@ -170,7 +177,7 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
                   src={image}
                   alt={vehicle.name}
                   fill
-                  className="object-contain drop-shadow-2xl"
+                  className="object-contain drop-shadow-[0_24px_60px_-40px_rgba(6,52,38,.45)]"
                   priority
                 />
               ) : (

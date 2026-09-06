@@ -34,7 +34,7 @@ export default function GlossaryPage() {
             id={d.slug}
             className="rounded-2xl border border-emerald-100 bg-white/70 p-6 scroll-mt-28"
           >
-            <h2 className="text-xl font-heading font-black text-emerald-950">
+            <h2 className="text-xl font-heading font-medium text-emerald-950">
               {d.term}
             </h2>
             <p className="mt-2 text-gray-700 font-medium leading-relaxed">

@@ -27,11 +27,11 @@ export default function CompareIndexPage() {
             href={`/compare/${c.slug}`}
             className="rounded-3xl border border-emerald-100 bg-white/70 p-6 hover:border-emerald-300 transition-colors group"
           >
-            <h2 className="text-lg font-heading font-black text-emerald-950 group-hover:text-emerald-700">
+            <h2 className="text-lg font-heading font-medium text-emerald-950 group-hover:text-emerald-700">
               {c.title}
             </h2>
             <p className="mt-2 text-sm text-gray-600 line-clamp-3">{c.answer}</p>
-            <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-emerald-800">
+            <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-emerald-800">
               Open comparison <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </Link>

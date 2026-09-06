@@ -41,7 +41,7 @@ export default function ReviewsPage() {
       updatedAt="2026-08-21"
     >
       <section className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-6 space-y-3">
-        <h2 className="text-lg font-heading font-black text-emerald-950">
+        <h2 className="text-lg font-heading font-medium text-emerald-950">
           Leave a note after your ride
         </h2>
         <p className="text-sm text-gray-600">
@@ -53,7 +53,7 @@ export default function ReviewsPage() {
           )}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex text-sm font-bold text-emerald-800 hover:text-emerald-600"
+          className="inline-flex text-sm font-medium text-emerald-800 hover:text-emerald-600"
         >
           WhatsApp feedback →
         </a>

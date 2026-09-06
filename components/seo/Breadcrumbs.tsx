@@ -41,14 +41,14 @@ export function Breadcrumbs({
                 {isLast ? (
                   <span
                     aria-current="page"
-                    className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700"
+                    className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-700"
                   >
                     {item.name}
                   </span>
                 ) : (
                   <Link
                     href={item.path}
-                    className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-900/50 hover:text-emerald-700 transition-colors"
+                    className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-900/50 hover:text-emerald-700 transition-colors"
                   >
                     {item.name}
                   </Link>

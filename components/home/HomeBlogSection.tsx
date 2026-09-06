@@ -54,11 +54,11 @@ export async function HomeBlogSection() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-emerald-900/10 pb-4">
           <div className="max-w-2xl space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-800 bg-emerald-100/80 border border-emerald-200/80 shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium uppercase tracking-[0.08em] text-emerald-800 bg-emerald-100/80 border border-emerald-200/80 shadow-2xs">
               <BookOpen className="h-3.5 w-3.5 text-emerald-600" />
               <span>The Journal & Travel Guides</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-medium text-emerald-950 tracking-tight leading-tight">
               Latest Insights & <span className="text-gradient-emerald">Rental Guides.</span>
             </h2>
             <p className="text-sm sm:text-base text-gray-600 font-medium">
@@ -69,7 +69,7 @@ export async function HomeBlogSection() {
           <Link href="/blog" className="shrink-0">
             <Button
               variant="outline"
-              className="h-11 px-5 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider shadow-2xs"
+              className="h-11 px-5 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-medium text-xs uppercase tracking-wider shadow-2xs"
             >
               <span>Explore All Guides</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -98,7 +98,7 @@ export async function HomeBlogSection() {
               <div className="p-6 flex flex-col flex-1 justify-between gap-4">
                 <div className="space-y-3">
                   {/* Meta Strip */}
-                  <div className="flex items-center gap-3 text-xs font-semibold text-emerald-700">
+                  <div className="flex items-center gap-3 text-xs font-normal text-emerald-700">
                     <span className="flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5" />
                       {formatDate(post.created_at)}
@@ -112,7 +112,7 @@ export async function HomeBlogSection() {
 
                   {/* Title */}
                   <Link href={`/blog/${post.slug}`} className="block focus:outline-none">
-                    <h3 className="text-lg sm:text-xl font-heading font-black text-emerald-950 group-hover/blog:text-emerald-700 transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-lg sm:text-xl font-heading font-medium text-emerald-950 group-hover/blog:text-emerald-700 transition-colors line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
                   </Link>
@@ -127,12 +127,12 @@ export async function HomeBlogSection() {
                 <div className="pt-3 border-t border-emerald-900/10 flex items-center justify-between">
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-900 group-hover/blog:text-emerald-700 focus:outline-none"
+                    className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-emerald-900 group-hover/blog:text-emerald-700 focus:outline-none"
                   >
                     <span>Read Article</span>
                     <ArrowRight className="h-3.5 w-3.5 group-hover/blog:translate-x-1 transition-transform" />
                   </Link>
-                  <span className="text-[11px] font-semibold text-gray-400">By {post.author || "Jinia"}</span>
+                  <span className="text-[11px] font-normal text-gray-400">By {post.author || "Jinia"}</span>
                 </div>
               </div>
             </article>

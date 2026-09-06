@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, Clock, ArrowRight, User, MousePointer2 } from "lucide-react";
+import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
-import { cn } from "@/lib/utils";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -63,8 +61,7 @@ export default async function BlogPage() {
   };
 
   return (
-    <div className="pb-24 relative overflow-hidden">
-      <SilkRibbonBackdrop className="opacity-45" />
+    <div className="pb-24">
 
       <PageHeader 
         title="The Journal."
@@ -75,35 +72,40 @@ export default async function BlogPage() {
 
       <div className="container">
         {publishedPosts.length === 0 ? (
-          <div className="text-center py-32">
-            <div className="glass-card p-16 max-w-2xl mx-auto space-y-6">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-600">Pending Update</span>
-              <p className="text-gray-500 text-lg font-medium leading-relaxed italic">
-                Our latest travel narratives are being curated. <br /> Check back soon for fresh insights.
-              </p>
-              <Link href="/">
-                <Button variant="outline" className="h-14 px-10 rounded-2xl border-green-100 text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px]">
-                  Return to Home
-                </Button>
+          <div className="mx-auto max-w-xl py-28 text-center">
+            <p className="flex items-center justify-center gap-3 type-label text-emerald-700">
+              <span aria-hidden className="h-px w-6 shrink-0 bg-amber-400" />
+              Nothing published yet
+            </p>
+            <p className="mt-6 text-base leading-relaxed text-emerald-950/60 sm:text-lg">
+              We are writing the first guides now. In the meantime, the desk answers questions
+              directly.
+            </p>
+            <div className="mt-9 flex justify-center gap-3">
+              <Link
+                href="/booking"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-emerald-950 px-7 text-sm font-medium text-white transition-colors hover:bg-emerald-800"
+              >
+                Request a vehicle
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-emerald-950/15 px-7 text-sm font-medium text-emerald-950 transition-colors hover:border-amber-400"
+              >
+                Back home
               </Link>
             </div>
           </div>
         ) : (
           <>
-            {/* Featured Post — Cinematic Glass Card */}
+            {/* Lead story */}
             {featuredPost && (
               <section className="mb-24">
-                <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
-                  <div className="space-y-4">
-                    <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">The Spotlight</span>
-                    <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 italic">Featured <span className="text-green-500/40">Story.</span></h2>
-                  </div>
-                </div>
+                <p className="mb-6 text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">Featured reading</p>
 
                 <Link href={`/blog/${featuredPost.slug}`} className="group block">
-                  <div className="glass-card overflow-hidden bg-white/40 border-white/60">
-                    <div className="grid lg:grid-cols-2">
-                      <div className="aspect-video lg:aspect-auto bg-green-50 relative overflow-hidden h-[400px] lg:h-[500px]">
+                  <div className="grid overflow-hidden border-y border-emerald-950/15 bg-white lg:grid-cols-2">
+                      <div className="relative h-[320px] overflow-hidden bg-[#fbfcfa] lg:h-[500px]">
                         {featuredPost.cover_image ? (
                           <img
                             src={featuredPost.cover_image}
@@ -111,13 +113,13 @@ export default async function BlogPage() {
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[10rem] grayscale opacity-10">📰</div>
+                          <div className="flex h-full w-full items-center justify-center text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-950/30">Jinia Journal</div>
                         )}
                         <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
                       </div>
                       
-                      <div className="p-10 md:p-16 flex flex-col justify-center space-y-8">
-                        <div className="flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-green-600">
+                      <div className="flex flex-col justify-center space-y-8 p-8 sm:p-10 md:p-14">
+                        <div className="flex flex-wrap items-center gap-5 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-700">
                           <span className="flex items-center gap-2">
                             <Calendar className="h-3 w-3" />
                             {formatDate(featuredPost.created_at)}
@@ -128,26 +130,20 @@ export default async function BlogPage() {
                           </span>
                         </div>
 
-                        <h3 className="text-3xl md:text-5xl font-heading font-black text-green-950 leading-tight italic group-hover:text-green-600 transition-colors duration-500">
-                          {featuredPost.title}.
+                        <h3 className="text-3xl md:text-5xl font-heading font-medium text-emerald-950 leading-tight group-hover:text-emerald-600 transition-colors duration-500">
+                          {featuredPost.title}
                         </h3>
                         
-                        <p className="text-lg text-gray-500 font-medium leading-relaxed line-clamp-3">
+                        <p className="text-base sm:text-lg text-emerald-950/60 font-medium leading-relaxed line-clamp-3">
                           {featuredPost.excerpt}
                         </p>
 
-                        <div className="pt-4 flex items-center justify-between border-t border-black/[0.05]">
-                          <span className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-green-950">
-                            <span className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-[10px]">
-                                {featuredPost.author.charAt(0)}
-                            </span>
-                            {featuredPost.author}
-                          </span>
-                          <span className="text-green-700 font-black uppercase text-[10px] tracking-[0.2em] flex items-center gap-3 group-hover:gap-5 transition-all duration-500">
-                            Unfold Story <ArrowRight className="h-4 w-4" />
+                        <div className="flex items-center justify-between border-t border-emerald-950/10 pt-5">
+                          <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">By {featuredPost.author}</span>
+                          <span className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950 transition-colors group-hover:text-emerald-600">
+                            Read story <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                           </span>
                         </div>
-                      </div>
                     </div>
                   </div>
                 </Link>
@@ -157,18 +153,13 @@ export default async function BlogPage() {
             {/* Other Posts Grid — Dynamic Bento Layout */}
             {otherPosts.length > 0 && (
               <section className="mb-32">
-                <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
-                  <div className="space-y-4">
-                    <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em] italic">Latest Narratives</span>
-                    <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 italic">Recent <span className="text-green-500/40">Articles.</span></h2>
-                  </div>
-                </div>
+                <div className="mb-10 border-b border-emerald-950/15 pb-5"><p className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">More from the journal</p></div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {otherPosts.map((post, idx) => (
                     <Link key={post.id} href={`/blog/${post.slug}`} className="group h-full">
-                      <div className="glass-card flex flex-col h-full bg-white/40 border-white/60 overflow-hidden hover:-translate-y-2 transition-all duration-500" style={{ transitionDelay: `${idx * 0.05}s` }}>
-                        <div className="aspect-[16/10] bg-green-50 relative overflow-hidden">
+                      <div className="flex h-full flex-col overflow-hidden border border-emerald-950/15 bg-white transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-emerald-950/35" style={{ transitionDelay: `${idx * 0.05}s` }}>
+                        <div className="relative aspect-[16/10] overflow-hidden bg-[#fbfcfa]">
                           {post.cover_image ? (
                             <img
                               src={post.cover_image}
@@ -176,31 +167,31 @@ export default async function BlogPage() {
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-6xl grayscale opacity-10">📄</div>
+                            <div className="flex h-full w-full items-center justify-center text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-950/30">Jinia Journal</div>
                           )}
-                          <div className="absolute top-4 left-4">
-                            <span className="px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest text-green-950 border border-white/40">
+                          <div className="absolute left-4 top-4">
+                            <span className="border-l-2 border-amber-400 bg-white/90 py-1 pl-2.5 pr-3 text-[9px] font-medium uppercase tracking-[0.05em] text-emerald-950">
                               {formatDate(post.created_at)}
                             </span>
                           </div>
                         </div>
                         
-                        <div className="p-8 flex-1 flex flex-col gap-6">
+                        <div className="flex flex-1 flex-col gap-6 p-6">
                             <div className="space-y-3">
-                                <h3 className="text-2xl font-heading font-black text-green-950 italic leading-tight group-hover:text-green-600 transition-colors">
+                                <h3 className="text-2xl font-heading font-medium text-emerald-950 leading-tight group-hover:text-emerald-600 transition-colors">
                                     {post.title}
                                 </h3>
-                                <p className="text-sm text-gray-500 font-medium leading-relaxed line-clamp-3">
+                                <p className="text-sm text-emerald-950/60 font-medium leading-relaxed line-clamp-3">
                                     {post.excerpt}
                                 </p>
                             </div>
 
-                            <div className="mt-auto pt-6 border-t border-black/[0.03] flex items-center justify-between">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
+                            <div className="mt-auto flex items-center justify-between border-t border-emerald-950/10 pt-5">
+                                <span className="flex items-center gap-2 text-[9px] font-medium uppercase tracking-[0.05em] text-emerald-950/45">
                                     <Clock className="h-3 w-3" /> {getReadingTime(post.content)} Min
                                 </span>
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-950 group-hover:text-green-600 flex items-center gap-2 transition-all">
-                                    Full Story <ArrowRight className="h-3 w-3" />
+                                <span className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950 transition-colors group-hover:text-emerald-600">
+                                    Read <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                                 </span>
                             </div>
                         </div>
@@ -213,27 +204,22 @@ export default async function BlogPage() {
           </>
         )}
 
-        {/* Cinematic CTA — Artistic Layout */}
-        <section className="relative glass-dark p-12 md:p-24 text-center overflow-hidden rounded-[3rem] sm:rounded-[4rem]">
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-            <span className="text-[20rem] font-heading font-black italic whitespace-nowrap">FLEET</span>
-          </div>
-
-          <div className="relative z-10 max-w-2xl mx-auto space-y-10">
-            <h2 className="text-3xl md:text-6xl font-heading font-black text-white italic leading-tight">
-              Ready for Your <br /> <span className="text-green-400">Next Destination?</span>
+        <section className="border-l-2 border-amber-400 bg-emerald-950 px-8 py-14 text-center text-white md:px-16 md:py-20">
+          <div className="mx-auto max-w-2xl space-y-8">
+            <h2 className="text-3xl md:text-5xl font-heading font-medium leading-tight">
+              Ready for your next destination?
             </h2>
-            <p className="text-white/50 font-medium text-lg leading-relaxed italic">
+            <p className="text-white/65 font-medium text-base leading-relaxed">
                 Experience the gold standard of concierge mobility in Bangladesh. Our fleet is ready when you are.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
               <Link href="/vehicles">
-                <Button size="lg" className="h-16 px-10 rounded-2xl bg-white text-green-950 hover:bg-green-50 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl">
+                <Button size="lg" className="h-12 px-7 rounded-lg bg-white text-emerald-950 hover:bg-emerald-50 font-medium uppercase tracking-[0.05em] text-[10px]">
                     Explore The Fleet
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] text-[10px]">
+                <Button size="lg" variant="outline" className="h-12 px-7 rounded-lg border-white/30 text-white hover:bg-white/10 font-medium uppercase tracking-[0.05em] text-[10px]">
                     Consult Concierge
                 </Button>
               </Link>

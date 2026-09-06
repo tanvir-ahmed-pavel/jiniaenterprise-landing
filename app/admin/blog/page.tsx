@@ -22,6 +22,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   author: string;
+  cover_image?: string | null;
   is_published: boolean;
   created_at: string;
 }
@@ -54,6 +55,7 @@ export default function BlogListPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
+    const targetPost = posts.find((p) => p.id === id);
     const supabase = createClient();
     const { error } = await supabase.from("blog_posts").delete().eq("id", id);
 
@@ -62,6 +64,15 @@ export default function BlogListPage() {
       alert("Failed to delete post");
     } else {
       setPosts(posts.filter((p) => p.id !== id));
+
+      // Clean up cover image from S3 if present
+      if (targetPost?.cover_image) {
+        fetch("/api/admin/upload", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: targetPost.cover_image }),
+        }).catch((err) => console.warn("Failed to delete blog cover from S3:", err));
+      }
     }
   };
 

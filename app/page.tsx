@@ -1,43 +1,22 @@
-import React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CarFront, Clock3, MessageSquare, Plane, ShieldCheck } from "lucide-react";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
-import { HomeFeaturedFleet } from "@/components/home/HomeFeaturedFleet";
-import { HeroBookingWidget } from "@/components/forms/HeroBookingWidget";
-import { UserJourneySection } from "@/components/home/UserJourneySection";
-import { ConciergeShowcase } from "@/components/home/ConciergeShowcase";
-import { ProtocolSpotlight } from "@/components/home/ProtocolSpotlight";
-import { ExpandingFinalCTA } from "@/components/home/ExpandingFinalCTA";
-import { HomeBlogSection } from "@/components/home/HomeBlogSection";
-import { SilkyHeroCanvas } from "@/components/home/SilkyHeroCanvas";
-import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
-import {
-  siteConfig,
-  corporateClients,
-} from "@/lib/config";
+import { BookingRail } from "@/components/forms/BookingRail";
+import { clientTestimonials, corporateClients, siteConfig } from "@/lib/config";
+import { clientService } from "@/lib/supabase/admin-service";
 import { createClient } from "@/lib/supabase/server";
 import { createMetadata } from "@/lib/seo/metadata";
-import {
-  Phone,
-  Calendar,
-  MessageSquare,
-  ArrowRight,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { SilkBackground } from "@/components/SilkBackground";
+import { ClientConstellation } from "@/components/home/ClientConstellation";
+import { ScrollParallax } from "@/components/home/ScrollParallax";
 
 export const metadata = createMetadata({
   title: "Car Rental in Dhaka with Driver",
-  description:
-    "Book chauffeur-driven car and bus rental in Dhaka. Daily, monthly, corporate, and airport transfer service from Jinia Enterprise.",
+  description: "Book chauffeur-driven car and bus rental in Dhaka. Daily, monthly, corporate, and airport transfer service from Jinia Enterprise.",
   path: "/",
-  keywords: [
-    "car rental Dhaka",
-    "car rental with driver Dhaka",
-    "airport transfer Dhaka",
-    "corporate car rental Bangladesh",
-    "monthly car rental Dhaka",
-    "Jinia Enterprise",
-  ],
+  keywords: ["car rental Dhaka", "car rental with driver Dhaka", "airport transfer Dhaka", "corporate car rental Bangladesh", "monthly car rental Dhaka", "Jinia Enterprise"],
 });
 
 interface Vehicle {
@@ -66,229 +45,204 @@ async function getFeaturedVehicles(): Promise<Vehicle[]> {
     .select("*")
     .eq("is_active", true)
     .eq("is_featured", true)
-    .order("sort_order", { ascending: true })
-    .limit(6);
-
+    .order("sort_order", { ascending: true });
   if (error) {
-    // Fallback: is_featured/sort_order columns may not exist yet.
-    // Run: ALTER TABLE vehicles ADD COLUMN sort_order INTEGER DEFAULT 0;
-    //      ALTER TABLE vehicles ADD COLUMN is_featured BOOLEAN DEFAULT false;
-    const { data: fallbackData } = await supabase
-      .from("vehicles")
-      .select("*")
-      .eq("is_active", true)
-      .limit(6);
-    return (fallbackData as Vehicle[]) || [];
+    console.error("Error fetching featured vehicles:", error);
+    return [];
   }
+  return ((data as Vehicle[]) || []).slice(0, 6);
+}
 
-  return (data as Vehicle[]) || [];
+const services = [
+  {
+    title: "Airport VIP Transfer",
+    description: "Flight lands. Chauffeur is already waiting at arrival gate.",
+    image: "/images/studio/airport-arrival-white.png",
+    icon: Plane,
+    href: "/airport-car-rental",
+  },
+  {
+    title: "Executive Daily Chauffeur",
+    description: "One dedicated driver. One luxury car. Your whole workday.",
+    image: "/images/studio/executive-chauffeur-white.png",
+    icon: BriefcaseBusiness,
+    href: "/corporate-car-rental",
+  },
+  {
+    title: "Embassy & Delegation Convoys",
+    description: "Synchronized mobility for VIP delegations.",
+    image: "/images/studio/delegation-convoy-white.png",
+    icon: ShieldCheck,
+    href: "/services",
+  },
+];
+
+/** One eyebrow treatment site-wide: gold hairline, then the label. Gold is the
+ *  structure that ties sections together, not a decoration applied per section. */
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="flex items-center gap-3 type-label text-emerald-700">
+      <span aria-hidden className="h-px w-6 shrink-0 bg-amber-400" />
+      {children}
+    </p>
+  );
 }
 
 export default async function Home() {
-  const featuredVehicles = await getFeaturedVehicles();
-
-  const trustStats = [
-    { value: "10+", label: "Years in Service" },
-    { value: "2,500+", label: "Successful Trips" },
-    { value: "100%", label: "Verified Drivers" },
-    { value: "24/7", label: "Customer Helpline" },
-  ];
+  const [featuredVehicles, activeClients] = await Promise.all([getFeaturedVehicles(), clientService.getActive()]);
+  const clients = activeClients.length > 0
+    ? activeClients.map((client) => ({ name: client.name, type: client.type, logo: client.logo_url }))
+    : corporateClients;
 
   return (
-    <div className="flex flex-col">
-      {/* ════════ HERO SECTION ════════ */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden -mt-16 pt-24 pb-16">
-        {/* Interactive Silky Green & Golden Canvas */}
-        <SilkyHeroCanvas />
+    <main className="overflow-x-clip bg-white text-emerald-950">
+      <ScrollParallax />
+      <HeroCarousel whatsapp={siteConfig.whatsapp} />
 
-        {/* Ambient Dark Emerald Subtle Vignette */}
-        <div className="absolute inset-0 bg-linear-to-b from-emerald-950/40 via-transparent to-[hsl(var(--background))] pointer-events-none z-1" />
+      <BookingRail />
 
-        {/* Content */}
-        <div className="container relative z-10 py-12 md:py-16">
-          <div className="max-w-5xl mx-auto text-center space-y-8">
-            {/* Trust Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-200 bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg animate-fade-in">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span>Dhaka&apos;s Trusted Car & Bus Rental Service</span>
+      <section className="container grid grid-cols-2 border-b border-emerald-950/10 py-7 sm:grid-cols-4">
+        {[{ value: "10+", label: "Years in service" }, { value: "2,500+", label: "Successful trips" }, { value: "100%", label: "Verified drivers" }, { value: "24/7", label: "Customer helpline" }].map((item, index) => (
+          <div key={item.label} className={`px-4 py-3 ${index % 2 === 1 ? "border-l border-emerald-950/10 sm:border-l" : ""} ${index > 1 ? "border-t border-emerald-950/10 sm:border-t-0" : ""} ${index > 0 ? "sm:border-l sm:border-emerald-950/10" : ""}`}>
+            <p className="type-display font-heading text-[2rem] sm:text-[2.5rem]">{item.value}</p>
+            <p className="type-label mt-2 text-emerald-950/50">{item.label}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Copy leads, photograph follows, and nothing moves. This scene is the
+          quiet beat between the booking rail and the service grid — motion here
+          was working against it. */}
+      <section className="container py-24 sm:py-32">
+        <div className="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
+          <div className="max-w-xl">
+            <Eyebrow>The arrival</Eyebrow>
+            <h2 className="type-display mt-5 max-w-[15ch] font-heading text-[2.25rem] sm:text-[3.25rem]">Before the door opens, the service has already begun.</h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-emerald-950/65 sm:text-lg">A cool cabin. A chauffeur who knows the route. A handoff that does not need explaining. Jinia is designed around the moments that set the tone for everything after.</p>
+            <div className="type-label mt-9 grid grid-cols-3 border-t border-emerald-950/15 pt-5 text-emerald-950/60">
+              <span>Flight-aware</span>
+              <span>Verified driver</span>
+              <span className="text-right">Ready vehicle</span>
             </div>
+          </div>
 
-            {/* Main Headline */}
-            <div className="space-y-4 animate-fade-in-up">
-              <h1 className="font-heading font-black tracking-tight leading-[1.05] text-white">
-                <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl">
-                  Rent Clean Cars & Buses
-                </span>
-                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-gold italic mt-1">
-                  With Professional Drivers
-                </span>
-              </h1>
-              
-              <p className="text-sm sm:text-base md:text-lg text-emerald-100/90 max-w-2xl mx-auto font-medium leading-relaxed">
-                Daily, monthly, and airport car rentals across Dhaka & Bangladesh. 
-                Reliable vehicles, experienced drivers, and fair, transparent rates.
-              </p>
+          <div className="jinia-grounded-scene relative mx-auto aspect-[5/4] w-full max-w-[46rem] lg:mx-0 lg:ml-auto">
+            <Image src="/images/studio/arrival-prado.png" alt="Chauffeur welcoming a passenger beside a graphite Toyota Land Cruiser Prado" fill sizes="(max-width: 1024px) 92vw, 46rem" className="mix-blend-multiply object-contain" />
+            <div className="type-label absolute bottom-0 left-0 right-0 flex items-end justify-between text-emerald-950/45">
+              <span>Hazrat Shahjalal / DAC</span>
+              <span>04:45</span>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3.5 justify-center items-center pt-2">
-              <Link href="/vehicles">
-                <Button
-                  size="lg"
-                  className="gap-2.5 px-8 h-14 text-sm font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-2xl shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all duration-300"
-                >
-                  <Calendar className="h-4 w-4" /> View All Vehicles
-                </Button>
+      <section className="container py-24 sm:py-32">
+        <div className="max-w-2xl">
+          <Eyebrow>Where you need to be</Eyebrow>
+          <h2 className="type-display mt-5 max-w-[15ch] font-heading text-[2.25rem] sm:text-[3.25rem]">For every kind of important day.</h2>
+        </div>
+        {/* Aligned, not staggered: the photos already vary in scale, so an
+            offset grid reads as a layout bug rather than as editorial. */}
+        <div className="mt-12 grid gap-10 md:grid-cols-3">
+          {services.map((service, index) => {
+            return (
+              <Link
+                key={service.title}
+                href={service.href}
+                className="group flex flex-col"
+                data-reveal=""
+                style={{ "--reveal-delay": `${index * 90}ms` } as React.CSSProperties}
+              >
+                <span className="type-label tabular-nums text-amber-600">0{index + 1}</span>
+                <div className="jinia-grounded-scene relative mt-3 aspect-[4/3]">
+                  <Image src={service.image} alt={service.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="mix-blend-multiply object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+                </div>
+                <div className="mt-4 flex flex-1 items-start justify-between gap-4 border-t border-emerald-950/15 pt-4 transition-colors group-hover:border-amber-400">
+                  <div>
+                    <h3 className="type-heading font-heading text-lg">{service.title}</h3>
+                    <p className="mt-2 max-w-xs text-sm leading-relaxed text-emerald-950/60">{service.description}</p>
+                  </div>
+                  <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-emerald-600 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                </div>
               </Link>
-              
-              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2.5 px-6 h-14 text-sm font-bold text-white border-white/20 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md transition-all duration-300"
-                >
-                  <Phone className="h-4 w-4 text-emerald-400" />
-                  <span>Call Us Now</span>
-                </Button>
-              </a>
+            );
+          })}
+        </div>
+      </section>
 
+      <section className="relative isolate overflow-hidden border-y border-emerald-950/10 bg-white py-24 sm:py-32">
+        <SilkBackground />
+        <div className="container relative z-10">
+          <div className="max-w-2xl">
+            <Eyebrow>Simple by design</Eyebrow>
+            <h2 className="type-display mt-5 font-heading text-[2.25rem] text-emerald-950 sm:text-[3.25rem]">One message.<br />A car at your door.</h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-emerald-950/60">A direct, considered route from your plan to a prepared car. No noise, no back-and-forth.</p>
+          </div>
+          <div className="jinia-process-steps mt-16 grid border-y sm:grid-cols-3">
+            {[{ icon: MessageSquare, title: "Share the plan", text: "Pickup, destination, date." }, { icon: Clock3, title: "Get your quote", text: "A clear fixed rate." }, { icon: CarFront, title: "Meet your car", text: "Clean, cool, and ready." }].map((step, index) => {
+              const Icon = step.icon;
+              return <div key={step.title} className="group px-6 py-8 sm:px-8 sm:not-last:border-r sm:not-last:border-emerald-950/15"><span className="type-label font-heading text-amber-700">0{index + 1}</span><Icon className="mt-12 h-5 w-5 text-emerald-800 transition-transform duration-500 ease-out group-hover:-translate-y-1" strokeWidth={1.8} /><h3 className="type-heading mt-5 font-heading text-lg text-emerald-950">{step.title}</h3><p className="mt-2 text-sm leading-relaxed text-emerald-950/75">{step.text}</p></div>;
+            })}
+          </div>
+        </div>
+      </section>
+
+      {featuredVehicles.length > 0 && <section className="container py-24 sm:py-32">
+        <div className="flex flex-col justify-between gap-5 border-b border-emerald-950/10 pb-6 sm:flex-row sm:items-end">
+          <div><Eyebrow>The fleet</Eyebrow><h2 className="type-display mt-4 font-heading text-[2.25rem] sm:text-[3rem]">The cars Dhaka asks for.</h2><p className="mt-3 text-sm font-medium text-emerald-950/60">BMW and Mercedes sedans are available on request through our concierge desk.</p></div>
+          <Link href="/vehicles" className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950 transition-colors hover:text-emerald-600">View all vehicles <ArrowRight className="h-4 w-4" /></Link>
+        </div>
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{featuredVehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div>
+      </section>}
+
+      <ClientConstellation clients={clients} testimonials={clientTestimonials} />
+
+      {/* A quiet closing note. The CTA deliberately shares the page's white
+          canvas: no image treatment, no extra atmosphere, just the service
+          promise and a clear next step. */}
+      <section className="relative overflow-hidden border-y border-emerald-950/10 bg-white py-16 sm:py-20">
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(88%,72rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-amber-400/80 to-transparent" />
+        <div className="container relative">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="flex items-center justify-center gap-3 type-label text-emerald-700">
+              <span aria-hidden className="h-px w-7 bg-amber-400" />
+              The Jinia concierge desk
+              <span aria-hidden className="h-px w-7 bg-amber-400" />
+            </p>
+            <h2 className="type-display mx-auto mt-6 max-w-[15ch] font-heading text-[2.65rem] text-emerald-950 sm:text-[3.7rem] lg:text-[4.5rem]">
+              Your next journey starts with a message.
+            </h2>
+            <p className="mx-auto mt-6 max-w-[43ch] text-base leading-relaxed text-emerald-950/65">
+              Tell us where the day is taking you. We will put the right car, chauffeur, and timing in place.
+            </p>
+
+            <div className="relative mx-auto mt-7 aspect-[3.25/1] w-full max-w-4xl overflow-hidden">
+              <Image
+                src="/images/vehicles/cta-three-vehicle-white-studio-v2.png"
+                alt="Jinia Enterprise's premium chauffeur fleet: an executive SUV, people carrier, and sedan"
+                fill
+                sizes="(max-width: 768px) 100vw, 896px"
+                className="object-cover object-[center_64%]"
+              />
+            </div>
+
+            <div className="mx-auto mt-4 flex max-w-xl flex-col items-center gap-5 border-y border-emerald-950/15 py-5 sm:flex-row sm:justify-between">
+              <p className="text-center text-sm leading-snug text-emerald-950/60 sm:text-left">
+                <span className="block font-medium text-emerald-950">A real person replies.</span>
+                Most quotes arrive inside the hour.
+              </p>
               <a
                 href={`https://wa.me/${siteConfig.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-emerald-950 px-6 text-sm font-normal text-white transition-colors hover:bg-emerald-800"
               >
-                <Button
-                  size="lg"
-                  className="gap-2.5 px-6 h-14 text-sm font-bold bg-white text-emerald-950 hover:bg-emerald-50 rounded-2xl shadow-lg transition-all duration-300"
-                >
-                  <MessageSquare className="h-4 w-4 text-emerald-600" />
-                  <span>WhatsApp Us</span>
-                </Button>
+                <MessageSquare aria-hidden className="h-4 w-4" /> Get a quote
               </a>
             </div>
-
-            {/* Quick Booking Widget */}
-            <div className="pt-6 relative z-20">
-              <HeroBookingWidget />
-            </div>
           </div>
         </div>
       </section>
-
-      {/* ════════ TRUST STATS STRIP ════════ */}
-      <section className="relative -mt-8 z-20 container mb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 sm:p-6 glass-card bg-white/80 border border-white shadow-xl rounded-3xl">
-          {trustStats.map((stat) => (
-            <div key={stat.label} className="text-center p-3 sm:p-4 rounded-2xl bg-emerald-50/50">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-emerald-950">
-                {stat.value}
-              </div>
-              <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 mt-1">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ════════ CONCIERGE CAPABILITY SHOWCASE ════════ */}
-      <ConciergeShowcase />
-
-      {/* ════════ HOW A BOOKING FEELS ════════ */}
-      <UserJourneySection />
-
-      {/* ════════ FEATURED FLEET — after intent is clear ════════ */}
-      {featuredVehicles.length > 0 && (
-        <section className="py-24 sm:py-32 bg-linear-to-b from-transparent via-emerald-950/[0.035] to-transparent relative overflow-hidden">
-          <SilkRibbonBackdrop className="opacity-40" />
-
-          <div className="container space-y-14 relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-              <div className="max-w-xl space-y-3">
-                <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/70 px-3.5 py-1.5 rounded-full border border-emerald-200">
-                  Featured Fleet
-                </span>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 leading-tight">
-                  Pick the car that fits{" "}
-                  <span className="text-gradient-emerald">the trip you just planned.</span>
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 font-medium">
-                  Sedans, VIP SUVs, family microbuses, and AC coaches—with professional drivers.
-                </p>
-              </div>
-              <Link href="/vehicles">
-                <Button variant="outline" className="px-6 h-12 rounded-xl border-emerald-200 text-emerald-900 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider group">
-                  View all vehicles <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
-
-            <HomeFeaturedFleet vehicles={featuredVehicles} />
-          </div>
-        </section>
-      )}
-
-      {/* ════════ PROTOCOL & SAFETY STANDARDS ════════ */}
-      <ProtocolSpotlight />
-
-      {/* ════════ TRUSTED CLIENTS — MARQUEE ════════ */}
-      <section className="py-24 sm:py-32 overflow-hidden bg-emerald-950/5 relative">
-        <SilkRibbonBackdrop flip className="opacity-30" />
-
-        <div className="container mb-12 text-center space-y-3 max-w-3xl relative z-10">
-          <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/70 px-3.5 py-1.5 rounded-full border border-emerald-200">
-            Trusted by Top Clients
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-heading font-black text-emerald-950">
-            Serving Embassies, Corporates & Families
-          </h2>
-          <p className="text-sm text-gray-600 font-medium">
-            Over a decade of reliable, safe, and punctual car & bus rental services across Bangladesh.
-          </p>
-        </div>
-
-        <div className="relative mb-4 pause-on-hover z-10">
-          <div className="flex animate-marquee gap-4 w-max">
-            {[...corporateClients, ...corporateClients].map((client, i) => (
-              <div
-                key={`r1-${i}`}
-                className="px-6 py-4 rounded-2xl bg-white border border-emerald-100 text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-3 shadow-xs hover:bg-emerald-900 hover:text-white transition-all duration-300"
-              >
-                <div className={cn(
-                  "w-2.5 h-2.5 rounded-full",
-                  client.type === "Embassy" ? "bg-emerald-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
-                )} />
-                <span>{client.name}</span>
-                <span className="text-[10px] opacity-60 font-semibold lowercase">({client.type})</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative pause-on-hover z-10">
-          <div className="flex animate-marquee-reverse gap-4 w-max">
-            {[...corporateClients.slice().reverse(), ...corporateClients.slice().reverse()].map((client, i) => (
-              <div
-                key={`r2-${i}`}
-                className="px-6 py-4 rounded-2xl bg-white border border-emerald-100 text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-3 shadow-xs hover:bg-emerald-900 hover:text-white transition-all duration-300"
-              >
-                <div className={cn(
-                  "w-2.5 h-2.5 rounded-full",
-                  client.type === "Embassy" ? "bg-emerald-500" : client.type === "International Organization" ? "bg-blue-500" : "bg-amber-500"
-                )} />
-                <span>{client.name}</span>
-                <span className="text-[10px] opacity-60 font-semibold lowercase">({client.type})</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════ FINAL CTA WITH SCROLL-DRIVEN EXPAND ANIMATION ════════ */}
-      <ExpandingFinalCTA />
-
-      {/* ════════ LATEST BLOG ARTICLES & GUIDES ════════ */}
-      <HomeBlogSection />
-    </div>
+    </main>
   );
 }

@@ -65,13 +65,13 @@ export function ExpandingFinalCTA() {
         {/* Crisp, Stable, Centered Content */}
         <div className="max-w-2xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
           {/* Top Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 backdrop-blur-md shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium uppercase tracking-[0.08em] text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 backdrop-blur-md shadow-xs">
             <Sparkles className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
             <span>Executive Fleet & Chauffeurs</span>
           </div>
 
           {/* Clean Bold Headline */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-black text-white leading-[1.1] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-medium text-white leading-[1.1] tracking-tight">
             Ready for a Better Way to Travel?
           </h2>
 
@@ -85,7 +85,7 @@ export function ExpandingFinalCTA() {
             <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
               <Button 
                 size="lg" 
-                className="h-14 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-xl shadow-white/10 hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="h-14 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-medium uppercase tracking-wider text-xs shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] shadow-white/10 hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <Phone className="mr-2.5 h-4 w-4 text-emerald-700" /> 
                 Call: {siteConfig.phone}
@@ -101,7 +101,7 @@ export function ExpandingFinalCTA() {
             >
               <Button 
                 size="lg" 
-                className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black uppercase tracking-wider text-xs shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-medium uppercase tracking-wider text-xs shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] shadow-emerald-500/25 hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <MessageSquare className="mr-2.5 h-4 w-4 text-emerald-950" /> 
                 WhatsApp Desk
@@ -110,7 +110,7 @@ export function ExpandingFinalCTA() {
           </div>
 
           {/* Minimal Trust Assurances */}
-          <div className="pt-5 border-t border-white/10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-semibold text-emerald-200/75">
+          <div className="pt-5 border-t border-white/10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-normal text-emerald-200/75">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               Fixed Fair Pricing

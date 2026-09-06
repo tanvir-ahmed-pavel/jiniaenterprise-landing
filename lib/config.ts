@@ -43,7 +43,7 @@ export const teamMembers = [
     role: "Fleet & Driver Operations",
     description:
       "Ensures all cars and buses are on time, well-maintained, and assigned with professional drivers for smooth daily service.",
-    image: "/team/operations-manager.jpg",
+    image: "",
   },
   {
     id: "3",
@@ -51,7 +51,7 @@ export const teamMembers = [
     role: "Booking & Inquiries",
     description:
       "Available 24/7 on call and WhatsApp to assist you with quick bookings, price estimates, and custom route plans.",
-    image: "/team/customer-relations.jpg",
+    image: "",
   },
   {
     id: "4",
@@ -59,7 +59,7 @@ export const teamMembers = [
     role: "Fleet Maintenance",
     description:
       "Inspects every car's AC, tyres, engine, and cleanliness daily so you enjoy a comfortable, trouble-free ride.",
-    image: "/team/fleet-supervisor.jpg",
+    image: "",
   },
 ];
 
@@ -211,6 +211,34 @@ export const corporateClients = [
   { name: "KGS Sourcing", type: "Corporate" },
 ];
 
+/**
+ * PLACEHOLDER COPY — not real quotes. Written so the constellation can be
+ * designed and reviewed with testimonial nodes in place; replace every entry
+ * with an approved quote before this goes anywhere near production.
+ */
+export const clientTestimonials = [
+  {
+    quote: "Ten years of airport runs and not one missed pickup.",
+    author: "Placeholder name",
+    role: "Embassy of Placeholder, Dhaka",
+  },
+  {
+    quote: "Our directors stopped thinking about transport entirely.",
+    author: "Placeholder name",
+    role: "Head of Admin, Placeholder Ltd.",
+  },
+  {
+    quote: "They move a twelve-car delegation like it is one car.",
+    author: "Placeholder name",
+    role: "Protocol Officer",
+  },
+  {
+    quote: "The driver knows the route before we do.",
+    author: "Placeholder name",
+    role: "Country Director, Placeholder",
+  },
+];
+
 export const companyHistory = {
   founded: 2014,
   founder: "Jinia Enterprise",
@@ -345,7 +373,8 @@ export const sampleVehicles = [
     description:
       "Popular mid-size sedan known for comfort and reliability. Ideal for business and personal use.",
     is_active: true,
-    image_url: "/vehicles/toyota-premio.jpg",
+    image_url: "/images/fleet/toyota-premio-2023-studio.png",
+    images: ["/images/fleet/toyota-premio-2023-studio.png"],
   },
   {
     id: "6",
@@ -364,7 +393,8 @@ export const sampleVehicles = [
     description:
       "A premium SUV combining luxury and capability. Perfect for VIP transport, executive travel, and outstation trips.",
     is_active: true,
-    image_url: "/vehicles/toyota-prado.jpg",
+    image_url: "/images/vehicles/front/toyota-land-cruiser-prado-pearl-white.png",
+    images: ["/images/vehicles/front/toyota-land-cruiser-prado-pearl-white.png"],
   },
   {
     id: "7",
@@ -382,7 +412,8 @@ export const sampleVehicles = [
     description:
       "Stylish luxury crossover SUV with premium features. Elegant design meets practical comfort.",
     is_active: true,
-    image_url: "/vehicles/toyota-harrier.jpg",
+    image_url: "/images/fleet/toyota-harrier-studio.png",
+    images: ["/images/fleet/toyota-harrier-studio.png"],
   },
   {
     id: "8",
@@ -418,7 +449,8 @@ export const sampleVehicles = [
     description:
       "A versatile 7-seater MPV ideal for families and small groups. Plenty of luggage space and comfortable seating.",
     is_active: true,
-    image_url: "/vehicles/toyota-noah.jpg",
+    image_url: "/images/vehicles/front/toyota-noah-cream-v3.png",
+    images: ["/images/vehicles/front/toyota-noah-cream-v3.png"],
   },
   {
     id: "10",
