@@ -7,6 +7,14 @@ import path from "node:path";
 type ImportItem = { vehicleId: string; files: string[] };
 type CreateItem = { name: string; slug: string; files: string[]; description: string; seats: number; engine_cc: number; category: "Premium" | "Standard" };
 
+function assertVehicleAssetPath(relative: string) {
+  const normalized = path.posix.normalize(relative.replaceAll("\\", "/"));
+  if (!normalized.startsWith("images/vehicles/variants/") || normalized.includes("..")) {
+    throw new Error("Invalid asset path");
+  }
+  return normalized;
+}
+
 /** Authenticated bulk importer used by the admin workspace for locally generated variants. */
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -26,10 +34,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Each vehicle requires exactly three files" }, { status: 400 });
     }
     const urls = await Promise.all(item.files.map(async (relative) => {
-      const normalized = path.posix.normalize(relative.replaceAll("\\", "/"));
-      if (!normalized.startsWith("images/vehicles/variants/") || normalized.includes("..")) {
-        return NextResponse.json({ error: "Invalid asset path" }, { status: 400 });
-      }
+      const normalized = assertVehicleAssetPath(relative);
       const absolute = path.join(process.cwd(), "public", normalized);
       const buffer = await readFile(absolute);
       const uploaded = await uploadToStorage({
@@ -40,19 +45,15 @@ export async function POST(request: Request) {
       });
       return uploaded.url;
     }));
-    const { error } = await supabase.from("vehicles").update({ image_url: urls[0], images: urls }).eq("id", item.vehicleId);
+    const { error } = await supabase.from("vehicles").update({ image_url: urls[0], images: urls } as never).eq("id", item.vehicleId);
     if (error) throw error;
     results.push({ vehicleId: item.vehicleId, urls });
   }
   const created: unknown[] = [];
   for (const item of creates) {
     if (!item.name || !item.slug || !Array.isArray(item.files) || item.files.length !== 3) return NextResponse.json({ error: "Each new vehicle requires three files" }, { status: 400 });
-    const urls = item.files.map((relative) => {
-      const normalized = path.posix.normalize(relative.replaceAll("\\", "/"));
-      if (!normalized.startsWith("images/vehicles/variants/") || normalized.includes("..")) return NextResponse.json({ error: "Invalid asset path" }, { status: 400 });
-      return `/${normalized}`;
-    });
-    const { data, error } = await supabase.from("vehicles").insert({ name: item.name, slug: item.slug, category: item.category, seats: item.seats, engine_cc: item.engine_cc, description: item.description, features: ["Air Conditioning", "Professional Chauffeur", "Executive Interior"], rental_types: ["Daily", "Corporate", "On demand"], starting_price: null, price_label: "On demand", image_url: urls[0], images: urls, is_active: true, is_featured: false, sort_order: 9999 }).select().single();
+    const urls = item.files.map((relative) => `/${assertVehicleAssetPath(relative)}`);
+    const { data, error } = await supabase.from("vehicles").insert({ name: item.name, slug: item.slug, category: item.category, seats: item.seats, engine_cc: item.engine_cc, description: item.description, features: ["Air Conditioning", "Professional Chauffeur", "Executive Interior"], rental_types: ["Daily", "Corporate", "On demand"], starting_price: null, price_label: "On demand", image_url: urls[0], images: urls, is_active: true, is_featured: false, sort_order: 9999 } as never).select().single();
     if (error) throw error;
     created.push(data);
   }

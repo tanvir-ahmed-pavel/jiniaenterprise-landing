@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-outfit);
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @layer base {

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
@@ -14,18 +13,6 @@ import {
 } from "@/lib/seo/schema";
 import { businessIdentity } from "@/lib/business/identity";
 import Script from "next/script";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -76,8 +63,6 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased flex flex-col relative",
-          inter.variable,
-          outfit.variable,
         )}
         suppressHydrationWarning
       >
