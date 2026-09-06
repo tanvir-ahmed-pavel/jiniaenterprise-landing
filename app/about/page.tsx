@@ -1,14 +1,14 @@
 import { createMetadata } from "@/lib/seo/metadata";
-import {
-  companyHistory,
-  whyChooseUs,
-  siteConfig,
-  ourObjectives,
-  teamMembers,
-} from "@/lib/config";
-import { CheckCircle, Target, Eye, Heart, Award, User, Sparkles, Quote } from "lucide-react";
+import { companyHistory, whyChooseUs, siteConfig, teamMembers } from "@/lib/config";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { cn } from "@/lib/utils";
+import {
+  Eyebrow,
+  SectionIntro,
+  PrimaryAction,
+  GhostAction,
+  StatStrip,
+  DarkPanel,
+} from "@/components/layout/Section";
 
 export const metadata = createMetadata({
   title: "About Jinia Enterprise — Car Rental in Dhaka",
@@ -19,181 +19,162 @@ export const metadata = createMetadata({
 
 export default function AboutPage() {
   return (
-    <div className="pb-24">
-      <PageHeader 
-        title="Our Narrative."
-        subtitle="A Legacy of Trust"
-        description="With over a decade of experience, we've built more than just a car rental service—we've built a reputation for uncompromising quality."
+    <div>
+      <PageHeader
+        title="Since 2014."
+        subtitle="Our story"
+        description="A decade of chauffeur-driven car and bus rental — built one standing arrangement at a time, for corporates, embassies, and families across Bangladesh."
         breadcrumbs={[{ label: "Story" }]}
       />
 
-      <div className="container">
-        {/* Philosophy Quote — Artistic Overlay */}
-        <div className="relative glass-card p-12 md:p-20 text-center mb-24 overflow-hidden bg-green-950">
-          <Quote className="absolute top-10 left-10 h-20 w-20 text-white/5 -z-0" />
-          <div className="relative z-10 max-w-4xl mx-auto">
-            <blockquote className="text-2xl md:text-4xl font-heading font-black italic text-white leading-tight">
-              &ldquo;{siteConfig.philosophy}&rdquo;
-            </blockquote>
-            <div className="mt-8 h-px w-24 bg-green-500 mx-auto" />
-          </div>
-        </div>
+      <StatStrip
+        items={[
+          { value: "10+", label: "Years in service" },
+          { value: "50+", label: "Vehicles in fleet" },
+          { value: "100%", label: "Verified drivers" },
+          { value: "24/7", label: "Customer helpline" },
+        ]}
+      />
 
-        {/* Narrative & Promise — Staggered Layout */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 mb-32 items-center">
-          <div className="space-y-8 animate-fade-in-up">
-            <div className="space-y-4">
-              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">The Beginning</span>
-              <h2 className="text-4xl md:text-5xl font-heading font-black text-green-950 leading-none italic">
-                Who We Are.
-              </h2>
-            </div>
-            <div className="space-y-6 text-gray-500 text-lg font-medium leading-relaxed">
-              {companyHistory.story.split("\n\n").map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
-            </div>
+      {/* The story, set as an essay. The old page put it in a glass card next
+          to two more cards; prose reads better with a rule and some air. */}
+      <section className="container py-24 sm:py-32">
+        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+          <div>
+            <Eyebrow>The beginning</Eyebrow>
+            <h2 className="type-display mt-5 max-w-[12ch] font-heading text-[2.25rem] text-emerald-950 sm:text-[3rem]">
+              Who we are.
+            </h2>
           </div>
 
-          <div className="space-y-8">
-            {/* Our Promise — High Artistic Card */}
-            <div className="glass-card p-10 bg-white/60 border-white/80 space-y-6 relative overflow-hidden group">
-              <Sparkles className="absolute -top-4 -right-4 h-24 w-24 text-green-500/5 group-hover:scale-125 transition-transform duration-700" />
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100 shadow-sm">
-                  <Award className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-heading font-black text-green-950 italic">Our Promise.</h3>
-              </div>
-              <p className="text-gray-500 font-medium text-lg leading-relaxed italic border-l-4 border-green-500 pl-6">
+          <div className="space-y-6 text-base leading-relaxed text-emerald-950/65 sm:text-lg">
+            {companyHistory.story.split("\n\n").map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+
+            <div className="border-t border-emerald-950/15 pt-6">
+              <p className="type-label text-emerald-700">Our promise</p>
+              <p className="mt-3 text-base leading-relaxed text-emerald-950/70 sm:text-lg">
                 {companyHistory.promise}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Location Pattern — Minimalist */}
-            <div className="glass-card p-10 bg-green-50/30 border-green-100 space-y-4">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">Headquarters Axis</h3>
-              <p className="text-xl font-heading font-black text-green-950 leading-tight">
-                40/2, Unicorn Plaza (Level-2), <br />
-                Shop-9,10, Dhaka 1212
-              </p>
-              <div className="pt-4 flex items-center gap-2 text-xs font-bold text-green-600">
-                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                Ready for Global Concierge
+      {/* Mission, vision, values — three columns on hairlines, no icon tiles. */}
+      <section className="border-y border-emerald-950/10 bg-[#f6faf7] py-24 sm:py-32">
+        <div className="container">
+          <SectionIntro eyebrow="What guides us" title="Mission, vision, and the rules we keep." />
+
+          <div className="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-3">
+            {[
+              { label: "Mission", text: companyHistory.mission },
+              { label: "Vision", text: companyHistory.vision },
+            ].map((item) => (
+              <div key={item.label} className="border-t border-emerald-950/15 pt-5">
+                <p className="type-label text-emerald-700">{item.label}</p>
+                <p className="mt-3 text-sm leading-relaxed text-emerald-950/65">{item.text}</p>
               </div>
+            ))}
+
+            <div className="border-t border-emerald-950/15 pt-5">
+              <p className="type-label text-emerald-700">Values</p>
+              <ul className="mt-3 space-y-2">
+                {companyHistory.values.map((value) => (
+                  <li key={value} className="flex items-baseline gap-3 text-sm text-emerald-950/65">
+                    <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
+                    {value}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Vision & Mission — Glass Bento Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-32">
-          {[
-            { icon: Target, title: "Mission.", text: companyHistory.mission, delay: "0s" },
-            { icon: Eye, title: "Vision.", text: companyHistory.vision, delay: "0.1s" },
-            { 
-              icon: Heart, 
-              title: "Morals.", 
-              items: companyHistory.values,
-              delay: "0.2s"
-            },
-          ].map((item, idx) => (
-            <div 
-              key={item.title} 
-              className="glass-card p-10 bg-white/40 border-white/60 flex flex-col gap-6 group hover:-translate-y-2 transition-all duration-500"
-              style={{ transitionDelay: item.delay }}
-            >
-              <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100 group-hover:bg-green-600 transition-colors duration-500">
-                <item.icon className="h-7 w-7 text-green-600 group-hover:text-white transition-colors duration-500" />
-              </div>
-              <h3 className="text-3xl font-heading font-black text-green-950 italic">{item.title}</h3>
-              {item.text && <p className="text-gray-500 font-medium leading-relaxed">{item.text}</p>}
-              {item.items && (
-                <ul className="space-y-3">
-                  {item.items.map((val) => (
-                    <li key={val} className="flex items-center gap-3 text-sm font-bold text-gray-600">
-                      <div className="h-1.5 w-1.5 rounded-full bg-green-500" /> {val}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
-        </div>
+      {/* The team. Portraits sit on the page, not in ringed glass frames. */}
+      <section className="container py-24 sm:py-32">
+        <SectionIntro
+          eyebrow="The desk"
+          title="The people who answer."
+          lede="Small team, long tenure. You will speak to the same names each time you book."
+        />
 
-        {/* Team Section — Refined Cards */}
-        <div className="mb-32">
-          <div className="text-center mb-16 space-y-4">
-            <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/80 px-3.5 py-1.5 rounded-full border border-emerald-200/80">Leadership & Team</span>
-            <h2 className="text-4xl md:text-5xl font-heading font-black text-emerald-950 leading-tight">
-              Meet Our Dedicated Team.
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member) => (
-              <div key={member.id} className="glass-card group p-8 bg-white/70 border-white/80 text-center hover:bg-white/95 transition-all duration-500 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1">
-                {/* Perfectly Centered Executive Portrait Frame */}
-                <div className="relative w-32 h-32 mx-auto mb-6">
-                  {/* Subtle Luxury Ambient Ring */}
-                  <div className="absolute -inset-1 bg-linear-to-tr from-emerald-600/30 via-emerald-400/20 to-amber-400/30 rounded-3xl blur-xs group-hover:scale-105 transition-all duration-500" />
-                  <div className="relative w-full h-full rounded-3xl overflow-hidden border-2 border-emerald-700/20 bg-emerald-950 shadow-md flex items-center justify-center">
-                    {member.image ? (
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-emerald-900/40 text-emerald-300">
-                        <User className="h-12 w-12 opacity-60" />
-                      </div>
-                    )}
+        <div className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+          {teamMembers.map((member) => (
+            <div key={member.id} className="group flex flex-col">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[#eef4f0]">
+                {member.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  /* No portrait for this desk yet — a monogram reads as
+                     deliberate where a broken image or a stock icon does not. */
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span className="type-display font-heading text-4xl text-emerald-950/15">
+                      {member.name
+                        .replace(/^MD\.\s*/, "")
+                        .split(" ")
+                        .slice(0, 2)
+                        .map((word) => word[0])
+                        .join("")}
+                    </span>
                   </div>
-                </div>
-                <h3 className="text-xl font-heading font-black text-emerald-950 tracking-tight">{member.name}</h3>
-                <p className="text-emerald-700 text-[10px] font-black uppercase tracking-widest mt-1 mb-4">{member.role}</p>
-                <p className="text-gray-500 text-xs font-medium leading-relaxed">{member.description}</p>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Why Choose — Clear Grid */}
-        <div className="glass-card p-12 md:p-20 bg-emerald-50/50 border-emerald-100 rounded-3xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-black text-emerald-950">Why Choose Jinia Enterprise?</h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {whyChooseUs.map((item) => (
-              <div key={item.title} className="flex gap-6 group">
-                <div className="w-12 h-12 rounded-xl bg-white border border-green-100 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-500">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-heading font-black text-green-950 text-lg">{item.title}</h4>
-                  <p className="text-sm text-gray-500 font-medium leading-relaxed">{item.description}</p>
-                </div>
+              <div className="mt-4 border-t border-emerald-950/15 pt-4 transition-colors group-hover:border-amber-400">
+                <h3 className="type-heading font-heading text-lg text-emerald-950">{member.name}</h3>
+                <p className="type-label mt-1 text-emerald-700">{member.role}</p>
+                <p className="mt-3 text-sm leading-relaxed text-emerald-950/60">{member.description}</p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Stats Strip — Artistic Floating */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-24">
-          {[
-            { value: "10+", label: "Legacy Years" },
-            { value: "50+", label: "Fleet Select" },
-            { value: "100%", label: "Elite Safety" },
-            { value: "24/7", label: "Concierge" },
-          ].map((stat) => (
-            <div key={stat.label} className="glass-card p-8 bg-green-950 text-center">
-              <div className="text-3xl md:text-5xl font-heading font-black text-white italic tracking-tighter mb-1">
-                {stat.value}
-              </div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-green-500/50">{stat.label}</div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
+
+      {/* Why choose us — a two-column list, not eighteen bordered icon boxes. */}
+      <section className="border-t border-emerald-950/10 py-24 sm:py-32">
+        <div className="container">
+          <SectionIntro eyebrow="Why Jinia" title="What you are actually paying for." />
+          <div className="mt-12 grid gap-x-12 gap-y-9 md:grid-cols-2 lg:grid-cols-3">
+            {whyChooseUs.map((item, index) => (
+              <div key={item.title} className="border-t border-emerald-950/15 pt-5">
+                <span className="type-label tabular-nums text-amber-600">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="type-heading mt-3 font-heading text-lg text-emerald-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-emerald-950/60">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The philosophy line closes the page on the dark studio ground, which
+          is where the home page puts its one moment of contrast too. */}
+      <DarkPanel>
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="flex justify-center">
+            <Eyebrow>How we think about it</Eyebrow>
+          </div>
+          <blockquote className="type-display mx-auto mt-6 max-w-[22ch] font-heading text-[1.9rem] leading-tight sm:text-[2.6rem]">
+            &ldquo;{siteConfig.philosophy}&rdquo;
+          </blockquote>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <PrimaryAction href="/booking" tone="dark">Start booking</PrimaryAction>
+            <GhostAction href="/contact" tone="dark">Visit the office</GhostAction>
+          </div>
+          <p className="type-label mt-8 text-white/45">
+            40/2, Unicorn Plaza (Level-2), Shop-9,10, Dhaka 1212 · {siteConfig.phone}
+          </p>
+        </div>
+      </DarkPanel>
     </div>
   );
 }

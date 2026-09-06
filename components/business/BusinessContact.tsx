@@ -29,7 +29,7 @@ export function BusinessContact({
         className,
       )}
     >
-      <p className={cn("font-heading font-bold", compact ? "text-base" : "text-lg")}>
+      <p className={cn("font-heading font-medium", compact ? "text-base" : "text-lg")}>
         {brandName}
       </p>
 
@@ -38,7 +38,7 @@ export function BusinessContact({
           <li key={number}>
             <a
               href={getTelHref(number)}
-              className="font-semibold text-emerald-800 hover:text-emerald-600 transition-colors"
+              className="font-normal text-emerald-800 hover:text-emerald-600 transition-colors"
             >
               {number}
             </a>
@@ -62,7 +62,7 @@ export function BusinessContact({
           href={getWhatsAppHref()}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-semibold text-emerald-700 hover:text-emerald-500 transition-colors"
+          className="font-normal text-emerald-700 hover:text-emerald-500 transition-colors"
         >
           WhatsApp
         </a>

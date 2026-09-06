@@ -22,13 +22,13 @@ export function RelatedLinks({
 
   return (
     <section className={cn("space-y-4", className)}>
-      <h2 className="text-xl font-heading font-black text-emerald-950">{title}</h2>
-      <ul className="flex flex-wrap gap-3">
+      <h2 className="text-xl font-heading font-medium text-emerald-950">{title}</h2>
+      <ul className="flex flex-wrap gap-x-5 gap-y-3">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/80 px-4 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-100 transition-colors"
+              className="inline-flex items-center gap-1.5 border-b border-emerald-950/25 pb-1 text-sm font-normal text-emerald-900 transition-colors hover:border-emerald-700 hover:text-emerald-700"
             >
               {link.label}
               <ArrowRight className="h-3.5 w-3.5" aria-hidden />

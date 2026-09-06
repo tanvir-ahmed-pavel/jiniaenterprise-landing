@@ -25,7 +25,7 @@ export function LastUpdated({ date, className }: LastUpdatedProps) {
   return (
     <p
       className={cn(
-        "text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/60",
+        "text-xs font-normal uppercase tracking-[0.08em] text-emerald-800/60",
         className,
       )}
     >

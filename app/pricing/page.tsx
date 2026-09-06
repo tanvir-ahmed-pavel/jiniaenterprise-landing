@@ -47,7 +47,7 @@ export default function PricingPage() {
       updatedAt="2026-08-21"
     >
       <section className="space-y-4">
-        <h2 className="text-2xl font-heading font-black text-emerald-950">
+        <h2 className="text-2xl font-heading font-medium text-emerald-950">
           Indicative “from” day rates
         </h2>
         <p className="text-sm text-gray-600 font-medium">
@@ -57,20 +57,20 @@ export default function PricingPage() {
           <table className="w-full text-sm">
             <thead className="bg-emerald-950 text-white">
               <tr>
-                <th className="text-left p-3 font-bold">Vehicle</th>
-                <th className="text-left p-3 font-bold">From (BDT)</th>
-                <th className="text-left p-3 font-bold">Unit</th>
+                <th className="text-left p-3 font-medium">Vehicle</th>
+                <th className="text-left p-3 font-medium">From (BDT)</th>
+                <th className="text-left p-3 font-medium">Unit</th>
               </tr>
             </thead>
             <tbody>
               {indicativeFromPrices.map((row) => (
                 <tr key={row.slug} className="border-t border-emerald-50 bg-white/80">
-                  <td className="p-3 font-semibold text-emerald-950">
+                  <td className="p-3 font-normal text-emerald-950">
                     <Link href={`/vehicles/${row.slug}`} className="hover:text-emerald-700">
                       {row.name}
                     </Link>
                   </td>
-                  <td className="p-3 font-bold text-emerald-800">
+                  <td className="p-3 font-medium text-emerald-800">
                     ৳{row.startingPriceBdt.toLocaleString("en-BD")}
                   </td>
                   <td className="p-3 text-gray-600">{row.priceLabel}</td>

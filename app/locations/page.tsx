@@ -27,11 +27,11 @@ export default function LocationsIndexPage() {
             href={`/locations/${loc.slug}`}
             className="group rounded-3xl border border-emerald-100 bg-white/70 p-6 hover:border-emerald-300 hover:bg-white transition-colors"
           >
-            <h2 className="text-xl font-heading font-black text-emerald-950 group-hover:text-emerald-700">
+            <h2 className="text-xl font-heading font-medium text-emerald-950 group-hover:text-emerald-700">
               {loc.name}
             </h2>
             <p className="mt-2 text-sm text-gray-600 line-clamp-3">{loc.answer}</p>
-            <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-emerald-800">
+            <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-emerald-800">
               Open area guide <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </Link>

@@ -56,9 +56,9 @@ export const ImageCarousel = memo(function ImageCarousel({
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full h-full min-h-[200px] flex flex-col items-center justify-center bg-emerald-950/5">
+      <div className="jinia-vehicle-plate w-full h-full min-h-[200px] flex flex-col items-center justify-center">
         <Car className="h-10 w-10 text-emerald-900/20 mb-2" />
-        <span className="text-[10px] font-bold text-emerald-900/30 uppercase tracking-widest">
+        <span className="text-[10px] font-medium text-emerald-900/30 uppercase tracking-widest">
           No Image Available
         </span>
       </div>
@@ -67,13 +67,13 @@ export const ImageCarousel = memo(function ImageCarousel({
 
   return (
     <div
-      className="relative w-full h-full group/carousel overflow-hidden bg-muted"
+      className="jinia-vehicle-plate relative w-full h-full group/carousel overflow-hidden"
       onMouseEnter={() => !isInteracted && setIsInteracted(true)}
       onTouchStart={() => !isInteracted && setIsInteracted(true)}
     >
       {/* Lightweight Placeholder */}
       {!isLoaded && (
-        <div className="absolute inset-0 z-10 bg-emerald-950/5 transition-opacity duration-300 pointer-events-none" />
+        <div className="jinia-vehicle-plate absolute inset-0 z-10 transition-opacity duration-300 pointer-events-none" />
       )}
 
       {/* Image Display */}
@@ -85,9 +85,13 @@ export const ImageCarousel = memo(function ImageCarousel({
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           priority={priority && currentIndex === 0}
+          loading={priority && currentIndex === 0 ? "eager" : "lazy"}
           onLoad={() => setIsLoaded(true)}
           className={cn(
-            "object-cover transition-transform duration-700 ease-out will-change-transform group-hover/card:scale-105",
+            // Fill the card media edge-to-edge. Multiply drops the white studio
+            // plate baked into most vehicle shots so mixed sources share one
+            // ground instead of each showing its own rectangle.
+            "object-cover mix-blend-multiply transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform motion-safe:group-hover/card:scale-[1.02]",
             !isLoaded ? "opacity-0 scale-100" : "opacity-100"
           )}
         />
@@ -99,7 +103,7 @@ export const ImageCarousel = memo(function ImageCarousel({
           <button
             type="button"
             onClick={handlePrevious}
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-white hover:text-emerald-950 text-white backdrop-blur-xs border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 flex items-center justify-center shadow-md cursor-pointer"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 h-8 w-8 border border-emerald-950/15 bg-white/90 text-emerald-950 opacity-0 transition-all duration-200 group-hover/carousel:opacity-100 hover:bg-emerald-950 hover:text-white"
             aria-label="Previous image"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -108,7 +112,7 @@ export const ImageCarousel = memo(function ImageCarousel({
           <button
             type="button"
             onClick={handleNext}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-white hover:text-emerald-950 text-white backdrop-blur-xs border border-white/20 opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 flex items-center justify-center shadow-md cursor-pointer"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 h-8 w-8 border border-emerald-950/15 bg-white/90 text-emerald-950 opacity-0 transition-all duration-200 group-hover/carousel:opacity-100 hover:bg-emerald-950 hover:text-white"
             aria-label="Next image"
           >
             <ChevronRight className="h-4 w-4" />
@@ -122,9 +126,7 @@ export const ImageCarousel = memo(function ImageCarousel({
                 type="button"
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-300 pointer-events-auto cursor-pointer",
-                  index === currentIndex
-                    ? "w-5 bg-white shadow-sm"
-                    : "w-1.5 bg-white/50 hover:bg-white/80"
+                  index === currentIndex ? "w-5 bg-emerald-950" : "w-1.5 bg-emerald-950/25 hover:bg-emerald-950/60"
                 )}
                 onClick={(e) => {
                   e.preventDefault();
@@ -141,4 +143,3 @@ export const ImageCarousel = memo(function ImageCarousel({
     </div>
   );
 });
-

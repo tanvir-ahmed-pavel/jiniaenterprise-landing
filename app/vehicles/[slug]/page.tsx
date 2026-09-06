@@ -1,7 +1,5 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InquiryForm } from "@/components/forms/InquiryForm";
@@ -11,14 +9,14 @@ import {
   Check,
   Phone,
   MessageSquare,
-  Car,
   Fuel,
   Tag,
 } from "lucide-react";
-import { siteConfig } from "@/lib/config";
+import { sampleVehicles, siteConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createMetadata } from "@/lib/seo/metadata";
+import { orderVehicleImages } from "@/lib/vehicles/images";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getBreadcrumbSchema,
@@ -53,15 +51,13 @@ async function getVehicle(slug: string): Promise<Vehicle | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("vehicles")
-    .select("*")
+    .select("id,name,slug,category,seats,engine_cc,features,rental_types,description,images,image_url,starting_price,price_label,is_active,sort_order,is_featured")
     .eq("slug", slug)
     .single();
 
-  if (error || !data) {
-    return null;
-  }
+  if (!error && data) return data as Vehicle;
 
-  return data as Vehicle;
+  return (sampleVehicles as unknown as Vehicle[]).find((vehicle) => vehicle.slug === slug) || null;
 }
 
 // Generate metadata dynamically
@@ -83,7 +79,7 @@ export async function generateMetadata({
     title: `${vehicle.name} Rental in Dhaka | With Driver`,
     description,
     path: `/vehicles/${vehicle.slug}`,
-    image: vehicle.image_url || vehicle.images?.[0] || undefined,
+    image: orderVehicleImages(vehicle.images, vehicle.image_url)[0] || undefined,
   });
 }
 
@@ -113,17 +109,6 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     notFound();
   }
 
-  const categoryColors = {
-    Economy: "bg-green-500",
-    Standard: "bg-blue-500",
-    Premium: "bg-amber-500",
-    SUV: "bg-purple-500",
-    Microbus: "bg-teal-500",
-    Bus: "bg-indigo-500",
-  };
-
-
-
   // Format price helper
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-BD", {
@@ -138,14 +123,14 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     `Rent a ${vehicle.name} with a professional driver in Dhaka.`;
 
   return (
-    <div className="py-12">
+    <div className="pb-24 pt-28 sm:pt-36">
       <JsonLd
         data={[
           getVehicleSchema({
             name: vehicle.name,
             description,
             path: `/vehicles/${vehicle.slug}`,
-            image: vehicle.image_url || vehicle.images?.[0],
+            image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
             seats: vehicle.seats,
             category: vehicle.category,
           }),
@@ -157,41 +142,35 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
         ]}
       />
       <div className="container">
+        <div className="mb-12 max-w-3xl">
+          <p className="border-l-2 border-amber-400 pl-3 text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">Jinia Fleet / {vehicle.category}</p>
+          <h1 className="mt-5 text-5xl font-heading font-medium leading-[0.94] text-emerald-950 sm:text-7xl">{vehicle.name}</h1>
+          <p className="mt-6 max-w-2xl text-base font-medium leading-relaxed text-emerald-950/60 sm:text-lg">{description}</p>
+        </div>
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left: Vehicle Info */}
           <div className="space-y-6">
             {/* Image Gallery */}
-            <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-gray-100">
+            <div className="relative aspect-16/10 overflow-hidden rounded-lg border border-emerald-950/15 bg-[#fbfcfa]">
               <ImageCarousel
-                images={
-                  vehicle.images && vehicle.images.length > 0
-                    ? vehicle.images
-                    : vehicle.image_url
-                    ? [vehicle.image_url]
-                    : []
-                }
+                images={orderVehicleImages(vehicle.images, vehicle.image_url)}
                 vehicleName={vehicle.name}
+                priority
               />
-              <Badge
-                className={`absolute top-4 left-4 z-30 ${
-                  categoryColors[vehicle.category]
-                } text-white`}
-              >
+              <span className="absolute left-4 top-4 z-30 border-l-2 border-amber-400 bg-white/90 py-1 pl-2.5 pr-3 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950">
                 {vehicle.category}
-              </Badge>
+              </span>
             </div>
 
             {/* Price Card if available */}
             {vehicle.starting_price && (
-              <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-100">
-                <span className="text-gray-600 font-medium">
-                  Starting Price
-                </span>
+              <div className="flex items-center justify-between border-y border-emerald-950/15 py-4">
+                <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Starting price</span>
                 <div className="text-right">
-                  <span className="text-2xl font-bold text-green-700">
+                  <span className="text-2xl font-heading font-medium text-emerald-950">
                     {formatPrice(vehicle.starting_price)}
                   </span>
-                  <span className="text-sm text-gray-500 ml-1">
+                  <span className="ml-1 text-sm text-emerald-950/50">
                     / {vehicle.price_label || "day"}
                   </span>
                 </div>
@@ -199,25 +178,22 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
             )}
 
             {/* Vehicle Details */}
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-4xl font-heading font-bold">
-                {vehicle.name}
-              </h1>
+            <div className="space-y-6">
 
-              <div className="flex flex-wrap items-center gap-4 text-gray-600">
-                <span className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-emerald-950/10 pb-5 text-emerald-950/65">
+                <span className="flex items-center gap-2 text-sm">
                   <Users className="h-4 w-4" />
                   {vehicle.seats} Seats
                 </span>
 
                 {vehicle.engine_cc && (
-                  <span className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                  <span className="flex items-center gap-2 text-sm">
                     <Fuel className="h-4 w-4" />
                     {vehicle.engine_cc} CC
                   </span>
                 )}
 
-                <span className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                <span className="flex items-center gap-2 text-sm">
                   <Tag className="h-4 w-4" />
                   {vehicle.category} Class
                 </span>
@@ -225,7 +201,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
 
               {vehicle.description && (
                 <div
-                  className="text-gray-600 leading-relaxed prose prose-green max-w-none"
+                  className="max-w-none text-base leading-relaxed text-emerald-950/65"
                   dangerouslySetInnerHTML={{
                     __html: vehicle.description.replace(/\n/g, "<br/>"),
                   }}
@@ -235,12 +211,10 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               {/* Rental Types */}
               {vehicle.rental_types && vehicle.rental_types.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-semibold">Available For:</h3>
-                  <div className="flex flex-wrap gap-2">
+                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Available for</h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
                     {vehicle.rental_types.map((type) => (
-                      <Badge key={type} variant="secondary">
-                        {type} Rental
-                      </Badge>
+                      <span key={type} className="border-b border-emerald-950/20 pb-1 text-sm font-normal text-emerald-950">{type} rental</span>
                     ))}
                   </div>
                 </div>
@@ -249,12 +223,12 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               {/* Features */}
               {vehicle.features && vehicle.features.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-semibold">Features:</h3>
+                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Features</h3>
                   <ul className="grid grid-cols-2 gap-2">
                     {vehicle.features.map((feature) => (
                       <li
                         key={feature}
-                        className="flex items-center gap-2 text-sm text-gray-600"
+                        className="flex items-center gap-2 text-sm text-emerald-950/65"
                       >
                         <Check className="h-4 w-4 text-green-500" />
                         {feature}
@@ -267,7 +241,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               {/* Quick Contact */}
               <div className="flex gap-3 pt-4">
                 <a href={`tel:${siteConfig.phone}`} className="flex-1">
-                  <Button variant="outline" className="w-full gap-2">
+                  <Button variant="outline" className="w-full gap-2 rounded-lg border-emerald-950/25">
                     <Phone className="h-4 w-4" />
                     Call Now
                   </Button>
@@ -278,7 +252,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
                   rel="noopener noreferrer"
                   className="flex-1"
                 >
-                  <Button className="w-full gap-2 bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none">
+                  <Button className="w-full gap-2 rounded-lg bg-emerald-950 text-white hover:bg-emerald-800">
                     <MessageSquare className="h-4 w-4" />
                     WhatsApp
                   </Button>
@@ -289,7 +263,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
 
           {/* Right: Inquiry Form */}
           <div>
-            <Card className="sticky top-24">
+            <Card className="sticky top-24 rounded-lg border-emerald-950/15 bg-white shadow-none">
               <CardHeader>
                 <CardTitle>Request a Quote</CardTitle>
                 <p className="text-sm text-muted-foreground">

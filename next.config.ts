@@ -13,6 +13,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      // Legacy vehicle rows still point at third-party image hosts, so the
+      // https wildcard stays until those assets are replaced with owned
+      // photography. Plain http is dropped — no reason to optimise an
+      // unencrypted remote image.
       {
         protocol: "https",
         hostname: "*",

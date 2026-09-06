@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { blogService, BlogPost } from "@/lib/supabase/admin-service";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export default function EditBlogPostPage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function EditBlogPostPage() {
   const [isFetching, setIsFetching] = useState(true);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [content, setContent] = useState("");
+  const [coverImage, setCoverImage] = useState<string>("");
 
   useEffect(() => {
     const loadPost = async () => {
@@ -27,6 +29,7 @@ export default function EditBlogPostPage() {
       if (data) {
         setPost(data);
         setContent(data.content || "");
+        setCoverImage(data.cover_image || "");
       }
       setIsFetching(false);
     };
@@ -44,7 +47,7 @@ export default function EditBlogPostPage() {
       slug: formData.get("slug") as string,
       excerpt: formData.get("excerpt") as string,
       content: content,
-      cover_image: (formData.get("cover_image") as string) || null,
+      cover_image: coverImage.trim() || null,
       author: formData.get("author") as string,
       is_published: formData.get("is_published") === "on",
     };
@@ -148,13 +151,14 @@ export default function EditBlogPostPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="cover_image">Cover Image URL</Label>
-              <Input
-                id="cover_image"
-                name="cover_image"
-                defaultValue={post.cover_image || ""}
-                placeholder="/images/blog/post-cover.jpg"
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <ImageUploader
+                label="Cover Image (Upload or URL)"
+                helperText="Upload a featured image for your blog post or paste a direct image URL."
+                value={coverImage}
+                onChange={(val) => setCoverImage(typeof val === "string" ? val : val[0] || "")}
+                multiple={false}
+                folder="blog"
               />
             </div>
 

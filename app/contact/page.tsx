@@ -1,14 +1,6 @@
 import { InquiryForm } from "@/components/forms/InquiryForm";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  MessageSquare,
-  Globe,
-  Sparkles,
-} from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Eyebrow } from "@/components/layout/Section";
 import { createMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbSchema, getLocalBusinessSchema } from "@/lib/seo/schema";
@@ -26,9 +18,67 @@ export const metadata = createMetadata({
   path: "/contact",
 });
 
+/** Contact details as a definition list on hairlines. The old page wrapped each
+ *  of six lines in a rounded icon tile, which is six boxes to say six things. */
+const channels: Array<{ label: string; value: React.ReactNode }> = [
+  {
+    label: "Phone",
+    value: (
+      <div className="flex flex-col gap-1">
+        <a href={getTelHref()} className="transition-colors hover:text-emerald-700">
+          {businessIdentity.phone}
+        </a>
+        {businessIdentity.phoneSecondary && (
+          <a href={getTelHref(businessIdentity.phoneSecondary)} className="transition-colors hover:text-emerald-700">
+            {businessIdentity.phoneSecondary}
+          </a>
+        )}
+      </div>
+    ),
+  },
+  {
+    label: "WhatsApp",
+    value: (
+      <a href={getWhatsAppHref()} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-emerald-700">
+        {businessIdentity.phone}
+      </a>
+    ),
+  },
+  {
+    label: "Email",
+    value: (
+      <a href={`mailto:${businessIdentity.email}`} className="break-all transition-colors hover:text-emerald-700">
+        {businessIdentity.email}
+      </a>
+    ),
+  },
+  {
+    label: "Office",
+    value: <address className="not-italic leading-relaxed">{getFormattedAddress()}</address>,
+  },
+  {
+    label: "Hours",
+    value: (
+      <div className="space-y-1">
+        <p>Saturday to Thursday, 9:00 AM – 8:00 PM</p>
+        <p>Friday, 10:00 AM – 6:00 PM</p>
+      </div>
+    ),
+  },
+  {
+    label: "Service areas",
+    value: (
+      <p className="leading-relaxed">
+        Dhaka — Gulshan, Banani, Uttara, Dhanmondi and beyond — Hazrat Shahjalal airport, and
+        outstation routes to every district in Bangladesh.
+      </p>
+    ),
+  },
+];
+
 export default function ContactPage() {
   return (
-    <div className="pb-24">
+    <div>
       <JsonLd
         data={[
           getLocalBusinessSchema(),
@@ -39,123 +89,31 @@ export default function ContactPage() {
         ]}
       />
       <PageHeader
-        title="Connect."
-        subtitle="Dhaka concierge desk"
-        description="Call, WhatsApp, email, or visit our Gulshan office for car rental quotes and bookings."
-        breadcrumbs={[{ label: "Connect" }]}
+        title="Talk to the desk."
+        subtitle="Contact"
+        description="Call, WhatsApp, email, or come to the Gulshan office. A person answers, and a real quote follows."
+        breadcrumbs={[{ label: "Contact" }]}
       />
 
-      <div className="container">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          <div className="space-y-12 animate-fade-in-up">
-            <div className="space-y-4">
-              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">
-                Direct Channels
-              </span>
-              <h2 className="text-4xl font-heading font-black text-green-950 leading-none italic">
-                Get in Touch.
-              </h2>
-              <p className="text-sm text-gray-600 font-medium">
-                {businessIdentity.brandName} · {getFormattedAddress()}
-              </p>
-            </div>
+      <section className="container py-20 sm:py-28">
+        <div className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-24">
+          <div>
+            <Eyebrow>Direct channels</Eyebrow>
+            <h2 className="type-display mt-5 max-w-[12ch] font-heading text-[2.25rem] text-emerald-950 sm:text-[3rem]">
+              Every way to reach us.
+            </h2>
 
-            <div className="grid gap-8">
-              {[
-                {
-                  icon: Phone,
-                  title: "Phone",
-                  content: (
-                    <div className="flex flex-col gap-1 font-bold text-gray-600">
-                      <a
-                        href={getTelHref()}
-                        className="hover:text-green-600 transition-colors"
-                      >
-                        {businessIdentity.phone}
-                      </a>
-                      {businessIdentity.phoneSecondary && (
-                        <a
-                          href={getTelHref(businessIdentity.phoneSecondary)}
-                          className="hover:text-green-600 transition-colors"
-                        >
-                          {businessIdentity.phoneSecondary}
-                        </a>
-                      )}
-                    </div>
-                  ),
-                },
-                {
-                  icon: MessageSquare,
-                  title: "WhatsApp",
-                  content: (
-                    <a
-                      href={getWhatsAppHref()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-gray-600 hover:text-green-600 transition-colors"
-                    >
-                      {businessIdentity.phone}
-                    </a>
-                  ),
-                },
-                {
-                  icon: Mail,
-                  title: "Email",
-                  content: (
-                    <a
-                      href={`mailto:${businessIdentity.email}`}
-                      className="font-bold text-gray-600 hover:text-green-600 transition-colors break-all"
-                    >
-                      {businessIdentity.email}
-                    </a>
-                  ),
-                },
-                {
-                  icon: MapPin,
-                  title: "Office",
-                  content: (
-                    <address className="not-italic font-medium text-gray-600 leading-relaxed">
-                      {getFormattedAddress()}
-                    </address>
-                  ),
-                },
-                {
-                  icon: Clock,
-                  title: "Hours",
-                  content: (
-                    <div className="font-bold text-gray-600 space-y-1">
-                      <p>Sat–Thu: 9:00 AM – 8:00 PM</p>
-                      <p>Friday: 10:00 AM – 6:00 PM</p>
-                    </div>
-                  ),
-                },
-                {
-                  icon: Globe,
-                  title: "Service areas",
-                  content: (
-                    <p className="font-medium text-gray-600 leading-relaxed">
-                      Dhaka (Gulshan, Banani, Uttara, Dhanmondi, and more), DAC
-                      airport, and outstation Bangladesh routes.
-                    </p>
-                  ),
-                },
-              ].map((item) => (
-                <div key={item.title} className="flex gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-                    <item.icon className="h-5 w-5 text-emerald-700" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-black uppercase tracking-wider text-emerald-950">
-                      {item.title}
-                    </h3>
-                    {item.content}
-                  </div>
+            <dl className="mt-10 divide-y divide-emerald-950/10 border-y border-emerald-950/10">
+              {channels.map((channel) => (
+                <div key={channel.label} className="grid gap-2 py-5 sm:grid-cols-[9rem_1fr] sm:gap-6">
+                  <dt className="type-label text-emerald-700">{channel.label}</dt>
+                  <dd className="text-sm leading-relaxed text-emerald-950/70">{channel.value}</dd>
                 </div>
               ))}
-            </div>
+            </dl>
 
-            <div className="relative glass-card p-2 bg-white/40 border-white/60 overflow-hidden group">
-              <div className="aspect-video rounded-2xl overflow-hidden grayscale contrast-125 opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700">
+            <div className="mt-10 overflow-hidden rounded-lg border border-emerald-950/10">
+              <div className="aspect-video grayscale transition-all duration-700 hover:grayscale-0">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0164267879956!2d90.41455431498149!3d23.793769084567995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7a0f70dab33%3A0x4b606d63ecb0c1a5!2sGulshan%202%20Circle!5e0!3m2!1sen!2sbd!4v1702700000000!5m2!1sen!2sbd"
                   width="100%"
@@ -169,24 +127,23 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="relative lg:sticky lg:top-32 animate-fade-in-up animation-delay-100">
-            <div className="glass-card p-8 md:p-12 bg-white/70 border-white/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]">
-              <div className="mb-10 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-[10px] font-black uppercase tracking-widest text-green-600">
-                  <Sparkles className="h-3 w-3" /> Secure Submission
-                </div>
-                <h2 className="text-3xl font-heading font-black text-green-950 italic">
-                  Send a Message.
-                </h2>
-                <p className="text-gray-400 font-medium text-sm">
-                  Share pickup, dates, and vehicle preference for a faster quote.
-                </p>
+          <div className="lg:sticky lg:top-28">
+            <div className="rounded-2xl border border-emerald-950/10 bg-white p-6 sm:p-9">
+              <span aria-hidden className="mb-6 block h-px w-full bg-linear-to-r from-transparent via-amber-400 to-transparent" />
+              <Eyebrow>Send a message</Eyebrow>
+              <h2 className="type-display mt-4 font-heading text-[1.9rem] text-emerald-950 sm:text-[2.25rem]">
+                Request a quote.
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-emerald-950/55">
+                Share pickup, dates, and vehicle preference and we will price the exact trip.
+              </p>
+              <div className="mt-8">
+                <InquiryForm source="contact_page" />
               </div>
-              <InquiryForm source="contact_page" />
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

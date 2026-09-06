@@ -40,7 +40,7 @@ export default function FaqPage() {
             key={faq.question}
             className="rounded-2xl border border-emerald-100 bg-white/70 p-6 md:p-8"
           >
-            <h2 className="text-xl font-heading font-bold text-emerald-950">
+            <h2 className="text-xl font-heading font-medium text-emerald-950">
               {faq.question}
             </h2>
             <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
@@ -49,7 +49,7 @@ export default function FaqPage() {
 
         <div className="rounded-3xl border border-emerald-200 bg-emerald-50/80 p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
           <div>
-            <p className="font-heading font-bold text-emerald-950 text-lg">
+            <p className="font-heading font-medium text-emerald-950 text-lg">
               Still need a quote?
             </p>
             <p className="text-sm text-emerald-900/70 mt-1">

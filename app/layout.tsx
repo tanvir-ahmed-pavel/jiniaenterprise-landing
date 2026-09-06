@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
@@ -14,18 +13,6 @@ import {
 } from "@/lib/seo/schema";
 import { businessIdentity } from "@/lib/business/identity";
 import Script from "next/script";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -76,8 +63,6 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased flex flex-col relative",
-          inter.variable,
-          outfit.variable,
         )}
         suppressHydrationWarning
       >
@@ -89,8 +74,7 @@ export default function RootLayout({
             <div
               className="fixed inset-0 pointer-events-none -z-10"
               style={{
-                background:
-                  "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(167,243,208,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 30%, rgba(153,246,228,0.2) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 80%, rgba(167,243,208,0.15) 0%, transparent 50%), hsl(145, 20%, 96%)",
+                background: "#ffffff",
               }}
             />
           }

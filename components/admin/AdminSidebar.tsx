@@ -9,6 +9,7 @@ import {
   Car,
   FileText,
   Calendar,
+  Building2,
   LogOut,
   ChevronRight,
 } from "lucide-react";
@@ -16,6 +17,7 @@ import {
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/vehicles", label: "Vehicles", icon: Car },
+  { href: "/admin/clients", label: "Clients & Logos", icon: Building2 },
   { href: "/admin/blog", label: "Blog Posts", icon: FileText },
   { href: "/admin/bookings", label: "Bookings", icon: Calendar },
 ];

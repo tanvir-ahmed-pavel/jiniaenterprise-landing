@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-outfit);
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @layer base {
@@ -14,7 +14,7 @@
     --secondary-foreground: 158 50% 10%;
 
     /* Backgrounds — Rich Luxury Pearl Sage (No Stark White) */
-    --background: 152 16% 93.5%; /* Elegant soft pearl sage #e9f0ec */
+    --background: 0 0% 100%;
     --foreground: 158 60% 10%;
 
     /* Muted — Sophisticated Warm Slate */
@@ -49,6 +49,11 @@
   body {
     max-width: 100%;
     width: 100%;
+  }
+
+  .jinia-site :focus-visible {
+    outline: 2px solid #d6a72c;
+    outline-offset: 4px;
   }
 
   * {
@@ -125,6 +130,39 @@
       0 8px 16px -6px rgba(10, 25, 18, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 1);
     transform: translateY(-4px);
+  }
+
+  /* The public site uses a calm, editorial surface system. Admin keeps its own tools. */
+  .jinia-site .glass-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(6, 52, 38, 0.12) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .jinia-site .glass-card:hover {
+    background: #ffffff !important;
+    border-color: rgba(6, 52, 38, 0.22) !important;
+    box-shadow: none !important;
+    transform: translateY(-2px);
+  }
+
+  .jinia-site .glass,
+  .jinia-site .editorial-card {
+    background: #ffffff;
+    border: 1px solid rgba(6, 52, 38, 0.12);
+    border-radius: 8px;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .jinia-site .glass-input {
+    border-radius: 6px;
+    border-color: rgba(6, 52, 38, 0.16);
+    background: #ffffff;
+    box-shadow: none;
+    backdrop-filter: none;
   }
 
   .glass-dark {
@@ -368,6 +406,216 @@
 .animation-delay-4000 { animation-delay: 4s; }
 .animation-delay-5000 { animation-delay: 5s; }
 
+/* Homepage motion stays quiet: one entrance, one atmospheric detail, then stillness. */
+@keyframes jinia-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes jinia-car-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes jinia-ring-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes jinia-line-draw {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@keyframes jinia-image-settle {
+  from {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.jinia-hero-eyebrow,
+.jinia-hero-title,
+.jinia-hero-copy,
+.jinia-hero-actions,
+.jinia-hero-caption {
+  animation: jinia-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.jinia-hero-title { animation-delay: 80ms; }
+.jinia-hero-copy { animation-delay: 150ms; }
+.jinia-hero-actions { animation-delay: 220ms; }
+.jinia-hero-meta { animation: jinia-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both; }
+.jinia-hero-caption { animation-delay: 420ms; }
+
+/* Autoplay tell: the gold hairline fills across the active scene's dwell time. */
+@keyframes jinia-hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.jinia-hero-progress { animation: jinia-hero-progress 7000ms linear both; }
+
+/* One presentation for every vehicle photo, whatever the source: a single
+   neutral plate, contained framing, and a shared contact shadow. Mixed stock
+   only reads as a set when the plate underneath never changes. */
+.jinia-vehicle-plate {
+  background:
+    radial-gradient(70% 46% at 50% 82%, rgba(6, 52, 38, 0.07), transparent 62%),
+    linear-gradient(180deg, #fbfcfa 0%, #f4f7f4 100%);
+}
+.jinia-hero-car { animation: jinia-car-arrive 1000ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both; }
+.jinia-hero-ring { animation: jinia-ring-drift 7s ease-in-out 1.1s infinite; }
+.jinia-hero-line { animation: jinia-line-draw 900ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both; }
+.jinia-arrival-image { animation: jinia-image-settle 900ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+.jinia-object-stage {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.jinia-grounded-scene {
+  isolation: isolate;
+  background: #fff;
+}
+
+.jinia-site .mix-blend-multiply {
+  mix-blend-mode: multiply;
+}
+
+.jinia-site .jinia-editorial-copy {
+  text-wrap: balance;
+}
+
+/* Curved SVG folds replace the flat gradient panels. The artwork stays still
+   by default; supporting browsers add depth only as this section is scrolled. */
+.jinia-silk-field {
+  background: #fffdf8;
+}
+
+.jinia-silk-fold,
+.jinia-silk-highlight {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.jinia-silk-fold-a {
+  transform: translate3d(-1%, 0, 0) scale(1.035);
+}
+
+.jinia-silk-fold-b {
+  transform: translate3d(1%, 0, 0) scale(1.045);
+}
+
+.jinia-silk-fold-c {
+  transform: translate3d(-.5%, 0, 0) scale(1.035);
+}
+
+.jinia-silk-highlight {
+  transform: translate3d(2%, 0, 0);
+  opacity: .62;
+}
+
+.jinia-process-steps {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(6, 52, 38, 0.16);
+  box-shadow: 0 24px 70px rgba(6, 52, 38, 0.07);
+}
+
+@media (min-width: 768px) {
+  .jinia-site .jinia-editorial-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 720px;
+  }
+}
+
+@layer utilities {
+  .jinia-site .rounded-3xl,
+  .jinia-site .rounded-2xl {
+    border-radius: 8px !important;
+  }
+}
+
+@keyframes jinia-scroll-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+@supports (animation-timeline: view()) {
+  .jinia-scroll-reveal > * {
+    animation: jinia-scroll-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 34%;
+  }
+
+  .jinia-scroll-reveal > *:nth-child(2) { animation-range: entry 14% cover 40%; }
+  .jinia-scroll-reveal > *:nth-child(3) { animation-range: entry 20% cover 46%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-hero-eyebrow,
+  .jinia-hero-title,
+  .jinia-hero-copy,
+  .jinia-hero-actions,
+  .jinia-hero-meta,
+  .jinia-hero-caption,
+  .jinia-hero-car,
+  .jinia-hero-ring,
+  .jinia-hero-line,
+  .jinia-arrival-image {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .jinia-scroll-reveal > * { animation: none !important; }
+
+  .jinia-silk-fold,
+  .jinia-silk-highlight {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .jinia-hero-progress {
+    animation: none !important;
+    transform: scaleX(1) !important;
+  }
+
+  .jinia-service-image,
+  .group svg {
+    transition: none !important;
+  }
+}
+
 /* ── Mobile-First Touch Refinements ── */
 
 @media (hover: none) {
@@ -393,11 +641,12 @@
   .container {
     @apply px-6;
   }
-  
-  section {
-    @apply py-20;
-  }
 }
+
+/* A bare `section { @apply py-20 }` used to live here. Being unlayered, it beat
+   every Tailwind padding utility, so under 640px each section silently ignored
+   its own responsive spacing — which is what threw the hero's outline copies
+   out of register on a phone. Sections now set their own padding. */
 
 /* Ensure iOS forms don't zoom on focus */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
@@ -406,4 +655,500 @@
   input:focus {
     font-size: 16px;
   }
+}
+
+/* ══════════════════════════════════════════════════
+   PUBLIC TYPE SYSTEM
+   Four sizes, three weights, nothing heavier than 500.
+   Display type is light and tightly tracked — presence
+   comes from scale, not from weight. Scoped to
+   .jinia-site so the admin keeps its own UI type.
+   ══════════════════════════════════════════════════ */
+
+.jinia-site h1,
+.jinia-site h2,
+.jinia-site h3,
+.jinia-site h4,
+.jinia-site h5,
+.jinia-site h6 {
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+/* Display — hero and section openers. */
+.jinia-site .type-display {
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+/* Heading — everything else that carries a title. */
+.jinia-site .type-heading {
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+/* Label — eyebrows, meta, captions. Small and medium,
+   never letterspaced open: wide uppercase tracking is
+   what makes a page read as a template. */
+.jinia-site .type-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.jinia-site .type-body {
+  font-weight: 400;
+  letter-spacing: -0.001em;
+  line-height: 1.5;
+}
+
+/* ── Depth stage ───────────────────────────────────
+   One pointer/scroll signal, four layers reading it at
+   different strengths. The vehicle travels furthest and
+   paints above the headline, so the type passes behind
+   the subject the way it does in a depth-effect
+   wallpaper. Layer order is what sells it — parallax
+   alone, with everything on one plane, just wobbles. */
+.jinia-depth-stage {
+  --px: 0;
+  --py: 0;
+  --sy: 0;
+}
+
+.jinia-depth {
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.jinia-depth--far {
+  transform: translate3d(calc(var(--px) * 9px), calc(var(--py) * 7px + var(--sy) * 30px), 0);
+}
+
+.jinia-depth--mid {
+  transform: translate3d(calc(var(--px) * 22px), calc(var(--py) * 14px + var(--sy) * -48px), 0);
+}
+
+.jinia-depth--near {
+  transform: translate3d(calc(var(--px) * 48px), calc(var(--py) * 26px + var(--sy) * 64px), 0)
+    scale(calc(1 + var(--py) * 0.008));
+}
+
+.jinia-depth--front {
+  transform: translate3d(calc(var(--px) * 12px), calc(var(--py) * 8px), 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-depth {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* ── Client wall ───────────────────────────────────
+   A cylinder seen from its own axis. The rig sits at
+   the origin — the camera's position — and every tile
+   is rotated to its bearing and then pushed outward to
+   the wall, so its face turns back toward the middle.
+   Looking straight ahead you see the far wall; turn far
+   enough and a tile passes your shoulder edge-on, which
+   is why visibility is driven per frame in script
+   rather than left to the compositor. */
+.jinia-wall {
+  --rx: 0;
+  --ry: 0;
+  touch-action: pan-y;
+}
+
+.jinia-wall-viewport {
+  perspective: 1500px;
+  perspective-origin: 50% 50%;
+}
+
+.jinia-wall-rig {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+}
+
+.jinia-wall-tile {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 216px;
+  margin: -44px 0 0 -108px;
+  transform-style: preserve-3d;
+  /* Bearing first, then out to the wall: the tile ends up facing the axis. */
+  transform: rotateY(var(--angle)) translateZ(calc(var(--depth) * -1)) translateY(var(--y));
+}
+
+/* ── Constellation nodes ───────────────────────────
+   Each client keeps a quiet card plate so the cylinder
+   reads as a coherent lattice. Hover brings that card
+   forward and sharpens it without rearranging the wall. */
+.jinia-node {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  /* Raised from near-invisible: on the grey ground a resting node still has
+     to be legible enough to scan, or the wall is decoration rather than a
+     list of who is actually served. */
+  opacity: 0.72;
+  transition: opacity 450ms ease, transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jinia-node:hover,
+.jinia-node.is-active,
+.jinia-node:focus-visible {
+  opacity: 1;
+  transform: translateZ(78px)
+    rotateY(calc(var(--rx, 0) * -3deg))
+    rotateX(calc(var(--ry, 0) * 3deg));
+}
+
+.jinia-node-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #06342a;
+}
+
+/* The rule draws itself under the name on approach — the only chrome any of
+   these nodes gets, and only while it is the one being read. */
+.jinia-node-name::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 0.55rem;
+  background: #d4af4f;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 550ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jinia-node:hover .jinia-node-name::after,
+.jinia-node.is-active .jinia-node-name::after,
+.jinia-node:focus-visible .jinia-node-name::after {
+  transform: scaleX(1);
+}
+
+.jinia-node-type {
+  display: block;
+  margin-top: 0.5rem;
+  color: rgba(6, 52, 38, 0.45);
+  opacity: 0.48;
+  transition: opacity 450ms ease;
+}
+
+.jinia-node:hover .jinia-node-type,
+.jinia-node.is-active .jinia-node-type,
+.jinia-node:focus-visible .jinia-node-type {
+  opacity: 1;
+}
+
+.jinia-wall.is-dragging .jinia-node {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-node,
+  .jinia-node-name::after {
+    transition: none;
+  }
+
+  .jinia-node:hover,
+  .jinia-node.is-active,
+  .jinia-node:focus-visible {
+    transform: none;
+  }
+}
+
+
+/* Scroll parallax now runs from ScrollParallax.tsx, because
+   `animation-timeline: view()` is Chromium-only and inside `@supports` it
+   degrades to no movement at all in Safari and Firefox. `will-change` stays
+   here so the promoted layer is set up before the first frame. */
+[data-parallax] {
+  will-change: transform;
+}
+
+
+/* ── Navbar plate ──────────────────────────────────
+   A backdrop-filter still blurs what is behind it
+   when the background is transparent, so "no
+   background" was rendering as a frosted band across
+   the top of the hero. Blur is declared at zero and
+   animated up, which keeps the transition smooth
+   without leaving a filter running at the top. */
+.jinia-nav {
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+
+.jinia-nav.is-solid {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Outline type over the vehicle ─────────────────
+   The headline is drawn twice: a solid copy behind
+   the car, and this stroke-only copy in front of it.
+   Where the car covers a word the stroke still traces
+   it, so the line stays readable instead of being
+   swallowed. Over uncovered text the stroke lands on
+   the solid glyph's own edge, which just crisps it. */
+.jinia-outline-strong {
+  color: transparent;
+  -webkit-text-stroke: 1.1px rgba(6, 52, 38, 0.9);
+}
+
+.jinia-outline-soft {
+  color: transparent;
+  -webkit-text-stroke: 0.55px rgba(6, 52, 38, 0.55);
+}
+
+/* The filled pill sits behind the vehicle with the rest of the type; this is
+   its outline twin, so the car reveals the button's shape rather than
+   erasing it. */
+.jinia-outline-pill {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.25px rgba(6, 52, 38, 0.85);
+}
+
+/* The outline copy repeated the button's icon as a solid dark glyph on top of
+   the white one underneath, which read as a smudge. Only the ring and the
+   lettering belong in the twin; the icon is drawn once, by the real button. */
+.jinia-outline-icon {
+  visibility: hidden;
+}
+
+
+/* ── Constellation node kinds ──────────────────────
+   Two things share this canvas and must never be
+   mistaken for each other: an organisation Jinia
+   moves, and something one of them said. The client
+   carries a square mark and a name; the testimonial
+   carries a quote glyph, italic setting, a rule, and
+   an attribution that is always on. */
+.jinia-node-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(6, 52, 38, 0.16);
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 0.5rem;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(6, 52, 38, 0.6);
+  transition: border-color 450ms ease, color 450ms ease;
+}
+
+.jinia-node:hover .jinia-node-badge,
+.jinia-node.is-active .jinia-node-badge,
+.jinia-node:focus-visible .jinia-node-badge {
+  border-color: rgba(212, 175, 79, 0.8);
+  color: #06342a;
+}
+
+.jinia-node-logo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 22px;
+  object-fit: contain;
+  object-position: left center;
+  /* Client marks arrive in every colour there is. Desaturating at rest keeps
+     the wall one material; the real logo returns on approach. */
+  filter: grayscale(1);
+  opacity: 0.8;
+  transition: filter 450ms ease, opacity 450ms ease;
+}
+
+.jinia-node:hover .jinia-node-logo,
+.jinia-node.is-active .jinia-node-logo,
+.jinia-node:focus-visible .jinia-node-logo {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+/* ── Testimonial node ── */
+.jinia-node--quote {
+  width: 264px;
+  border-left: 1px solid rgba(212, 175, 79, 0.55);
+  padding-left: 0.9rem;
+}
+
+.jinia-node-mark {
+  display: block;
+  margin-bottom: -0.35rem;
+  font-family: var(--font-heading), system-ui, serif;
+  font-size: 2rem;
+  line-height: 1;
+  color: rgba(212, 175, 79, 0.9);
+}
+
+.jinia-node-quote {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: rgba(6, 52, 38, 0.82);
+}
+
+.jinia-node-attrib {
+  display: block;
+  margin-top: 0.7rem;
+  color: rgba(6, 52, 38, 0.7);
+}
+
+.jinia-node-role {
+  display: block;
+  margin-top: 0.15rem;
+  font-weight: 400;
+  color: rgba(6, 52, 38, 0.4);
+}
+
+
+/* ── Hero slide ────────────────────────────────────
+   Each vehicle holds a numbered seat either side of
+   the frame and the whole set moves together, so a
+   scene change reads as one object leaving and the
+   next arriving rather than two dissolving through
+   each other. The long ease is the premium part:
+   fast to leave, slow to settle. */
+.jinia-hero-slide {
+  transform: translate3d(calc(var(--seat, 0) * 116%), 0, 0);
+  transition: transform 1100ms cubic-bezier(0.22, 1, 0.28, 1), opacity 600ms ease;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-hero-slide {
+    transition: opacity 200ms ease;
+    transform: none;
+  }
+}
+
+
+/* Every node has a quiet plate so the cylinder reads as a coherent set of
+   cards; the active one brightens and comes forward instead of appearing from
+   nowhere. */
+.jinia-node {
+  position: relative;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin: 0;
+}
+
+.jinia-node::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 18px -16px rgba(6, 52, 38, 0.24);
+  opacity: 0.18;
+  transition: opacity 400ms ease, box-shadow 400ms ease;
+  z-index: -1;
+}
+
+.jinia-node:hover::before,
+.jinia-node.is-active::before,
+.jinia-node:focus-visible::before {
+  opacity: 1;
+  box-shadow: 0 24px 44px -20px rgba(6, 52, 38, 0.46);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-node,
+  .jinia-node::before {
+    transition: none;
+  }
+
+  .jinia-node:hover,
+  .jinia-node.is-active,
+  .jinia-node:focus-visible {
+    transform: none;
+  }
+}
+
+
+/* The client section's copy stays at a fixed depth in the same room as the
+   client wall. Cursor movement only pitches and yaws that plane, preserving
+   the text's original scale while it follows the cylinder's camera pan. */
+.jinia-wall-lean {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  transform-origin: 50% 50%;
+  transform:
+    perspective(1050px)
+    rotateY(calc(var(--rx) * -10deg))
+    rotateX(calc(var(--ry) * 6.5deg));
+  transition: transform 120ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jinia-wall-lean {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Entrance reveal ───────────────────────────────
+   Settles once as a block comes into view and then
+   stays put. Delay is set per element so a row
+   arrives in sequence rather than all at once. */
+/* Only hidden once script has armed it: no JS, no invisible section. */
+[data-reveal].is-armed {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition: opacity 850ms cubic-bezier(0.16, 1, 0.3, 1), transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-armed.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].is-armed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Outline type on a dark ground ─────────────────
+   The stroke colours are tuned for dark text on a
+   pale page. Inside a dark section they have to
+   invert, or the twin traces the words in something
+   nearly the same value as the background. */
+.jinia-on-dark .jinia-outline-strong {
+  -webkit-text-stroke: 1.1px rgba(255, 255, 255, 0.85);
+}
+
+.jinia-on-dark .jinia-outline-soft {
+  -webkit-text-stroke: 0.55px rgba(255, 255, 255, 0.6);
+}
+
+.jinia-on-dark .jinia-outline-pill {
+  box-shadow: inset 0 0 0 1.25px rgba(255, 255, 255, 0.85);
 }
