@@ -2,8 +2,7 @@ import { VehicleGrid } from "@/components/vehicles/VehicleGrid";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createClient } from "@/lib/supabase/server";
-import { Phone, MessageSquare, Sparkles, ShieldCheck, Snowflake, FileCheck2, Car, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShieldCheck, Snowflake, FileCheck2, Car } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 import { sampleVehicles, siteConfig } from "@/lib/config";
 
@@ -42,7 +41,7 @@ async function getVehicles(): Promise<Vehicle[]> {
 
     const { data, error } = await supabase
       .from("vehicles")
-      .select("*")
+      .select("id,name,slug,category,seats,engine_cc,features,rental_types,description,images,image_url,starting_price,price_label,is_active,sort_order,is_featured")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
 
@@ -78,7 +77,7 @@ export default async function VehiclesPage() {
               <Car className="h-5 w-5" />
             </div>
             <div className="text-xs">
-              <p className="font-bold text-emerald-950">{vehicles.length}+ Premium Models</p>
+              <p className="font-medium text-emerald-950">{vehicles.length}+ Premium Models</p>
               <p className="text-[11px] text-gray-500 font-medium">100% First-Hand Fleet</p>
             </div>
           </div>
@@ -88,7 +87,7 @@ export default async function VehiclesPage() {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div className="text-xs">
-              <p className="font-bold text-emerald-950">Licensed Chauffeurs</p>
+              <p className="font-medium text-emerald-950">Licensed Chauffeurs</p>
               <p className="text-[11px] text-gray-500 font-medium">BRTA & Police Verified</p>
             </div>
           </div>
@@ -98,7 +97,7 @@ export default async function VehiclesPage() {
               <Snowflake className="h-5 w-5" />
             </div>
             <div className="text-xs">
-              <p className="font-bold text-emerald-950">20°C Pre-Cooled Cabins</p>
+              <p className="font-medium text-emerald-950">20°C Pre-Cooled Cabins</p>
               <p className="text-[11px] text-gray-500 font-medium">Climate-Ready on Arrival</p>
             </div>
           </div>
@@ -108,7 +107,7 @@ export default async function VehiclesPage() {
               <FileCheck2 className="h-5 w-5" />
             </div>
             <div className="text-xs">
-              <p className="font-bold text-emerald-950">Corporate VAT Billing</p>
+              <p className="font-medium text-emerald-950">Corporate VAT Billing</p>
               <p className="text-[11px] text-gray-500 font-medium">100% Transparent Invoices</p>
             </div>
           </div>
@@ -117,40 +116,39 @@ export default async function VehiclesPage() {
         {/* Vehicle Grid with Live Multi-Filters & Quick Specs Drawer */}
         <VehicleGrid vehicles={vehicles} />
 
-        {/* Bespoke VIP Concierge Assistance CTA */}
-        <div className="relative glass-card p-10 sm:p-14 md:p-20 text-center overflow-hidden bg-emerald-950 rounded-3xl border border-emerald-800/80 shadow-2xl mt-16">
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-            <span className="text-[16rem] font-heading font-black italic whitespace-nowrap text-white">
-              BESPOKE
-            </span>
-          </div>
-
-          <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] text-emerald-300 bg-emerald-500/20 border border-emerald-400/30">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Specialized Retainers</span>
-            </div>
-
-            <h2 className="text-3xl md:text-5xl font-heading font-black text-white leading-tight">
-              Looking for a Long-Term Corporate or Diplomatic Fleet?
-            </h2>
-            <p className="text-emerald-100/80 font-medium text-sm sm:text-base leading-relaxed">
-              We arrange customized multi-month retentions, custom pilot escorts, and dedicated company fleet deployments with dedicated senior coordinators.
+        {/* Long-term enquiry. Same dark studio ground as the home CTA — no
+            glass card, no 16rem ghost word behind it. */}
+        <section className="jinia-on-dark relative isolate mt-20 overflow-hidden rounded-2xl bg-[#0d1310] bg-[radial-gradient(95%_90%_at_50%_10%,#26332c_0%,#161f1a_50%,#0d1310_85%)] px-6 py-20 text-center sm:px-12 sm:py-24">
+          <div className="relative z-10 mx-auto max-w-2xl">
+            <p className="flex items-center justify-center gap-3 type-label text-amber-300/80">
+              <span aria-hidden className="h-px w-6 shrink-0 bg-amber-400" />
+              Standing arrangements
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
-              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                <Button size="lg" className="h-13 px-8 rounded-2xl bg-white text-emerald-950 hover:bg-emerald-50 font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer">
-                  <Phone className="mr-2.5 h-4 w-4 text-emerald-700" /> Personal Call: {siteConfig.phone}
-                </Button>
+            <h2 className="type-display mx-auto mt-5 max-w-[18ch] font-heading text-[2rem] text-white sm:text-[2.75rem]">
+              Need a fleet for months, not a car for a day?
+            </h2>
+            <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-white/55">
+              Companies, NGOs, and embassies run monthly arrangements with us — named coordinator,
+              monthly billing, and a backup vehicle held for the days one is needed.
+            </p>
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <a
+                href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-emerald-950 transition-colors hover:bg-amber-300"
+              >
+                Call {siteConfig.phone}
               </a>
-              <a href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("Hi Jinia Enterprise — I would like a quote for a custom fleet retainer.")}`} target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="h-13 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer">
-                  <MessageSquare className="mr-2.5 h-4 w-4 text-emerald-950" /> WhatsApp Concierge
-                </Button>
+              <a
+                href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("Hi Jinia Enterprise — I would like a quote for a long-term fleet arrangement.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 px-7 text-sm font-medium text-white transition-colors hover:border-amber-300"
+              >
+                WhatsApp the desk
               </a>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
