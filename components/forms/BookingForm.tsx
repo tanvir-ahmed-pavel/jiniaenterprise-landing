@@ -8,6 +8,8 @@ import { Vehicle } from "@/lib/supabase/admin-service";
 import { ArrowDown, ArrowRight, CheckCircle2, ChevronUp, Check, Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select } from "@/components/ui/select";
+import Image from "next/image";
+import { orderVehicleImages } from "@/lib/vehicles/images";
 
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -89,6 +91,14 @@ function VehicleTypeahead({
     setIsOpen(false);
   };
 
+  const openVehiclePicker = () => {
+    // The selected label is a display value, not a filter. Clear it when the
+    // picker is reopened so the next search can see the complete fleet.
+    if (selectedVehicle && query === selectedVehicle.name) setQuery("");
+    setActiveIndex(0);
+    setIsOpen(true);
+  };
+
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
@@ -101,11 +111,11 @@ function VehicleTypeahead({
             setActiveIndex(0);
             setIsOpen(true);
           }}
-          onFocus={() => setIsOpen(true)}
+          onFocus={openVehiclePicker}
           onKeyDown={(event) => {
             if (event.key === "ArrowDown") {
               event.preventDefault();
-              setIsOpen(true);
+              openVehiclePicker();
               setActiveIndex((index) => Math.min(index + 1, filteredVehicles.length - 1));
             } else if (event.key === "ArrowUp") {
               event.preventDefault();
@@ -127,7 +137,7 @@ function VehicleTypeahead({
         />
         <button
           type="button"
-          onClick={() => setIsOpen((open) => !open)}
+          onClick={() => (isOpen ? setIsOpen(false) : openVehiclePicker())}
           aria-label={isOpen ? "Close vehicle suggestions" : "Open vehicle suggestions"}
           className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-md text-emerald-900/60 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
         >
@@ -160,14 +170,27 @@ function VehicleTypeahead({
                 index === activeIndex ? "bg-emerald-50" : "hover:bg-emerald-50"
               )}
             >
-              <span>
+              <span className="flex min-w-0 items-center gap-3">
+                {orderVehicleImages(vehicle.images, vehicle.image_url)[0] && <Image src={orderVehicleImages(vehicle.images, vehicle.image_url)[0]} alt="" width={64} height={46} className="h-11 w-16 shrink-0 object-contain mix-blend-multiply" />}
+                <span>
                 <span className="block text-sm font-medium text-emerald-950">{vehicle.name}</span>
                 <span className="block text-xs text-emerald-950/50">{vehicle.category} · {vehicle.seats} seats</span>
+                </span>
               </span>
               {vehicle.id === value && <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" />}
             </button>
           ))}
           {filteredVehicles.length === 0 && <p className="px-3 py-4 text-sm text-emerald-950/55">No matching vehicles.</p>}
+        </div>
+      )}
+      {selectedVehicle && orderVehicleImages(selectedVehicle.images, selectedVehicle.image_url)[0] && (
+        <div className="mt-3 flex items-center gap-4 rounded-xl border border-emerald-950/10 bg-emerald-50/60 p-3">
+          <Image src={orderVehicleImages(selectedVehicle.images, selectedVehicle.image_url)[0]} alt={selectedVehicle.name} width={112} height={76} className="h-[4.75rem] w-28 shrink-0 object-contain mix-blend-multiply" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-emerald-950">{selectedVehicle.name}</p>
+            <p className="mt-1 text-xs text-emerald-950/55">{selectedVehicle.category} · {selectedVehicle.seats} seats{selectedVehicle.engine_cc ? ` · ${selectedVehicle.engine_cc.toLocaleString()} cc` : ""}</p>
+            {selectedVehicle.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-emerald-950/60">{selectedVehicle.description}</p>}
+          </div>
         </div>
       )}
     </div>

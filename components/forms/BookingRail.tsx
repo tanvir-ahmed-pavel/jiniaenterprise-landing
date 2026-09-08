@@ -4,10 +4,30 @@ import { useState } from "react";
 import { ArrowRight, CalendarDays, CheckCircle2, MapPin, CarFront, Phone } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { Select } from "@/components/ui/select";
+import type { Vehicle } from "@/lib/supabase/admin-service";
+import { orderVehicleImages } from "@/lib/vehicles/images";
 
-export function BookingRail() {
+type BookingVehicle = Pick<Vehicle, "name" | "category" | "seats"> & { images?: string[]; image_url?: string | null };
+
+export function BookingRail({ vehicles = [] }: { vehicles?: BookingVehicle[] }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const vehicleOptions = vehicles.length
+    ? vehicles.map((vehicle) => ({
+        value: vehicle.name,
+        label: vehicle.name,
+        image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
+        description: `${vehicle.category} · ${vehicle.seats} seats`,
+      }))
+    : [
+        { value: "Toyota Premio", label: "Toyota Premio" },
+        { value: "Toyota Harrier", label: "Toyota Harrier" },
+        { value: "Toyota Alphard", label: "Toyota Alphard" },
+        { value: "Land Cruiser Prado", label: "Land Cruiser Prado" },
+        { value: "BMW or Mercedes sedan", label: "BMW or Mercedes sedan" },
+        { value: "Nissan Civilian bus", label: "Nissan Civilian bus" },
+        { value: "Nissan X-Trail", label: "Nissan X-Trail" },
+      ];
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,15 +119,7 @@ export function BookingRail() {
                       defaultValue=""
                       placeholder="Choose a vehicle"
                       aria-label="Vehicle"
-                      options={[
-                        { value: "Toyota Premio", label: "Toyota Premio" },
-                        { value: "Toyota Harrier", label: "Toyota Harrier" },
-                        { value: "Toyota Alphard", label: "Toyota Alphard" },
-                        { value: "Land Cruiser Prado", label: "Land Cruiser Prado" },
-                        { value: "BMW or Mercedes sedan", label: "BMW or Mercedes sedan" },
-                        { value: "Nissan Civilian bus", label: "Nissan Civilian bus" },
-                        { value: "Nissan X-Trail", label: "Nissan X-Trail" },
-                      ]}
+                      options={vehicleOptions}
                     />
                   </label>
                 </div>

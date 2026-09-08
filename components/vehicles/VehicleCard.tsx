@@ -94,19 +94,20 @@ export const VehicleCard = memo(function VehicleCard({
             </div>
           </dl>
 
-          <div className="mt-5 flex items-center justify-between gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <Link href={`/vehicles/${vehicle.slug || vehicle.id}`} className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950 transition-colors hover:text-emerald-600">
               View vehicle <ArrowRight className="h-4 w-4 transition-transform group-hover/card:translate-x-1" />
             </Link>
-            {onQuickInspect ? (
-              <button type="button" onClick={onQuickInspect} className="inline-flex h-9 w-9 items-center justify-center border border-emerald-950/15 text-emerald-950 transition-colors hover:bg-emerald-950 hover:text-white" aria-label={`Quick specs for ${vehicle.name}`}>
-                <Eye className="h-4 w-4" />
-              </button>
-            ) : (
+            <div className="flex items-center gap-2">
+              {onQuickInspect && (
+                <button type="button" onClick={onQuickInspect} className="inline-flex h-9 w-9 items-center justify-center border border-emerald-950/15 text-emerald-950 transition-colors hover:bg-emerald-950 hover:text-white" aria-label={`View details for ${vehicle.name}`}>
+                  <Eye className="h-4 w-4" />
+                </button>
+              )}
               <Link href={`/booking?vehicle=${vehicle.slug || vehicle.id}`} className="inline-flex h-9 items-center rounded-full bg-emerald-950 px-4 text-sm font-medium text-white transition-colors hover:bg-emerald-800">
                 Reserve
               </Link>
-            )}
+            </div>
           </div>
         </div>
       </div>

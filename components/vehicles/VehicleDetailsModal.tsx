@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,12 +45,6 @@ interface VehicleDetailsModalProps {
 }
 
 export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -66,7 +60,7 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
     };
   }, [vehicle, onClose]);
 
-  if (!mounted || !vehicle) return null;
+  if (!vehicle || typeof document === "undefined") return null;
 
   const displayImages =
     vehicle.images && vehicle.images.length > 0
@@ -95,14 +89,14 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-y-auto">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-emerald-950/70 p-4 backdrop-blur-sm sm:p-6 md:p-8">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-emerald-950/85 backdrop-blur-md z-[9999]"
+          className="fixed inset-0 bg-emerald-950/70"
         />
 
         {/* Modal Dialog */}
@@ -111,13 +105,13 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white border border-emerald-900/20 shadow-2xl z-[10000] scrollbar-none my-auto"
+          className="relative z-[10000] my-auto max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-emerald-950/12 bg-white shadow-[0_24px_70px_-36px_rgba(6,52,38,.55)] scrollbar-none"
         >
           {/* Close Button */}
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer shadow-lg"
+            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-emerald-950/70 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-emerald-950"
           >
             <X className="h-4 w-4" />
           </button>
@@ -133,11 +127,11 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
 
             {/* Top Badges */}
             <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/30 backdrop-blur-md border border-emerald-400/40 text-[10px] font-black uppercase tracking-wider text-emerald-300">
+              <span className="type-label rounded-md border-l-2 border-amber-400 bg-emerald-950/75 py-1 pl-2.5 pr-3 text-emerald-100 backdrop-blur-md">
                 {vehicle.category || "Vehicle"}
               </span>
               {vehicle.is_featured && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 text-[10px] font-black uppercase tracking-wider shadow-md">
+                <span className="type-label inline-flex items-center gap-1 rounded-md bg-amber-400 px-2.5 py-1 text-amber-950">
                   <Star className="h-3 w-3 fill-amber-950" />
                   Featured
                 </span>
@@ -147,19 +141,19 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
             {/* Bottom Title & Price */}
             <div className="absolute bottom-4 left-5 right-5 z-20 flex items-end justify-between gap-4">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 block">
+                <span className="type-label block text-emerald-200/80">
                   Fleet Specification
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-heading font-black text-white leading-tight">
+                <h3 className="type-display font-heading text-2xl font-medium leading-tight text-white sm:text-3xl">
                   {vehicle.name}
                 </h3>
               </div>
               {vehicle.starting_price && (
                 <div className="text-right shrink-0">
-                  <span className="text-[10px] uppercase text-emerald-300/80 font-bold block leading-none">
+                  <span className="type-label block text-emerald-200/80">
                     {vehicle.price_label || "Starting From"}
                   </span>
-                  <span className="text-xl sm:text-2xl font-black text-amber-300 leading-none mt-0.5 block">
+                  <span className="mt-0.5 block text-xl font-medium leading-none text-amber-300 sm:text-2xl">
                     ৳{vehicle.starting_price.toLocaleString("en-BD")}
                   </span>
                 </div>
@@ -168,44 +162,44 @@ export function VehicleDetailsModal({ vehicle, onClose }: VehicleDetailsModalPro
           </div>
 
           {/* Modal Body */}
-          <div className="p-5 sm:p-7 space-y-6">
+          <div className="space-y-6 p-5 sm:p-7">
             
             {/* 6 Essential Specs Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <Users className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Capacity</span>
-                <span className="text-xs font-black text-emerald-950">{seatsCount} Passengers</span>
+                <span className="type-label block text-emerald-950/45">Capacity</span>
+                <span className="text-xs font-medium text-emerald-950">{seatsCount} Passengers</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <Luggage className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Luggage</span>
-                <span className="text-xs font-black text-emerald-950">{luggageEstimate}</span>
+                <span className="type-label block text-emerald-950/45">Luggage</span>
+                <span className="text-xs font-medium text-emerald-950">{luggageEstimate}</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <Snowflake className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Climate Control</span>
-                <span className="text-xs font-black text-emerald-950">Pre-Cooled Dual AC</span>
+                <span className="type-label block text-emerald-950/45">Climate Control</span>
+                <span className="text-xs font-medium text-emerald-950">Pre-Cooled Dual AC</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <Fuel className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Engine / Fuel</span>
-                <span className="text-xs font-black text-emerald-950 truncate block">{engineText}</span>
+                <span className="type-label block text-emerald-950/45">Engine / Fuel</span>
+                <span className="block truncate text-xs font-medium text-emerald-950">{engineText}</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <ShieldCheck className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Chauffeur</span>
-                <span className="text-xs font-black text-emerald-950">BRTA & Vetted</span>
+                <span className="type-label block text-emerald-950/45">Chauffeur</span>
+                <span className="text-xs font-medium text-emerald-950">BRTA & Vetted</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
+              <div className="rounded-md border border-emerald-950/10 bg-emerald-50/60 p-3 text-center">
                 <Compass className="h-4 w-4 text-emerald-700 mx-auto mb-1" />
-                <span className="text-[9px] uppercase text-gray-500 font-bold block tracking-wider">Coverage</span>
-                <span className="text-xs font-black text-emerald-950">Dhaka & Nationwide</span>
+                <span className="type-label block text-emerald-950/45">Coverage</span>
+                <span className="text-xs font-medium text-emerald-950">Dhaka & Nationwide</span>
               </div>
             </div>
 

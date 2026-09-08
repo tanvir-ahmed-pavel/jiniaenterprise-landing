@@ -20,13 +20,25 @@ const promises = [
   "One price for the trip, quoted up front",
 ];
 
-export default async function BookingPage() {
+export default async function BookingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ vehicle?: string | string[] }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const { data: vehicles } = await supabase
     .from("vehicles")
     .select("*")
     .eq("is_active", true)
     .order("name");
+
+  const requestedVehicle = Array.isArray(params.vehicle) ? params.vehicle[0] : params.vehicle;
+  const preselectedVehicle = requestedVehicle
+    ? (vehicles as Array<{ id: string; slug: string }> | null)?.find(
+        (vehicle) => vehicle.id === requestedVehicle || vehicle.slug === requestedVehicle,
+      )?.id
+    : undefined;
 
   return (
     <div>
@@ -50,7 +62,7 @@ export default async function BookingPage() {
             </p>
 
             <div className="mt-10 border-t border-emerald-950/10 pt-10">
-              <BookingForm vehicles={vehicles || []} />
+              <BookingForm vehicles={vehicles || []} preselectedVehicle={preselectedVehicle} />
             </div>
           </div>
 

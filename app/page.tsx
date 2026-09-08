@@ -53,6 +53,12 @@ async function getFeaturedVehicles(): Promise<Vehicle[]> {
   return ((data as Vehicle[]) || []).slice(0, 6);
 }
 
+async function getBookingVehicles(): Promise<Vehicle[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("vehicles").select("*").eq("is_active", true).order("name");
+  return (data as Vehicle[]) || [];
+}
+
 const services = [
   {
     title: "Airport VIP Transfer",
@@ -89,7 +95,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default async function Home() {
-  const [featuredVehicles, activeClients] = await Promise.all([getFeaturedVehicles(), clientService.getActive()]);
+  const [featuredVehicles, bookingVehicles, activeClients] = await Promise.all([getFeaturedVehicles(), getBookingVehicles(), clientService.getActive()]);
   const clients = activeClients.length > 0
     ? activeClients.map((client) => ({ name: client.name, type: client.type, logo: client.logo_url }))
     : corporateClients;
@@ -99,7 +105,7 @@ export default async function Home() {
       <ScrollParallax />
       <HeroCarousel whatsapp={siteConfig.whatsapp} />
 
-      <BookingRail />
+      <BookingRail vehicles={bookingVehicles} />
 
       <section className="container grid grid-cols-2 border-b border-emerald-950/10 py-7 sm:grid-cols-4">
         {[{ value: "10+", label: "Years in service" }, { value: "2,500+", label: "Successful trips" }, { value: "100%", label: "Verified drivers" }, { value: "24/7", label: "Customer helpline" }].map((item, index) => (
