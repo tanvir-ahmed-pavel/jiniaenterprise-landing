@@ -15,12 +15,13 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
 import { vehicleService } from "@/lib/supabase/admin-service";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export default function AddVehiclePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [features, setFeatures] = useState<string[]>([""]);
-  const [images, setImages] = useState<string[]>([""]);
+  const [images, setImages] = useState<string[]>([]);
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);
@@ -34,20 +35,6 @@ export default function AddVehiclePage() {
     const newFeatures = [...features];
     newFeatures[index] = value;
     setFeatures(newFeatures);
-  };
-
-  const handleAddImage = () => {
-    if (images.length < 5) setImages([...images, ""]);
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
-
-  const handleImageChange = (index: number, value: string) => {
-    const newImages = [...images];
-    newImages[index] = value;
-    setImages(newImages);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -222,46 +209,17 @@ export default function AddVehiclePage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Vehicle Images (Max 5)</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAddImage}
-                    disabled={images.length >= 5}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Add Image
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {images.map((image, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={image}
-                        onChange={(e) =>
-                          handleImageChange(index, e.target.value)
-                        }
-                        placeholder={index === 0 ? "Primary image URL..." : "Additional image URL..."}
-                      />
-                      {images.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveImage(index)}
-                          className="text-red-500"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  <p className="text-xs text-muted-foreground">
-                    First image is the primary thumbnail. We recommend 16:10 aspect ratio.
-                  </p>
-                </div>
+              {/* Vehicle Images Uploader */}
+              <div className="space-y-2 pt-2 border-t border-gray-100">
+                <ImageUploader
+                  label="Vehicle Images (Upload or URL)"
+                  helperText="Upload photos or drag and drop. The first photo is used as the primary card image."
+                  value={images}
+                  onChange={(val) => setImages(Array.isArray(val) ? val : [val])}
+                  multiple={true}
+                  maxFiles={8}
+                  folder="vehicles"
+                />
               </div>
 
               <div className="space-y-2">

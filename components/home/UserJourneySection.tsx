@@ -2,229 +2,77 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  Car, 
-  ShieldCheck, 
-  MapPin, 
-  Receipt, 
-  ArrowRight, 
-  Check, 
-  Sparkles,
-  PhoneCall
-} from "lucide-react";
+import { MessageSquare, ShieldCheck, MapPin, Receipt, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SilkRibbonBackdrop } from "@/components/ui/SilkRibbonBackdrop";
+import { cn } from "@/lib/utils";
 
-interface JourneyStep {
-  number: string;
-  title: string;
-  subtitle: string;
-  icon: React.ElementType;
-  badge: string;
-  description: string;
-  highlights: string[];
-}
-
-const journeySteps: JourneyStep[] = [
-  {
-    number: "01",
-    title: "1. Choose Your Car & Route",
-    subtitle: "Select Vehicle & Dates",
-    icon: Car,
-    badge: "Step 1: Pick Car",
-    description: "Browse our sedans, SUVs, microbuses, or buses. Choose your pickup date, time, and trip details with transparent pricing.",
-    highlights: [
-      "Instant confirmation via Phone or WhatsApp",
-      "Fixed prices with no hidden charges",
-      "Cars, VIP SUVs & AC Buses available",
-    ],
-  },
-  {
-    number: "02",
-    title: "2. Receive Driver Details",
-    subtitle: "Verified Driver Assigned",
-    icon: ShieldCheck,
-    badge: "Step 2: Assignment",
-    description: "We assign an experienced, polite driver and share their name, phone number, and vehicle registration number in advance.",
-    highlights: [
-      "BRTA licensed & background-verified driver",
-      "Clean, sanitized, and pre-checked car",
-      "Driver contact info sent before trip",
-    ],
-  },
-  {
-    number: "03",
-    title: "3. Driver Arrives On Time",
-    subtitle: "Pickup at Your Doorstep",
-    icon: MapPin,
-    badge: "Step 3: Pickup",
-    description: "Your driver arrives early at your doorstep, office, or airport terminal, ready to assist with luggage and take you smoothly on your way.",
-    highlights: [
-      "Always 15 minutes early for pickup",
-      "Airport signboard greeting at DAC",
-      "Air-conditioned & clean comfortable cabin",
-    ],
-  },
-  {
-    number: "04",
-    title: "4. Enjoy the Ride & Pay Easily",
-    subtitle: "Multiple Payment Options",
-    icon: Receipt,
-    badge: "Step 4: Completion",
-    description: "Relax throughout your journey. Pay conveniently using bKash, Credit Card, Cash, or Bank Transfer with an official receipt.",
-    highlights: [
-      "bKash, Cards, Cash & Bank Transfer",
-      "Official VAT & tax invoice for companies",
-      "24/7 helpline if you need help on the road",
-    ],
-  },
+const journeySteps = [
+  { number: "01", title: "Tell us", detail: "Share your route and date.", icon: MessageSquare },
+  { number: "02", title: "Meet your driver", detail: "Get the name, car, and plate.", icon: ShieldCheck },
+  { number: "03", title: "Ride ready", detail: "Your car waits, clean and cool.", icon: MapPin },
+  { number: "04", title: "Pay simply", detail: "One clear, itemized rate.", icon: Receipt },
 ];
 
 export function UserJourneySection() {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const current = journeySteps[activeStep];
-  const IconComponent = current.icon;
+  const [activeStep, setActiveStep] = useState(0);
+  const active = journeySteps[activeStep];
+  const ActiveIcon = active.icon;
 
   return (
-    <section className="py-20 sm:py-28 bg-linear-to-b from-emerald-950/[0.03] via-transparent to-emerald-950/[0.04] relative overflow-hidden">
-      {/* Subtle Background */}
-      <SilkRibbonBackdrop className="opacity-35" />
-      <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-30" />
-
-      <div className="container relative z-10 space-y-12">
-        {/* Section Header - Concise & Scannable */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div className="max-w-2xl space-y-2">
-            <span className="text-emerald-700 text-xs font-black uppercase tracking-[0.2em] bg-emerald-100/80 px-3.5 py-1.5 rounded-full border border-emerald-200/80 inline-flex items-center gap-2">
-              <Sparkles className="h-3 w-3 text-emerald-600" />
-              <span>Easy Booking Process</span>
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-emerald-950 tracking-tight leading-tight">
-              How It Works. <span className="text-gradient-emerald">Simple 4 Steps.</span>
+    <section className="py-16 sm:py-24 bg-emerald-950/[0.025] relative overflow-hidden">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-6 border-b border-emerald-900/10">
+          <div>
+            <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">The simple part</span>
+            <h2 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-heading font-medium text-emerald-950 leading-tight">
+              From message to moving.
             </h2>
           </div>
-          <p className="text-sm text-gray-500 font-medium max-w-sm">
-            Booking a car with driver in Dhaka has never been easier. Safe, punctual, and hassle-free.
-          </p>
+          <Link href="/booking">
+            <Button className="h-11 px-5 rounded-xl bg-emerald-900 text-white hover:bg-emerald-800 gap-2 text-xs font-medium uppercase tracking-wider">
+              Book a ride <ChevronRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
 
-        {/* 4 Interactive Visual Step Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-          {journeySteps.map((step, idx) => {
-            const isSelected = activeStep === idx;
-            const StepIcon = step.icon;
-            return (
-              <button
-                key={step.number}
-                onClick={() => setActiveStep(idx)}
-                className={`text-left p-3.5 sm:p-5 md:p-6 rounded-2xl border transition-all duration-300 relative cursor-pointer ${
-                  isSelected
-                    ? "bg-emerald-950 text-white border-emerald-900 shadow-xl scale-[1.02]"
-                    : "bg-gray-50/70 hover:bg-emerald-50/60 text-gray-700 border-gray-200 hover:border-emerald-300"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
-                  <span className={`text-xl sm:text-2xl font-heading font-black italic ${
-                    isSelected ? "text-emerald-400" : "text-gray-300 group-hover:text-emerald-600"
-                  }`}>
-                    {step.number}
-                  </span>
-                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center ${
-                    isSelected ? "bg-white/10 text-emerald-300" : "bg-white text-gray-500 shadow-xs"
-                  }`}>
-                    <StepIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-10 mt-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {journeySteps.map((step, idx) => {
+              const Icon = step.icon;
+              const isActive = activeStep === idx;
+              return (
+                <button
+                  key={step.number}
+                  type="button"
+                  onClick={() => setActiveStep(idx)}
+                  className={cn(
+                    "min-h-40 sm:min-h-44 rounded-2xl p-4 text-left border transition-all duration-300 cursor-pointer flex flex-col justify-between",
+                    isActive
+                      ? "bg-white border-emerald-400 shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] shadow-emerald-950/10"
+                      : "bg-white/60 border-emerald-100 hover:border-emerald-300"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <Icon className={cn("h-5 w-5", isActive ? "text-emerald-600" : "text-emerald-900/40")} />
+                    <span className="text-[10px] font-medium text-emerald-900/40">{step.number}</span>
                   </div>
-                </div>
-
-                <h4 className={`text-xs sm:text-sm font-heading font-black leading-snug line-clamp-1 ${
-                  isSelected ? "text-white" : "text-emerald-950"
-                }`}>
-                  {step.title}
-                </h4>
-                <p className={`text-[10px] sm:text-[11px] mt-0.5 sm:mt-1 font-medium truncate ${
-                  isSelected ? "text-emerald-200/80" : "text-gray-500"
-                }`}>
-                  {step.subtitle}
-                </p>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Step Feature Box - Compact, Scannable & Mobile-Optimized */}
-        <div className="editorial-card rounded-3xl p-5 sm:p-8 md:p-10 border border-emerald-100 bg-white shadow-lg overflow-hidden">
-          <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-            {/* Left Highlights */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-700 text-[10px] font-black uppercase tracking-widest bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-200">
-                  {current.badge}
-                </span>
-                <span className="text-xs font-bold text-gray-400">Step {activeStep + 1} of 4</span>
-              </div>
-
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-heading font-black text-emerald-950 leading-tight">
-                {current.title}
-              </h3>
-
-              <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
-                {current.description}
-              </p>
-
-              {/* 3 Quick Highlight Tags */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1 sm:pt-2">
-                {current.highlights.map((highlight, i) => (
-                  <div key={i} className="flex items-center gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[3]" />
-                    <span className="text-xs font-bold text-gray-800 leading-tight break-words">{highlight}</span>
+                  <div>
+                    <h3 className="text-sm font-heading font-medium text-emerald-950">{step.title}</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-500">{step.detail}</p>
                   </div>
-                ))}
-              </div>
+                </button>
+              );
+            })}
+          </div>
 
-              {/* Responsive Action Buttons */}
-              <div className="pt-2 sm:pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full">
-                <Link href="/booking" className="w-full sm:w-auto">
-                  <Button size="sm" className="w-full sm:w-auto h-11 px-6 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs uppercase tracking-wider gap-2 cursor-pointer">
-                    <span>Book a Vehicle Now</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
-                <a href="tel:+8801716633445" className="w-full sm:w-auto">
-                  <Button variant="outline" size="sm" className="w-full sm:w-auto h-11 px-4 rounded-xl border-gray-200 text-emerald-950 hover:bg-emerald-50 gap-2 font-bold text-xs uppercase tracking-wider cursor-pointer">
-                    <PhoneCall className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>Call Helpline</span>
-                  </Button>
-                </a>
-              </div>
+          <div className="rounded-2xl bg-emerald-950 p-6 sm:p-8 text-white flex items-center gap-5 min-h-40">
+            <div className="h-14 w-14 shrink-0 rounded-2xl bg-emerald-400 text-emerald-950 flex items-center justify-center">
+              <ActiveIcon className="h-7 w-7" />
             </div>
-
-            {/* Right Quick Assurance Badge */}
-            <div className="lg:col-span-5 w-full">
-              <div className="bg-emerald-950 rounded-2xl p-4 sm:p-6 text-white space-y-4 border border-emerald-800 shadow-xl">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-lg bg-white/10 text-emerald-300">
-                      <IconComponent className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Our Promise</p>
-                      <h4 className="font-heading font-extrabold text-white text-sm">Safe & On Time</h4>
-                    </div>
-                  </div>
-                  <span className="text-xl font-black italic text-emerald-400">{current.number}</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-center text-xs">
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-emerald-400 font-bold">100% On-Time</p>
-                    <p className="text-[10px] text-white/60">Punctuality Guarantee</p>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-emerald-400 font-bold">Polite & Verified</p>
-                    <p className="text-[10px] text-white/60">Experienced Drivers</p>
-                  </div>
-                </div>
-              </div>
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-300">Step {active.number}</p>
+              <h3 className="mt-1 text-2xl font-heading font-medium">{active.title}</h3>
+              <p className="mt-1 text-sm text-emerald-100/70">{active.detail}</p>
             </div>
           </div>
         </div>

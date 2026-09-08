@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { vehicleService } from "@/lib/supabase/admin-service";
 import { createClient } from "@/lib/supabase/client";
-import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy, Star, Eye, EyeOff, Hash } from "lucide-react";
+import { orderVehicleImages } from "@/lib/vehicles/images";
+import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy, Star, Eye, EyeOff, Hash, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Vehicle {
   id: string;
@@ -24,34 +27,54 @@ interface Vehicle {
   is_featured: boolean;
 }
 
+const PAGE_SIZE = 6;
+
 export default function VehiclesListPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalVehicles, setTotalVehicles] = useState(0);
+  const [featuredVehicles, setFeaturedVehicles] = useState(0);
+  const [activeVehicles, setActiveVehicles] = useState(0);
 
-  async function fetchVehicles() {
+  const fetchVehicles = useCallback(async (pageToFetch: number) => {
     setIsLoading(true);
     const supabase = createClient();
-    const { data, error } = await supabase
+    const from = (pageToFetch - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    const pagedQuery = supabase
       .from("vehicles")
-      .select("*")
-      .order("sort_order", { ascending: true });
+      .select("id,name,slug,category,seats,engine_cc,rental_types,image_url,images,starting_price,is_active,sort_order,is_featured", { count: "exact" })
+      .order("sort_order", { ascending: true })
+      .range(from, to);
 
-    if (error) {
-      console.error("Error fetching vehicles:", error);
+    const { data: pagedData, error: pagedError, count } = await pagedQuery;
+
+    if (pagedError) {
+      console.error("Error fetching vehicles:", pagedError);
     } else {
-      setVehicles((data as Vehicle[]) || []);
+      setVehicles((pagedData as Vehicle[]) || []);
+      setTotalVehicles(count || 0);
     }
     setIsLoading(false);
-  }
+
+    // Stats are secondary; don't block the first paint of the vehicle cards on them.
+    const [featuredCount, activeCount] = await Promise.all([
+      supabase.from("vehicles").select("id", { count: "exact", head: true }).eq("is_featured", true),
+      supabase.from("vehicles").select("id", { count: "exact", head: true }).eq("is_active", true),
+    ]);
+    setFeaturedVehicles(featuredCount.count || 0);
+    setActiveVehicles(activeCount.count || 0);
+  }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchVehicles();
-  }, []);
+    fetchVehicles(page);
+  }, [fetchVehicles, page]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this vehicle?")) return;
 
+    const targetVehicle = vehicles.find((v) => v.id === id);
     const supabase = createClient();
     const { error } = await supabase.from("vehicles").delete().eq("id", id);
 
@@ -59,7 +82,23 @@ export default function VehiclesListPage() {
       console.error("Error deleting vehicle:", error);
       alert("Failed to delete vehicle");
     } else {
-      setVehicles(vehicles.filter((v) => v.id !== id));
+      const nextPage = vehicles.length === 1 && page > 1 ? page - 1 : page;
+      setPage(nextPage);
+      if (nextPage === page) fetchVehicles(page);
+
+      // Clean up images from S3 in the background
+      const imagesToDelete = [
+        ...(targetVehicle?.images || []),
+        targetVehicle?.image_url,
+      ].filter(Boolean) as string[];
+
+      if (imagesToDelete.length > 0) {
+        fetch("/api/admin/upload", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ urls: imagesToDelete }),
+        }).catch((err) => console.warn("Failed to delete images from S3:", err));
+      }
     }
   };
 
@@ -67,50 +106,41 @@ export default function VehiclesListPage() {
     if (!confirm("Are you sure you want to clone this vehicle?")) return;
     
     setIsLoading(true);
-    const supabase = createClient();
-    
-    // Fetch full vehicle details
-    const { data: fullVehicleData, error: fetchError } = await supabase
-      .from("vehicles")
-      .select("*")
-      .eq("id", vehicle.id)
-      .single();
+    try {
+      // Fetch full vehicle details
+      const fullVehicle = await vehicleService.getById(vehicle.id);
 
-    const fullVehicle = fullVehicleData as any;
+      if (!fullVehicle) {
+        alert("Failed to fetch vehicle details for cloning.");
+        setIsLoading(false);
+        return;
+      }
 
-    if (fetchError || !fullVehicle) {
-      console.error("Error fetching full vehicle details:", fetchError);
-      alert("Failed to fetch vehicle details for cloning.");
-      setIsLoading(false);
-      return;
-    }
+      const newName = `${fullVehicle.name} (Copy)`;
+      const baseSlug = newName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
 
-    const newName = `${fullVehicle.name} (Copy)`;
-    const baseSlug = newName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-    const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
-    
-    const clonedData = { ...fullVehicle };
-    delete clonedData.id;
-    delete clonedData.created_at;
-    delete clonedData.updated_at;
-    clonedData.name = newName;
-    clonedData.slug = slug;
-    clonedData.is_active = false; // Set to inactive by default so they can review it
+      const clonedData: Record<string, unknown> = { ...fullVehicle };
+      delete clonedData.id;
+      delete clonedData.created_at;
+      delete clonedData.updated_at;
+      clonedData.name = newName;
+      clonedData.slug = slug;
+      clonedData.is_active = false; // Set to inactive by default so they can review it
 
-    const { data: newVehicle, error: createError } = await supabase
-      .from("vehicles")
-      .insert(clonedData)
-      .select()
-      .single();
+      // Cast to VehicleInsert expected by vehicleService
+      const newVehicle = await vehicleService.create(clonedData as Parameters<typeof vehicleService.create>[0]);
 
-    if (createError) {
+      if (newVehicle) {
+        await fetchVehicles(page);
+        alert("Vehicle cloned successfully! The clone is inactive by default.");
+      }
+    } catch (createError) {
       console.error("Error cloning vehicle:", createError);
       alert("Failed to clone vehicle");
-    } else if (newVehicle) {
-      setVehicles([newVehicle as Vehicle, ...vehicles]);
-      alert("Vehicle cloned successfully! The clone is inactive by default.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleToggleFeatured = async (vehicle: Vehicle) => {
@@ -121,7 +151,7 @@ export default function VehiclesListPage() {
       .update({ is_featured: newValue } as never)
       .eq("id", vehicle.id);
     if (!error) {
-      setVehicles(vehicles.map((v) =>
+        setVehicles(vehicles.map((v) =>
         v.id === vehicle.id ? { ...v, is_featured: newValue } : v
       ));
     }
@@ -135,7 +165,7 @@ export default function VehiclesListPage() {
       .update({ is_active: newValue } as never)
       .eq("id", vehicle.id);
     if (!error) {
-      setVehicles(vehicles.map((v) =>
+        setVehicles(vehicles.map((v) =>
         v.id === vehicle.id ? { ...v, is_active: newValue } : v
       ));
     }
@@ -175,7 +205,7 @@ export default function VehiclesListPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && vehicles.length === 0) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[50vh]">
         <Loader2 className="h-8 w-8 animate-spin text-green-600" />
@@ -207,7 +237,7 @@ export default function VehiclesListPage() {
                 <Car className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{vehicles.length}</p>
+                <p className="text-2xl font-bold">{totalVehicles}</p>
                 <p className="text-sm text-muted-foreground">Total Vehicles</p>
               </div>
             </div>
@@ -221,7 +251,7 @@ export default function VehiclesListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => v.is_featured).length}
+                  {featuredVehicles}
                 </p>
                 <p className="text-sm text-muted-foreground">Featured</p>
               </div>
@@ -236,7 +266,7 @@ export default function VehiclesListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => v.is_active).length}
+                  {activeVehicles}
                 </p>
                 <p className="text-sm text-muted-foreground">Active</p>
               </div>
@@ -251,7 +281,7 @@ export default function VehiclesListPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">
-                  {vehicles.filter((v) => !v.is_active).length}
+                  {Math.max(0, totalVehicles - activeVehicles)}
                 </p>
                 <p className="text-sm text-muted-foreground">Inactive</p>
               </div>
@@ -262,15 +292,22 @@ export default function VehiclesListPage() {
 
       {/* Vehicles Grid */}
       {vehicles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {vehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="overflow-hidden hover:transform-none! hover:shadow-(--glass-shadow) hover:bg-(--glass-bg)! transition-none">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-busy={isLoading}>
+          {vehicles.map((vehicle) => {
+            const primaryImage = orderVehicleImages(vehicle.images, vehicle.image_url)[0];
+            return (
+            <Card key={vehicle.id} className="[content-visibility:auto] [contain-intrinsic-size:0_430px] overflow-hidden hover:transform-none! hover:shadow-(--glass-shadow) hover:bg-(--glass-bg)! transition-none">
               <div className="aspect-video bg-gray-100 relative">
-                {vehicle.images?.[0] || vehicle.image_url ? (
-                  <img
-                    src={vehicle.images?.[0] || vehicle.image_url || ""}
+                {primaryImage ? (
+                  <Image
+                    src={primaryImage}
                     alt={vehicle.name}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -293,6 +330,12 @@ export default function VehiclesListPage() {
                   <Badge className="absolute bottom-2 left-2 bg-amber-500 gap-1">
                     <Star className="h-3 w-3" /> Featured
                   </Badge>
+                )}
+                {(vehicle.images && vehicle.images.length > 0) && (
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-xs">
+                    <ImageIcon className="h-3 w-3" />
+                    <span>{vehicle.images.length}</span>
+                  </div>
                 )}
               </div>
               <CardContent className="p-4">
@@ -394,7 +437,8 @@ export default function VehiclesListPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <Card className="p-12 text-center">
@@ -407,6 +451,37 @@ export default function VehiclesListPage() {
             <Button>Add Vehicle</Button>
           </Link>
         </Card>
+      )}
+
+      {totalVehicles > 0 && (
+        <div className="mt-6 flex items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, totalVehicles)} of {totalVehicles}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page === 1 || isLoading}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+              <span className="min-w-20 text-center text-sm text-muted-foreground">
+              Page {page} of {Math.max(1, Math.ceil(totalVehicles / PAGE_SIZE))}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.min(Math.ceil(totalVehicles / PAGE_SIZE), current + 1))}
+              disabled={page >= Math.ceil(totalVehicles / PAGE_SIZE) || isLoading}
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

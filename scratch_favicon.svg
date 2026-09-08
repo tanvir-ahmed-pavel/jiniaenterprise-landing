@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08281d" />
+      <stop offset="50%" stop-color="#051b13" />
+      <stop offset="100%" stop-color="#020f0a" />
+    </linearGradient>
+
+    <!-- Emerald Border Glow Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+
+    <!-- Shield Fill Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+
+    <!-- Accent Green Gradient -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#4ade80" />
+    </linearGradient>
+
+    <filter id="subtleShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="12" />
+
+  <!-- Top Speed Accents (Automotive Wing Motif) -->
+  <g filter="url(#subtleShadow)">
+    <!-- Top Sleek Bar -->
+    <path d="M 160 120 L 352 120 L 336 142 L 176 142 Z" fill="url(#accentGrad)" opacity="0.95" />
+    <!-- Left Wing -->
+    <path d="M 80 180 L 140 180 L 130 198 L 70 198 Z" fill="#22c55e" opacity="0.8" />
+    <!-- Right Wing -->
+    <path d="M 372 180 L 432 180 L 442 198 L 382 198 Z" fill="#22c55e" opacity="0.8" />
+  </g>
+
+  <!-- Main Shield Crest -->
+  <g filter="url(#subtleShadow)">
+    <!-- Outer Shield Border -->
+    <path d="M 100 170 L 412 170 L 412 210 L 256 390 L 100 210 Z" fill="url(#shieldGrad)" stroke="#4ade80" stroke-width="8" stroke-linejoin="round" />
+    
+    <!-- Inner Shield Accent Line -->
+    <path d="M 124 186 L 388 186 L 388 208 L 256 360 L 124 208 Z" fill="#16a34a" />
+  </g>
+
+  <!-- JE Monogram Text -->
+  <text x="256" y="295" 
+        font-family="system-ui, -apple-system, 'Outfit', 'Inter', 'Segoe UI', Roboto, sans-serif" 
+        font-size="118" 
+        font-weight="900" 
+        letter-spacing="2"
+        fill="#ffffff" 
+        text-anchor="middle" 
+        dominant-baseline="central"
+        style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.4));">JE</text>
+</svg>

@@ -17,15 +17,18 @@ import {
   Mail,
   MapPin,
   Loader2,
+  Building2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   vehicleService,
   blogService,
   bookingService,
+  clientService,
   type Vehicle,
   type BlogPost,
   type Booking,
+  type Client,
 } from "@/lib/supabase/admin-service";
 
 type TabType = "vehicles" | "bookings" | "blog";
@@ -35,20 +38,23 @@ export default function AdminDashboard() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
-        const [vehicleData, blogData, bookingData] = await Promise.all([
+        const [vehicleData, blogData, bookingData, clientData] = await Promise.all([
           vehicleService.getAll(),
           blogService.getAll(),
           bookingService.getAll(),
+          clientService.getAll(),
         ]);
         setVehicles(vehicleData);
         setBlogPosts(blogData);
         setBookings(bookingData);
+        setClients(clientData);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       } finally {
@@ -130,7 +136,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
@@ -154,6 +160,18 @@ export default function AdminDashboard() {
             </div>
             <p className="text-xs text-muted-foreground">Awaiting response</p>
           </CardContent>
+        </Card>
+        <Card className="hover:border-emerald-300 transition-colors">
+          <Link href="/admin/clients" className="block">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Clients & Orgs</CardTitle>
+              <Building2 className="h-4 w-4 text-emerald-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-emerald-700">{clients.length}</div>
+              <p className="text-xs text-emerald-600 font-medium hover:underline">Manage logos →</p>
+            </CardContent>
+          </Link>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

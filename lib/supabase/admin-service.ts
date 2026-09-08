@@ -1,5 +1,6 @@
 import { createClient } from "./client";
 import { Database } from "./types";
+import { corporateClients } from "@/lib/config";
 
 // Type aliases for convenience
 type Vehicle = Database["public"]["Tables"]["vehicles"]["Row"];
@@ -12,6 +13,10 @@ type BlogPostUpdate = Database["public"]["Tables"]["blog_posts"]["Update"];
 
 type Booking = Database["public"]["Tables"]["bookings"]["Row"];
 type BookingUpdate = Database["public"]["Tables"]["bookings"]["Update"];
+
+type Client = Database["public"]["Tables"]["clients"]["Row"];
+type ClientInsert = Database["public"]["Tables"]["clients"]["Insert"];
+type ClientUpdate = Database["public"]["Tables"]["clients"]["Update"];
 
 // Helper to check if Supabase is configured
 const isSupabaseConfigured = () => {
@@ -358,7 +363,197 @@ export const bookingService = {
   },
 };
 
+// =====================================================
+// CLIENTS SERVICE
+// =====================================================
+export const clientService = {
+  async getAll(): Promise<Client[]> {
+    if (!isSupabaseConfigured()) {
+      return corporateClients.map((c, i) => ({
+        id: `default-client-${i + 1}`,
+        name: c.name,
+        type: c.type as Client["type"],
+        logo_url: null,
+        website_url: null,
+        is_active: true,
+        sort_order: i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    }
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .order("sort_order", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching clients:", error);
+      return corporateClients.map((c, i) => ({
+        id: `default-client-${i + 1}`,
+        name: c.name,
+        type: c.type as Client["type"],
+        logo_url: null,
+        website_url: null,
+        is_active: true,
+        sort_order: i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    }
+
+    if (!data || data.length === 0) {
+      return corporateClients.map((c, i) => ({
+        id: `default-client-${i + 1}`,
+        name: c.name,
+        type: c.type as Client["type"],
+        logo_url: null,
+        website_url: null,
+        is_active: true,
+        sort_order: i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    }
+
+    return (data as Client[]) || [];
+  },
+
+  async getActive(): Promise<Client[]> {
+    if (!isSupabaseConfigured()) {
+      return corporateClients.map((c, i) => ({
+        id: `default-client-${i + 1}`,
+        name: c.name,
+        type: c.type as Client["type"],
+        logo_url: null,
+        website_url: null,
+        is_active: true,
+        sort_order: i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    }
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return corporateClients.map((c, i) => ({
+        id: `default-client-${i + 1}`,
+        name: c.name,
+        type: c.type as Client["type"],
+        logo_url: null,
+        website_url: null,
+        is_active: true,
+        sort_order: i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    }
+    return data as Client[];
+  },
+
+  async getById(id: string): Promise<Client | null> {
+    if (!isSupabaseConfigured()) return null;
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) return null;
+    return data as Client;
+  },
+
+  async create(client: ClientInsert): Promise<Client | null> {
+    if (!isSupabaseConfigured()) {
+      console.log("Supabase not configured - client data:", client);
+      return {
+        id: `client-${Date.now()}`,
+        name: client.name,
+        type: client.type || "Corporate",
+        logo_url: client.logo_url || null,
+        website_url: client.website_url || null,
+        is_active: client.is_active ?? true,
+        sort_order: client.sort_order || 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    }
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("clients")
+      .insert(client as never)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating client:", error);
+      throw error;
+    }
+    return data as Client;
+  },
+
+  async update(id: string, client: ClientUpdate): Promise<Client | null> {
+    if (!isSupabaseConfigured()) return null;
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("clients")
+      .update({ ...client, updated_at: new Date().toISOString() } as never)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating client:", error);
+      throw error;
+    }
+    return data as Client;
+  },
+
+  async delete(id: string): Promise<boolean> {
+    if (!isSupabaseConfigured()) return true;
+    const supabase = createClient();
+    const { error } = await supabase.from("clients").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting client:", error);
+      return false;
+    }
+    return true;
+  },
+
+  async seedDefaults(): Promise<{ count: number; success: boolean }> {
+    if (!isSupabaseConfigured()) return { count: 0, success: false };
+    const supabase = createClient();
+    const rowsToInsert: ClientInsert[] = corporateClients.map((c, idx) => ({
+      name: c.name,
+      type: c.type as Client["type"],
+      logo_url: null,
+      website_url: null,
+      is_active: true,
+      sort_order: idx,
+    }));
+
+    const { data, error } = await supabase
+      .from("clients")
+      .insert(rowsToInsert as never)
+      .select();
+
+    if (error) {
+      console.error("Error seeding clients:", error);
+      throw error;
+    }
+    return { count: data?.length || 0, success: true };
+  },
+};
+
 // Export types for use in components
 export type { Vehicle, VehicleInsert, VehicleUpdate };
 export type { BlogPost, BlogPostInsert, BlogPostUpdate };
 export type { Booking, BookingUpdate };
+export type { Client, ClientInsert, ClientUpdate };

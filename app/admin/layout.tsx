@@ -121,15 +121,12 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const isLoginPage = pathname === "/admin/login";
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(!isLoginPage);
 
   useEffect(() => {
-    if (isLoginPage) {
-      setIsCheckingAuth(false);
-      return;
-    }
+    if (isLoginPage) return;
 
     const checkAuth = async () => {
       try {
@@ -147,7 +144,7 @@ export default function AdminLayout({
     };
 
     checkAuth();
-  }, [pathname, isLoginPage, router]);
+  }, [isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;

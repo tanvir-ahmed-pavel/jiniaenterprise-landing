@@ -1,100 +1,119 @@
-import { Metadata } from "next";
 import { InquiryForm } from "@/components/forms/InquiryForm";
-import { Phone, Mail, MapPin, Clock, MessageSquare, Globe, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Eyebrow } from "@/components/layout/Section";
+import { createMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbSchema, getLocalBusinessSchema } from "@/lib/seo/schema";
+import {
+  businessIdentity,
+  getFormattedAddress,
+  getTelHref,
+  getWhatsAppHref,
+} from "@/lib/business/identity";
 
-export const metadata: Metadata = {
-  title: "Contact Us | Jinia Enterprise",
+export const metadata = createMetadata({
+  title: "Contact Jinia Enterprise — Dhaka Car Rental Desk",
   description:
-    "Get in touch with Jinia Enterprise for car rental inquiries. Call us, WhatsApp, or send a message. Located in Gulshan-2, Dhaka.",
-};
+    "Call, WhatsApp, or visit Jinia Enterprise in Gulshan, Dhaka. Request car rental quotes, airport transfers, and corporate fleet support.",
+  path: "/contact",
+});
+
+/** Contact details as a definition list on hairlines. The old page wrapped each
+ *  of six lines in a rounded icon tile, which is six boxes to say six things. */
+const channels: Array<{ label: string; value: React.ReactNode }> = [
+  {
+    label: "Phone",
+    value: (
+      <div className="flex flex-col gap-1">
+        <a href={getTelHref()} className="transition-colors hover:text-emerald-700">
+          {businessIdentity.phone}
+        </a>
+        {businessIdentity.phoneSecondary && (
+          <a href={getTelHref(businessIdentity.phoneSecondary)} className="transition-colors hover:text-emerald-700">
+            {businessIdentity.phoneSecondary}
+          </a>
+        )}
+      </div>
+    ),
+  },
+  {
+    label: "WhatsApp",
+    value: (
+      <a href={getWhatsAppHref()} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-emerald-700">
+        {businessIdentity.phone}
+      </a>
+    ),
+  },
+  {
+    label: "Email",
+    value: (
+      <a href={`mailto:${businessIdentity.email}`} className="break-all transition-colors hover:text-emerald-700">
+        {businessIdentity.email}
+      </a>
+    ),
+  },
+  {
+    label: "Office",
+    value: <address className="not-italic leading-relaxed">{getFormattedAddress()}</address>,
+  },
+  {
+    label: "Hours",
+    value: (
+      <div className="space-y-1">
+        <p>Saturday to Thursday, 9:00 AM – 8:00 PM</p>
+        <p>Friday, 10:00 AM – 6:00 PM</p>
+      </div>
+    ),
+  },
+  {
+    label: "Service areas",
+    value: (
+      <p className="leading-relaxed">
+        Dhaka — Gulshan, Banani, Uttara, Dhanmondi and beyond — Hazrat Shahjalal airport, and
+        outstation routes to every district in Bangladesh.
+      </p>
+    ),
+  },
+];
 
 export default function ContactPage() {
   return (
-    <div className="pb-24">
-      <PageHeader 
-        title="Connect."
-        subtitle="Global Concierge Axis"
-        description="Whether you're planning a diplomatic mission or a personal journey, our team is ready to facilitate your mobility in Dhaka."
-        breadcrumbs={[{ label: "Connect" }]}
+    <div>
+      <JsonLd
+        data={[
+          getLocalBusinessSchema(),
+          getBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Contact", path: "/contact" },
+          ]),
+        ]}
+      />
+      <PageHeader
+        title="Talk to the desk."
+        subtitle="Contact"
+        description="Call, WhatsApp, email, or come to the Gulshan office. A person answers, and a real quote follows."
+        breadcrumbs={[{ label: "Contact" }]}
       />
 
-      <div className="container">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          {/* Contact Information Axis */}
-          <div className="space-y-12 animate-fade-in-up">
-            <div className="space-y-4">
-              <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.3em]">Direct Channels</span>
-              <h2 className="text-4xl font-heading font-black text-green-950 leading-none italic">
-                Get in Touch.
-              </h2>
-            </div>
+      <section className="container py-20 sm:py-28">
+        <div className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-24">
+          <div>
+            <Eyebrow>Direct channels</Eyebrow>
+            <h2 className="type-display mt-5 max-w-[12ch] font-heading text-[2.25rem] text-emerald-950 sm:text-[3rem]">
+              Every way to reach us.
+            </h2>
 
-            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8">
-              {[
-                {
-                  icon: Phone,
-                  title: "Phone Axis",
-                  content: (
-                    <div className="flex flex-col gap-1 font-bold text-gray-600">
-                      <a href="tel:+8801716633445" className="hover:text-green-600 transition-colors">+88 01716 633445</a>
-                      <a href="tel:+8801976633445" className="hover:text-green-600 transition-colors">+88 01976 633445</a>
-                    </div>
-                  ),
-                },
-                {
-                  icon: MessageSquare,
-                  title: "WhatsApp",
-                  content: (
-                    <a
-                      href="https://wa.me/8801716633445"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-gray-600 hover:text-green-600 transition-colors"
-                    >
-                      +88 01716 633445 (Online)
-                    </a>
-                  ),
-                },
-                {
-                  icon: Mail,
-                  title: "Digital Mail",
-                  content: (
-                    <a
-                      href="mailto:jiniaenterprise.com@gmail.com"
-                      className="font-bold text-gray-600 hover:text-green-600 transition-colors"
-                    >
-                      jiniaenterprise.com@gmail.com
-                    </a>
-                  ),
-                },
-                {
-                  icon: MapPin,
-                  title: "Headquarters",
-                  content: (
-                    <address className="not-italic text-gray-500 font-medium leading-relaxed">
-                      40/2, Unicorn Plaza (Level-2), <br />
-                      Shop-9,10, <br />
-                      Dhaka 1212.
-                    </address>
-                  ),
-                },
-              ].map(({ icon: Icon, title, content }) => (
-                <div key={title} className="flex gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl icon-glow flex items-center justify-center shrink-0 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
-                    <Icon className="h-6 w-6 text-green-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-green-900/40">{title}</h3>
-                    <div className="text-base">{content}</div>
-                  </div>
+            <dl className="mt-10 divide-y divide-emerald-950/10 border-y border-emerald-950/10">
+              {channels.map((channel) => (
+                <div key={channel.label} className="grid gap-2 py-5 sm:grid-cols-[9rem_1fr] sm:gap-6">
+                  <dt className="type-label text-emerald-700">{channel.label}</dt>
+                  <dd className="text-sm leading-relaxed text-emerald-950/70">{channel.value}</dd>
                 </div>
               ))}
-            </div>
+            </dl>
 
-            {/* Premium Map Frame */}
-            <div className="relative glass-card p-2 bg-white/40 border-white/60 overflow-hidden group">
-              <div className="aspect-video rounded-2xl overflow-hidden grayscale contrast-125 opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700">
+            <div className="mt-10 overflow-hidden rounded-lg border border-emerald-950/10">
+              <div className="aspect-video grayscale transition-all duration-700 hover:grayscale-0">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0164267879956!2d90.41455431498149!3d23.793769084567995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7a0f70dab33%3A0x4b606d63ecb0c1a5!2sGulshan%202%20Circle!5e0!3m2!1sen!2sbd!4v1702700000000!5m2!1sen!2sbd"
                   width="100%"
@@ -102,40 +121,29 @@ export default function ContactPage() {
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
-                  title="Jinia Enterprise Location"
+                  title="Jinia Enterprise Location — Gulshan, Dhaka"
                 />
               </div>
             </div>
           </div>
 
-          {/* Artistic Form Container */}
-          <div className="relative lg:sticky lg:top-32">
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-green-500/5 rounded-full blur-3xl -z-10" />
-            <div className="glass-card p-8 md:p-12 bg-white/70 border-white/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]">
-              <div className="mb-10 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-[10px] font-black uppercase tracking-widest text-green-600">
-                  <Sparkles className="h-3 w-3" /> Secure Submission
-                </div>
-                <h2 className="text-3xl font-heading font-black text-green-950 italic">Send a Message.</h2>
-                <p className="text-gray-400 font-medium text-sm">Our team typically responds within 30 minutes during business hours.</p>
-              </div>
-              <InquiryForm source="contact_page" />
-            </div>
-            
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="glass-card p-6 bg-green-50/50 text-center">
-                <div className="text-2xl font-heading font-black text-green-950 italic">98%</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-green-900/40">Response Rate</div>
-              </div>
-              <div className="glass-card p-6 bg-green-50/50 text-center">
-                <div className="text-2xl font-heading font-black text-green-950 italic">10+</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-green-900/40">Support Agents</div>
+          <div className="lg:sticky lg:top-28">
+            <div className="rounded-2xl border border-emerald-950/10 bg-white p-6 sm:p-9">
+              <span aria-hidden className="mb-6 block h-px w-full bg-linear-to-r from-transparent via-amber-400 to-transparent" />
+              <Eyebrow>Send a message</Eyebrow>
+              <h2 className="type-display mt-4 font-heading text-[1.9rem] text-emerald-950 sm:text-[2.25rem]">
+                Request a quote.
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-emerald-950/55">
+                Share pickup, dates, and vehicle preference and we will price the exact trip.
+              </p>
+              <div className="mt-8">
+                <InquiryForm source="contact_page" />
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

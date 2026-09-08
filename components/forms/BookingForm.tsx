@@ -1,26 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useId, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Vehicle } from "@/lib/supabase/admin-service";
-import {
-  Loader2,
-  CheckCircle,
-  Calendar,
-  User,
-  Phone,
-  Mail,
-  Car,
-  MessageSquare,
-  MapPin,
-  Sparkles,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, CheckCircle2, ChevronUp, Check, Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
+import Image from "next/image";
+import { orderVehicleImages } from "@/lib/vehicles/images";
 
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -41,16 +30,181 @@ interface BookingFormProps {
   vehicles?: Vehicle[];
 }
 
-export function BookingForm({
-  preselectedVehicle,
-  vehicles = [],
-}: BookingFormProps) {
+/** Same field treatment as the home booking rail and the contact form. */
+const field =
+  "h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400";
+const labelCls = "type-label mb-2 block text-emerald-950/70";
+const errorCls = "mt-1.5 text-xs font-normal text-red-600";
+
+/** Numbered legend on a rule — the grouping device the booking rail uses,
+ *  instead of an icon tile per section. */
+function Legend({ index, children }: { index: string; children: React.ReactNode }) {
+  return (
+    <p className="type-label mb-5 flex items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700">
+      <span className="tabular-nums text-amber-600">{index}</span> {children}
+    </p>
+  );
+}
+
+function VehicleTypeahead({
+  vehicles,
+  value,
+  onChange,
+  hasError,
+}: {
+  vehicles: Vehicle[];
+  value: string;
+  onChange: (value: string) => void;
+  hasError: boolean;
+}) {
+  const listboxId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const selectedVehicle = vehicles.find((vehicle) => vehicle.id === value);
+
+  useEffect(() => {
+    if (!isOpen) {
+      // Keep the combobox label synchronized with react-hook-form resets.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setQuery(selectedVehicle?.name || "");
+    }
+  }, [isOpen, selectedVehicle?.name]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: PointerEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", handleOutsideClick);
+    return () => document.removeEventListener("pointerdown", handleOutsideClick);
+  }, []);
+
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const search = query.trim().toLowerCase();
+    return !search || `${vehicle.name} ${vehicle.category}`.toLowerCase().includes(search);
+  });
+
+  const selectVehicle = (vehicle?: Vehicle) => {
+    onChange(vehicle?.id || "");
+    setQuery(vehicle?.name || "");
+    setIsOpen(false);
+  };
+
+  const openVehiclePicker = () => {
+    // The selected label is a display value, not a filter. Clear it when the
+    // picker is reopened so the next search can see the complete fleet.
+    if (selectedVehicle && query === selectedVehicle.name) setQuery("");
+    setActiveIndex(0);
+    setIsOpen(true);
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="relative">
+        <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-700/60" />
+        <input
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            onChange("");
+            setActiveIndex(0);
+            setIsOpen(true);
+          }}
+          onFocus={openVehiclePicker}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              openVehiclePicker();
+              setActiveIndex((index) => Math.min(index + 1, filteredVehicles.length - 1));
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setActiveIndex((index) => Math.max(index - 1, 0));
+            } else if (event.key === "Enter" && isOpen) {
+              event.preventDefault();
+              selectVehicle(filteredVehicles[activeIndex]);
+            } else if (event.key === "Escape") {
+              setIsOpen(false);
+            }
+          }}
+          placeholder="Any available vehicle"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-controls={listboxId}
+          aria-expanded={isOpen}
+          aria-label="Choose a vehicle"
+          className={cn(field, "pl-10 pr-10", hasError && "border-red-500")}
+        />
+        <button
+          type="button"
+          onClick={() => (isOpen ? setIsOpen(false) : openVehiclePicker())}
+          aria-label={isOpen ? "Close vehicle suggestions" : "Open vehicle suggestions"}
+          className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-md text-emerald-900/60 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+        >
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <div id={listboxId} role="listbox" className="absolute z-20 mt-2 max-h-64 w-full overflow-y-auto rounded-xl border border-emerald-950/10 bg-white p-1.5 shadow-[0_18px_50px_-24px_rgba(6,52,38,.45)]">
+          <button
+            type="button"
+            role="option"
+            aria-selected={!value}
+            onClick={() => selectVehicle()}
+            className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm text-emerald-950 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+          >
+            Any available vehicle
+            {!value && <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" />}
+          </button>
+          {filteredVehicles.map((vehicle, index) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={vehicle.id === value}
+              key={vehicle.id}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => selectVehicle(vehicle)}
+              className={cn(
+                "flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400",
+                index === activeIndex ? "bg-emerald-50" : "hover:bg-emerald-50"
+              )}
+            >
+              <span className="flex min-w-0 items-center gap-3">
+                {orderVehicleImages(vehicle.images, vehicle.image_url)[0] && <Image src={orderVehicleImages(vehicle.images, vehicle.image_url)[0]} alt="" width={64} height={46} className="h-11 w-16 shrink-0 object-contain mix-blend-multiply" />}
+                <span>
+                <span className="block text-sm font-medium text-emerald-950">{vehicle.name}</span>
+                <span className="block text-xs text-emerald-950/50">{vehicle.category} · {vehicle.seats} seats</span>
+                </span>
+              </span>
+              {vehicle.id === value && <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" />}
+            </button>
+          ))}
+          {filteredVehicles.length === 0 && <p className="px-3 py-4 text-sm text-emerald-950/55">No matching vehicles.</p>}
+        </div>
+      )}
+      {selectedVehicle && orderVehicleImages(selectedVehicle.images, selectedVehicle.image_url)[0] && (
+        <div className="mt-3 flex items-center gap-4 rounded-xl border border-emerald-950/10 bg-emerald-50/60 p-3">
+          <Image src={orderVehicleImages(selectedVehicle.images, selectedVehicle.image_url)[0]} alt={selectedVehicle.name} width={112} height={76} className="h-[4.75rem] w-28 shrink-0 object-contain mix-blend-multiply" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-emerald-950">{selectedVehicle.name}</p>
+            <p className="mt-1 text-xs text-emerald-950/55">{selectedVehicle.category} · {selectedVehicle.seats} seats{selectedVehicle.engine_cc ? ` · ${selectedVehicle.engine_cc.toLocaleString()} cc` : ""}</p>
+            {selectedVehicle.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-emerald-950/60">{selectedVehicle.description}</p>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -63,11 +217,11 @@ export function BookingForm({
   });
 
   const rentalTypes = [
-    { value: "daily", label: "Daily Rental" },
-    { value: "weekly", label: "Weekly Rental" },
-    { value: "monthly", label: "Monthly Rental" },
-    { value: "corporate", label: "Corporate/Long-term" },
-    { value: "airport", label: "Airport Transfer" },
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+    { value: "corporate", label: "Corporate or long-term" },
+    { value: "airport", label: "Airport transfer" },
   ];
 
   const onSubmit = async (data: BookingFormData) => {
@@ -75,29 +229,20 @@ export function BookingForm({
     setError("");
 
     try {
-      const vehicle = data.vehicle_id
-        ? vehicles.find((v) => v.id === data.vehicle_id)
-        : null;
+      const vehicle = data.vehicle_id ? vehicles.find((v) => v.id === data.vehicle_id) : null;
 
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          vehicle_name: vehicle?.name || null,
-        }),
+        body: JSON.stringify({ ...data, vehicle_name: vehicle?.name || null }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit booking");
-      }
+      if (!response.ok) throw new Error("Failed to submit booking");
 
       setIsSuccess(true);
       reset();
     } catch {
-      setError(
-        "Failed to submit booking. Please try again or contact us directly."
-      );
+      setError("We could not send that. Please try again, or call the desk directly.");
     } finally {
       setIsSubmitting(false);
     }
@@ -105,217 +250,141 @@ export function BookingForm({
 
   if (isSuccess) {
     return (
-      <div className="text-center py-12 px-6">
-        <div className="w-20 h-20 bg-green-50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce">
-          <CheckCircle className="h-10 w-10 text-green-600" />
-        </div>
-        <h3 className="text-4xl font-heading font-black text-green-950 italic mb-4">
-          Request Received.
-        </h3>
-        <p className="text-gray-500 font-medium mb-10 max-w-md mx-auto">
-          Your journey orchestration has begun. Our concierge will reach out within two hours to finalize the details.
+      <div className="space-y-6 py-10 text-center">
+        <p className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950">
+          <CheckCircle2 className="h-5 w-5 text-emerald-700" /> Request received.
         </p>
-        <Button
+        <p className="mx-auto max-w-md text-sm leading-relaxed text-emerald-950/60">
+          The desk will contact you within two hours to confirm the vehicle, the driver, and the
+          price for your dates.
+        </p>
+        <button
+          type="button"
           onClick={() => setIsSuccess(false)}
-          className="h-16 px-10 rounded-2xl bg-green-950 text-white hover:bg-green-900 font-black uppercase tracking-[0.2em] text-[10px]"
+          className="inline-flex h-12 items-center justify-center rounded-full border border-emerald-950/15 px-7 text-sm font-medium text-emerald-950 transition-colors hover:border-amber-400"
         >
-          Initiate Another Request
-        </Button>
+          Make another request
+        </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       {error && (
-        <div className="p-6 text-sm font-bold text-red-600 bg-red-50/50 border border-red-100 rounded-2xl animate-fade-in">
+        <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm font-normal text-red-700">
           {error}
-        </div>
+        </p>
       )}
 
-      {/* Section: Identity */}
-      <div className="space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
-            <User className="h-4 w-4 text-green-600" />
-          </div>
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">
-            The Client Identity
-          </h4>
+      <fieldset className="min-w-0">
+        <Legend index="01">Your details</Legend>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="block">
+            <span className={labelCls}>Name</span>
+            <input placeholder="Your name" className={cn(field, errors.name && "border-red-500")} {...register("name")} />
+            {errors.name && <p className={errorCls}>{errors.name.message}</p>}
+          </label>
+          <label className="block">
+            <span className={labelCls}>Phone</span>
+            <input type="tel" placeholder="+880 1..." className={cn(field, errors.phone && "border-red-500")} {...register("phone")} />
+            {errors.phone && <p className={errorCls}>{errors.phone.message}</p>}
+          </label>
+          <label className="block">
+            <span className={labelCls}>Email</span>
+            <input type="email" placeholder="you@email.com" className={cn(field, errors.email && "border-red-500")} {...register("email")} />
+            {errors.email && <p className={errorCls}>{errors.email.message}</p>}
+          </label>
         </div>
+      </fieldset>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Legal Full Name
-            </Label>
-            <Input
-              id="name"
-              placeholder="e.g. Tanvir Ahmed"
-              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
-              {...register("name")}
+      <fieldset className="min-w-0">
+        <Legend index="02">The trip</Legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className={labelCls}>Vehicle</span>
+            <Controller
+              name="vehicle_id"
+              control={control}
+              render={({ field: vehicleField }) => (
+                <VehicleTypeahead
+                  vehicles={vehicles}
+                  value={vehicleField.value || ""}
+                  onChange={vehicleField.onChange}
+                  hasError={Boolean(errors.vehicle_id)}
+                />
+              )}
             />
-            {errors.name && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Active Phone Axis
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+880 1XXX XXXXXX"
-              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
-              {...register("phone")}
+          </label>
+          <label className="block">
+            <span className={labelCls}>Rental type</span>
+            <Controller
+              name="rental_type"
+              control={control}
+              render={({ field: rentalTypeField }) => (
+                <Select
+                  options={rentalTypes}
+                  value={rentalTypeField.value}
+                  onValueChange={rentalTypeField.onChange}
+                  aria-label="Rental type"
+                />
+              )}
             />
-            {errors.phone && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.phone.message}</p>
-            )}
-          </div>
+          </label>
         </div>
 
-        <div className="space-y-3">
-          <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-            Digital Correspondence
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="your@email.com"
-            className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-[10px] font-black uppercase tracking-widest text-red-500 ml-1">{errors.email.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Section: Logistics */}
-      <div className="space-y-8 pt-6 border-t border-black/[0.03]">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
-            <Car className="h-4 w-4 text-green-600" />
-          </div>
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-900/40">
-            The Logistics Core
-          </h4>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <Label htmlFor="vehicle_id" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Fleet Selection
-            </Label>
-            <select
-              id="vehicle_id"
-              className="w-full h-14 px-6 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 appearance-none font-bold text-gray-700"
-              {...register("vehicle_id")}
-            >
-              <option value="">Any Selective Vehicle</option>
-              {vehicles.map((vehicle) => (
-                <option key={vehicle.id} value={vehicle.id}>
-                  {vehicle.name} ({vehicle.seats} Positions)
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-3">
-            <Label htmlFor="rental_type" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Tenure Model
-            </Label>
-            <select
-              id="rental_type"
-              className="w-full h-14 px-6 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 appearance-none font-bold text-gray-700"
-              {...register("rental_type")}
-            >
-              {rentalTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <Label htmlFor="pickup_date" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Commencement Date
-            </Label>
-            <Input
-              id="pickup_date"
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <label className="block">
+            <span className={labelCls}>Pickup date</span>
+            <input
               type="date"
-              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
               min={new Date().toISOString().split("T")[0]}
+              className={cn(field, errors.pickup_date && "border-red-500")}
               {...register("pickup_date")}
             />
-          </div>
-
-          <div className="space-y-3">
-            <Label htmlFor="return_date" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-              Conclusion Date
-            </Label>
-            <Input
-              id="return_date"
-              type="date"
-              className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
-              {...register("return_date")}
-            />
-          </div>
+            {errors.pickup_date && <p className={errorCls}>{errors.pickup_date.message}</p>}
+          </label>
+          <label className="block">
+            <span className={labelCls}>Return date</span>
+            <input type="date" className={field} {...register("return_date")} />
+          </label>
+          <label className="block">
+            <span className={labelCls}>Pickup</span>
+            <input placeholder="Airport, Gulshan..." className={field} {...register("pickup_location")} />
+          </label>
         </div>
 
-        <div className="space-y-3">
-          <Label htmlFor="pickup_location" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-            Pickup Origin
-          </Label>
-          <Input
-            id="pickup_location"
-            placeholder="e.g. Hazrat Shahjalal Airport"
-            className="h-14 rounded-2xl border-white/60 bg-white/40 focus:bg-white transition-all duration-300"
-            {...register("pickup_location")}
-          />
-        </div>
-
-        <div className="space-y-3">
-          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest text-green-950 ml-1">
-            Bespoke Requirements
-          </Label>
+        <label className="mt-4 block">
+          <span className={labelCls}>Anything else</span>
           <textarea
-            id="message"
             rows={4}
-            placeholder="Specify any customized needs or orchestration notes..."
-            className="w-full h-32 px-6 py-4 rounded-2xl border border-white/60 bg-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all duration-300 resize-none font-medium text-gray-700"
+            placeholder="Passengers, hours, stops, anything the driver should know."
+            className={cn(field, "h-auto min-h-[120px] resize-y py-3 leading-relaxed")}
             {...register("message")}
           />
-        </div>
+        </label>
+      </fieldset>
+
+      <div className="flex flex-col gap-4 border-t border-emerald-950/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="type-label max-w-sm text-emerald-950/50">
+          Sending this does not charge anything. It asks the desk for a quote.
+        </p>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-950 px-7 text-sm font-medium text-white transition-colors hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Sending
+            </>
+          ) : (
+            <>
+              Request reservation <ArrowRight className="h-4 w-4" />
+            </>
+          )}
+        </button>
       </div>
-
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full h-16 rounded-2xl bg-green-600 text-white hover:bg-green-700 font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-green-200/50"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-            Orchestrating...
-          </>
-        ) : (
-          <>
-            <Sparkles className="mr-3 h-4 w-4" />
-            Request Reservation
-          </>
-        )}
-      </Button>
-
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-center text-green-900/30">
-        By initiating, you authorize Jinia Concierge to contact you.
-      </p>
     </form>
   );
 }

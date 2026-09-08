@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { blogService } from "@/lib/supabase/admin-service";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export default function AddBlogPostPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
+  const [coverImage, setCoverImage] = useState<string>("");
 
   const generateSlug = (title: string) => {
     return title
@@ -37,8 +39,6 @@ export default function AddBlogPostPage() {
     const title = formData.get("title") as string;
     const manualSlug = formData.get("slug") as string;
 
-    // Ensure slug is unique-ish by adding timestamp if identical?
-    // Supabase will error if collision on unique constraint.
     const slug = manualSlug || generateSlug(title);
 
     const blogData = {
@@ -46,7 +46,7 @@ export default function AddBlogPostPage() {
       slug: slug,
       excerpt: formData.get("excerpt") as string,
       content: content,
-      cover_image: (formData.get("cover_image") as string) || null,
+      cover_image: coverImage.trim() || null,
       author: (formData.get("author") as string) || "Jinia Enterprise",
       is_published: formData.get("is_published") === "on",
     };
@@ -160,12 +160,14 @@ Regular paragraph text.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cover_image">Cover Image URL</Label>
-                <Input
-                  id="cover_image"
-                  name="cover_image"
-                  placeholder="/images/blog/post-cover.jpg"
+              <div className="space-y-2 pt-2 border-t border-gray-100">
+                <ImageUploader
+                  label="Cover Image (Upload or URL)"
+                  helperText="Upload a featured image for your blog post or paste a direct image URL."
+                  value={coverImage}
+                  onChange={(val) => setCoverImage(typeof val === "string" ? val : val[0] || "")}
+                  multiple={false}
+                  folder="blog"
                 />
               </div>
 
