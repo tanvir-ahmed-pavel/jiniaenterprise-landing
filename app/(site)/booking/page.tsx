@@ -1,9 +1,11 @@
 import { BookingForm } from "@/components/forms/BookingForm";
+import { RESPONSE_PROMISE, getFormattedAddress } from "@/lib/business/identity";
 import { siteConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Eyebrow } from "@/components/layout/Section";
 import { createMetadata } from "@/lib/seo/metadata";
+import { getPublicVehicleSlug, getStoredSlugCandidates } from "@/lib/vehicles/slugs";
 
 export const metadata = createMetadata({
   title: "Book Car Rental in Dhaka",
@@ -14,19 +16,32 @@ export const metadata = createMetadata({
 
 const promises = [
   "No deposit taken to hold a booking",
-  "A reply inside the hour, from a person",
+  RESPONSE_PROMISE.sentence,
   "Driver name and vehicle sent before pickup",
   "Monthly billing available for companies",
   "One price for the trip, quoted up front",
 ];
 
-export default async function BookingPage() {
+const RENTAL_TYPES = ["daily", "weekly", "monthly", "corporate", "airport"];
+
+export default async function BookingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ vehicle?: string; type?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const { data: vehicles } = await supabase
     .from("vehicles")
     .select("*")
     .eq("is_active", true)
     .order("name");
+
+  // Fleet cards link here with ?vehicle=<slug>; airport pages with ?type=airport.
+  const wanted = params.vehicle ? getStoredSlugCandidates(getPublicVehicleSlug(params.vehicle)) : [];
+  const rows = (vehicles ?? []) as Array<{ id: string; slug: string }>;
+  const preselectedVehicle = rows.find((v) => wanted.includes(v.slug) || v.id === params.vehicle)?.id;
+  const preselectedType = params.type && RENTAL_TYPES.includes(params.type) ? params.type : undefined;
 
   return (
     <div>
@@ -50,7 +65,11 @@ export default async function BookingPage() {
             </p>
 
             <div className="mt-10 border-t border-emerald-950/10 pt-10">
-              <BookingForm vehicles={vehicles || []} />
+              <BookingForm
+                vehicles={vehicles || []}
+                preselectedVehicle={preselectedVehicle}
+                preselectedType={preselectedType}
+              />
             </div>
           </div>
 
@@ -85,11 +104,7 @@ export default async function BookingPage() {
             <div>
               <Eyebrow>The office</Eyebrow>
               <address className="mt-5 not-italic text-sm leading-relaxed text-emerald-950/65">
-                {siteConfig.address.line1}
-                <br />
-                {siteConfig.address.line2}
-                <br />
-                {siteConfig.address.area}, {siteConfig.address.city}
+                {getFormattedAddress()}
               </address>
               <div className="mt-5 border-t border-emerald-950/10 pt-5 text-sm leading-relaxed text-emerald-950/55">
                 <p>Saturday to Thursday, 9:00 AM – 8:00 PM</p>

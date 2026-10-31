@@ -1,18 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, CalendarDays, CheckCircle2, MapPin, CarFront, Phone } from "lucide-react";
+import { RESPONSE_PROMISE } from "@/lib/business/identity";
+import { ArrowRight, CalendarDays, CheckCircle2, MapPin, CarFront, MessageSquare, Phone } from "lucide-react";
+import { DateField } from "@/components/forms/DateField";
+import { fleetPrices } from "@/content/fleet-prices";
+import { PHONE_ERROR, normalizePhone } from "@/lib/forms/phone";
+import { todayInDhaka } from "@/lib/forms/date";
+import { buildWhatsAppRequestHref } from "@/lib/forms/whatsapp";
 import { siteConfig } from "@/lib/config";
 import { Select } from "@/components/ui/select";
+
+/** One option per model in the published fleet, plus the on-request sedans. */
+const VEHICLE_OPTIONS = [
+  ...Array.from(new Set(fleetPrices.map((row) => row.model))).map((model) => ({ value: model, label: model })),
+  { value: "BMW or Mercedes sedan", label: "BMW or Mercedes sedan (on request)" },
+];
 
 export function BookingRail() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
+  const [sendError, setSendError] = useState(false);
+  const [whatsAppHref, setWhatsAppHref] = useState(() => buildWhatsAppRequestHref({}));
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const rawPhone = String(form.get("phone") ?? "");
+    const phone = normalizePhone(rawPhone);
+    if (!phone) {
+      setPhoneError(PHONE_ERROR);
+      return;
+    }
+    setPhoneError("");
+    setSendError(false);
     setIsSubmitting(true);
+    setWhatsAppHref(
+      buildWhatsAppRequestHref({
+        name: String(form.get("name") ?? ""),
+        phone,
+        rentalType: "City, full day",
+        vehicle: String(form.get("vehicle") ?? "") || undefined,
+        date: String(form.get("date") ?? ""),
+        pickup: String(form.get("pickup") ?? ""),
+      }),
+    );
 
     try {
       const response = await fetch("/api/inquiries", {
@@ -21,7 +54,7 @@ export function BookingRail() {
         body: JSON.stringify({
           source: "home_booking_rail",
           name: form.get("name"),
-          phone: form.get("phone"),
+          phone,
           email: form.get("email"),
           rental_type: form.get("rentalType"),
           start_date: form.get("date"),
@@ -31,7 +64,10 @@ export function BookingRail() {
         }),
       });
 
-      if (response.ok) setSubmitted(true);
+      if (!response.ok) throw new Error(`Inquiry failed: ${response.status}`);
+      setSubmitted(true);
+    } catch {
+      setSendError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -40,7 +76,18 @@ export function BookingRail() {
   if (submitted) {
     return (
       <div className="border-y border-emerald-950/15 bg-white py-7 text-center">
-        <p className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950"><CheckCircle2 className="h-5 w-5 text-emerald-700" /> Request received. Our desk will contact you shortly.</p>
+        <p className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950"><CheckCircle2 className="h-5 w-5 text-emerald-700" /> Request received. {RESPONSE_PROMISE.sentence}</p>
+        <p className="mt-4">
+          <a
+            href={whatsAppHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="rail_whatsapp_handoff"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-emerald-950 px-7 text-sm font-medium text-white transition-colors hover:bg-emerald-800"
+          >
+            <MessageSquare aria-hidden className="h-4 w-4" /> Send this request on WhatsApp
+          </a>
+        </p>
       </div>
     );
   }
@@ -62,6 +109,12 @@ export function BookingRail() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+            {sendError && (
+              <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                That did not send. Please try again, or{" "}
+                <a href={whatsAppHref} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">send it on WhatsApp</a>.
+              </p>
+            )}
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
               <fieldset className="min-w-0">
                 <legend className="type-label mb-4 flex w-full items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700"><span className="tabular-nums text-amber-600">01</span> Your details</legend>
@@ -72,7 +125,8 @@ export function BookingRail() {
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 block text-emerald-950/70">Phone</span>
-                    <input name="phone" type="tel" required placeholder="+880 1..." className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    <input name="phone" type="tel" inputMode="tel" autoComplete="tel" required placeholder="01XXXXXXXXX" aria-invalid={!!phoneError} aria-describedby={phoneError ? "rail-phone-error" : undefined} className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    {phoneError && <span id="rail-phone-error" role="alert" className="mt-1.5 block text-xs text-red-600">{phoneError}</span>}
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 block text-emerald-950/70">Email</span>
@@ -86,7 +140,7 @@ export function BookingRail() {
                 <div className="grid gap-3 sm:grid-cols-3">
                   <label className="block">
                     <span className="type-label mb-2 flex items-center gap-1.5 text-emerald-950/70"><CalendarDays className="h-3.5 w-3.5 text-emerald-700" /> Date</span>
-                    <input name="date" type="date" required min={new Date().toISOString().split("T")[0]} className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors focus:border-amber-400" />
+                    <DateField name="date" required min={todayInDhaka()} className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors focus:border-amber-400" />
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 flex items-center gap-1.5 text-emerald-950/70"><MapPin className="h-3.5 w-3.5 text-emerald-700" /> Pickup</span>
@@ -99,15 +153,7 @@ export function BookingRail() {
                       defaultValue=""
                       placeholder="Choose a vehicle"
                       aria-label="Vehicle"
-                      options={[
-                        { value: "Toyota Premio", label: "Toyota Premio" },
-                        { value: "Toyota Harrier", label: "Toyota Harrier" },
-                        { value: "Toyota Alphard", label: "Toyota Alphard" },
-                        { value: "Land Cruiser Prado", label: "Land Cruiser Prado" },
-                        { value: "BMW or Mercedes sedan", label: "BMW or Mercedes sedan" },
-                        { value: "Nissan Civilian bus", label: "Nissan Civilian bus" },
-                        { value: "Nissan X-Trail", label: "Nissan X-Trail" },
-                      ]}
+                      options={VEHICLE_OPTIONS}
                     />
                   </label>
                 </div>
@@ -121,7 +167,7 @@ export function BookingRail() {
                   <span aria-hidden className="h-1 w-1 rounded-full bg-amber-400" /> No deposit
                 </li>
                 <li className="flex items-center gap-2">
-                  <span aria-hidden className="h-1 w-1 rounded-full bg-amber-400" /> Reply inside the hour
+                  <span aria-hidden className="h-1 w-1 rounded-full bg-amber-400" /> {RESPONSE_PROMISE.short}
                 </li>
                 <li className="flex items-center gap-2">
                   <span aria-hidden className="h-1 w-1 rounded-full bg-amber-400" /> A real person, not a bot

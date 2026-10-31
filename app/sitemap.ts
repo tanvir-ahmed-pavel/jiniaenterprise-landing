@@ -4,6 +4,8 @@ import { pillarPages } from "@/lib/seo/content";
 import { sampleVehicles, sampleBlogPosts } from "@/lib/config";
 import { SITE_URL } from "@/lib/seo/canonical";
 import { getVehiclePath } from "@/lib/vehicles/slugs";
+import { getLastModified } from "@/lib/seo/lastmod";
+import { BANGLA_PAGES, getLanguageAlternates } from "@/lib/i18n/alternates";
 import { locations } from "@/content/locations";
 import { routes } from "@/content/routes";
 import { serviceDetails } from "@/content/service-details";
@@ -11,7 +13,6 @@ import { policies } from "@/content/policies";
 import { comparisons } from "@/content/comparisons";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
 
   const staticRoutes: Array<{
     path: string;
@@ -64,14 +65,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.65,
       changeFrequency: "monthly" as const,
     })),
+    ...Object.values(BANGLA_PAGES).map((path) => ({
+      path,
+      priority: 0.8,
+      changeFrequency: "monthly" as const,
+    })),
   ];
 
-  const staticPages: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
-    url: `${SITE_URL}${route.path}`,
-    lastModified: now,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  }));
+  const staticPages: MetadataRoute.Sitemap = staticRoutes.map((route) => {
+    const languages = getLanguageAlternates(route.path);
+    return {
+      url: `${SITE_URL}${route.path}`,
+      lastModified: getLastModified(route.path || "/"),
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+      ...(languages ? { alternates: { languages } } : {}),
+    };
+  });
 
   let vehiclePages: MetadataRoute.Sitemap = [];
   let blogPages: MetadataRoute.Sitemap = [];
@@ -100,7 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (vehicleRows.length) {
       vehiclePages = vehicleRows.map((v) => ({
         url: `${SITE_URL}${getVehiclePath(v.slug)}`,
-        lastModified: v.updated_at ? new Date(v.updated_at) : now,
+        lastModified: getLastModified(getVehiclePath(v.slug), v.updated_at),
         changeFrequency: "weekly",
         priority: 0.7,
       }));
@@ -109,11 +119,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (postRows.length) {
       blogPages = postRows.map((p) => ({
         url: `${SITE_URL}/blog/${p.slug}`,
-        lastModified: p.updated_at
-          ? new Date(p.updated_at)
-          : p.created_at
-            ? new Date(p.created_at)
-            : now,
+        lastModified: getLastModified(`/blog/${p.slug}`, p.updated_at ?? p.created_at),
         changeFrequency: "monthly",
         priority: 0.55,
       }));
@@ -125,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((v) => v.is_active !== false && v.slug)
       .map((v) => ({
         url: `${SITE_URL}${getVehiclePath(v.slug)}`,
-        lastModified: now,
+        lastModified: getLastModified(getVehiclePath(v.slug)),
         changeFrequency: "weekly" as const,
         priority: 0.7,
       }));
@@ -136,7 +142,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((p) => p.is_published)
       .map((p) => ({
         url: `${SITE_URL}/blog/${p.slug}`,
-        lastModified: p.updated_at ? new Date(p.updated_at) : now,
+        lastModified: getLastModified(`/blog/${p.slug}`, p.updated_at),
         changeFrequency: "monthly" as const,
         priority: 0.55,
       }));

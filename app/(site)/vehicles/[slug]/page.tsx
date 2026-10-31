@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,8 @@ import { sampleVehicles, siteConfig } from "@/lib/config";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createMetadata } from "@/lib/seo/metadata";
 import { orderVehicleImages } from "@/lib/vehicles/images";
+import { RESPONSE_PROMISE, getTelHref, getWhatsAppHref } from "@/lib/business/identity";
+import { CITY_DAY_HOURS, PRICE_EXTRAS, fleetPrices, formatBdt, getFleetPrice, getQuotablePriceSentence } from "@/content/fleet-prices";
 import { getPublicVehicleSlug, getStoredSlugCandidates, getVehiclePath } from "@/lib/vehicles/slugs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -70,6 +73,36 @@ async function getVehicle(slug: string): Promise<Vehicle | null> {
   return (sampleVehicles as unknown as Vehicle[]).find((vehicle) => candidates.includes(vehicle.slug)) || null;
 }
 
+/**
+ * Names, price and the quotable sentence come from the shared price table
+ * when the vehicle is listed there, so the page, its JSON-LD, the cards, the
+ * pricing page and the estimator can never disagree.
+ */
+function describeVehicle(vehicle: Vehicle) {
+  const row = getFleetPrice(vehicle.slug);
+  const model = row?.model ?? vehicle.name.replace(/\s*\(.*\)\s*$/, "").trim();
+  const years = row?.years;
+  const seats = row?.seats ?? vehicle.seats;
+  const dayRate = row ? row.dayRate : vehicle.starting_price ?? null;
+  // Two units of the same model (Noah, Prado, H1) need the years in the
+  // title, or both pages would share one.
+  const sharedModel = fleetPrices.filter((r) => r.model === model).length > 1;
+  const title = `${model}${sharedModel && years ? ` ${years}` : ""} Rental with Driver in Dhaka | ${seats} Seats`;
+  const heading = `${model}${years ? ` (${years})` : ""} rental with driver`;
+  const sentence = row
+    ? getQuotablePriceSentence({ ...row, dayRate })
+    : getQuotablePriceSentence({
+        slug: vehicle.slug,
+        name: vehicle.name,
+        model,
+        seats,
+        kind: "Sedan",
+        dayRate,
+        monthlyFrom: null,
+      });
+  return { row, model, years, seats, dayRate, title, heading, sentence };
+}
+
 // Generate metadata dynamically
 export async function generateMetadata({
   params,
@@ -81,13 +114,11 @@ export async function generateMetadata({
     return { title: "Vehicle Not Found" };
   }
 
-  const description =
-    vehicle.description ||
-    `Rent a ${vehicle.name} with a professional driver in Dhaka from Jinia Enterprise.`;
+  const facts = describeVehicle(vehicle);
 
   return createMetadata({
-    title: `${vehicle.name} Rental in Dhaka | With Driver`,
-    description,
+    title: facts.title,
+    description: facts.sentence,
     path: getVehiclePath(vehicle.slug),
     image: orderVehicleImages(vehicle.images, vehicle.image_url)[0] || undefined,
   });
@@ -119,14 +150,8 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     notFound();
   }
 
-  // Format price helper
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-BD", {
-      style: "currency",
-      currency: "BDT",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const facts = describeVehicle(vehicle);
+  const photoAlt = `${facts.model} ${facts.seats}-seater ${facts.row?.kind.toLowerCase() ?? "car"} for rent with driver in Dhaka`;
 
   const description =
     vehicle.description ||
@@ -141,8 +166,9 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
             description,
             path: getVehiclePath(vehicle.slug),
             image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
-            seats: vehicle.seats,
+            seats: facts.seats,
             category: vehicle.category,
+            dayRate: facts.dayRate,
           }),
           getBreadcrumbSchema([
             { name: "Home", path: "/" },
@@ -154,8 +180,9 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
       <div className="container">
         <div className="mb-12 max-w-3xl">
           <p className="border-l-2 border-amber-400 pl-3 text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">Jinia Fleet / {vehicle.category}</p>
-          <h1 className="mt-5 text-5xl font-heading font-medium leading-[0.94] text-emerald-950 sm:text-7xl">{vehicle.name}</h1>
-          <p className="mt-6 max-w-2xl text-base font-medium leading-relaxed text-emerald-950/60 sm:text-lg">{description}</p>
+          <h1 className="mt-5 text-4xl font-heading font-medium leading-[0.98] text-emerald-950 sm:text-6xl">{facts.heading}</h1>
+          {/* One self-contained sentence an assistant can quote as-is. */}
+          <p className="mt-6 max-w-2xl text-base font-medium leading-relaxed text-emerald-950/75 sm:text-lg">{facts.sentence}</p>
         </div>
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left: Vehicle Info */}
@@ -164,7 +191,8 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
             <div className="relative aspect-16/10 overflow-hidden rounded-lg border border-emerald-950/15 bg-[#fbfcfa]">
               <ImageCarousel
                 images={orderVehicleImages(vehicle.images, vehicle.image_url)}
-                vehicleName={vehicle.name}
+                vehicleName={facts.model}
+                alt={photoAlt}
                 priority
               />
               <span className="absolute left-4 top-4 z-30 border-l-2 border-amber-400 bg-white/90 py-1 pl-2.5 pr-3 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950">
@@ -172,28 +200,46 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               </span>
             </div>
 
-            {/* Price Card if available */}
-            {vehicle.starting_price && (
-              <div className="flex items-center justify-between border-y border-emerald-950/15 py-4">
-                <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Starting price</span>
-                <div className="text-right">
-                  <span className="text-2xl font-heading font-medium text-emerald-950">
-                    {formatPrice(vehicle.starting_price)}
-                  </span>
-                  <span className="ml-1 text-sm text-emerald-950/50">
-                    / {vehicle.price_label || "day"}
-                  </span>
-                </div>
+            {/* One price, one unit. Monthly is stated separately so a reader
+                never has to guess which period a number covers. */}
+            <dl className="grid grid-cols-2 border-y border-emerald-950/15 py-4 tabular-nums">
+              <div>
+                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Day rate</dt>
+                <dd className="mt-1 text-emerald-950">
+                  {facts.dayRate ? (
+                    <>
+                      <span className="text-2xl font-heading font-medium">From {formatBdt(facts.dayRate)}</span>
+                      <span className="text-sm text-emerald-950/60"> / day</span>
+                      <span className="mt-1 block text-xs text-emerald-950/55">{CITY_DAY_HOURS}, Dhaka city</span>
+                    </>
+                  ) : (
+                    <span className="text-base font-medium">Quoted on request</span>
+                  )}
+                </dd>
               </div>
-            )}
+              <div className="border-l border-emerald-950/10 pl-4">
+                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Monthly</dt>
+                <dd className="mt-1 text-emerald-950">
+                  {facts.row?.monthlyFrom ? (
+                    <span className="text-2xl font-heading font-medium">From {formatBdt(facts.row.monthlyFrom)}</span>
+                  ) : (
+                    <span className="text-base font-medium">Quoted for your hours</span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+            <p className="text-sm leading-relaxed text-emerald-950/60">
+              {PRICE_EXTRAS}{" "}
+              <Link href="/policies/overtime-and-fuel" className="underline underline-offset-4">Overtime &amp; fuel policy</Link>
+            </p>
 
             {/* Vehicle Details */}
             <div className="space-y-6">
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-emerald-950/10 pb-5 text-emerald-950/65">
-                <span className="flex items-center gap-2 text-sm">
+                <span className="flex items-center gap-2 text-sm tabular-nums">
                   <Users className="h-4 w-4" />
-                  {vehicle.seats} Seats
+                  {facts.seats} seats · with driver
                 </span>
 
                 {vehicle.engine_cc && (
@@ -250,14 +296,14 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
 
               {/* Quick Contact */}
               <div className="flex gap-3 pt-4">
-                <a href={`tel:${siteConfig.phone}`} className="flex-1">
+                <a href={getTelHref()} className="flex-1">
                   <Button variant="outline" className="w-full gap-2 rounded-lg border-emerald-950/25">
                     <Phone className="h-4 w-4" />
                     Call Now
                   </Button>
                 </a>
                 <a
-                  href={`https://wa.me/${siteConfig.whatsapp}?text=Hi, I'm interested in renting the ${vehicle.name}`}
+                  href={getWhatsAppHref(`Hi Jinia, I'd like to rent the ${facts.heading.replace(" rental with driver", "")} with driver.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"
@@ -277,8 +323,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               <CardHeader>
                 <CardTitle>Request a Quote</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Fill out the form below and we&apos;ll get back to you within
-                  24 hours.
+                  Fill out the form below. {RESPONSE_PROMISE.sentence}
                 </p>
               </CardHeader>
               <CardContent>

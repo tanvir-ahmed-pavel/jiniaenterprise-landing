@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { DateField } from "@/components/forms/DateField";
+import { PHONE_ERROR, PHONE_HINT, isValidPhone, normalizePhone } from "@/lib/forms/phone";
+import { todayInDhaka } from "@/lib/forms/date";
+import { buildWhatsAppRequestHref } from "@/lib/forms/whatsapp";
+import { RESPONSE_PROMISE } from "@/lib/business/identity";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { siteConfig } from "@/lib/config";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select } from "@/components/ui/select";
 
 const inquirySchema = z.object({
   name: z.string().min(2, "Please tell us your name."),
-  phone: z.string().min(10, "Please enter a phone number we can reach."),
+  phone: z.string().refine(isValidPhone, PHONE_ERROR),
   email: z.string().email("Please enter a valid email address."),
   rental_type: z.string().optional(),
   start_date: z.string().optional(),
@@ -39,6 +43,8 @@ const errorCls = "mt-1.5 text-xs font-normal text-red-600";
 export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [whatsAppHref, setWhatsAppHref] = useState(() => buildWhatsAppRequestHref({ vehicle: vehicleName }));
 
   const {
     register,
@@ -55,24 +61,40 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
 
   const onSubmit = async (data: InquiryFormData) => {
     setIsSubmitting(true);
+    setSubmitError("");
+    const phone = normalizePhone(data.phone) ?? data.phone;
     try {
       const response = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          phone,
           vehicle_id: vehicleId || null,
           vehicle_name: vehicleName || null,
           source: source || (vehicleId ? "vehicle_page" : "contact_page"),
         }),
       });
 
-      if (response.ok) {
-        setIsSubmitted(true);
-        reset();
-      }
+      if (!response.ok) throw new Error(`Inquiry failed: ${response.status}`);
+      setWhatsAppHref(
+        buildWhatsAppRequestHref({
+          name: data.name,
+          phone,
+          rentalType: data.rental_type,
+          vehicle: vehicleName,
+          date: data.start_date,
+          endDate: data.end_date,
+          pickup: data.pickup_location,
+          destination: data.destination,
+          message: data.message,
+        }),
+      );
+      setIsSubmitted(true);
+      reset();
     } catch (error) {
       console.error("Error submitting inquiry:", error);
+      setSubmitError("That did not send. Please try again, or send the request on WhatsApp below.");
     } finally {
       setIsSubmitting(false);
     }
@@ -85,16 +107,17 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
           <CheckCircle2 className="h-5 w-5 text-emerald-700" /> Request received.
         </p>
         <p className="mx-auto max-w-sm text-sm leading-relaxed text-emerald-950/60">
-          The desk will come back to you shortly with a quote for the trip you described.
+          {RESPONSE_PROMISE.sentence} Prefer WhatsApp? Send the same request there in one tap.
         </p>
         <div className="flex flex-col items-center gap-4 pt-2">
           <a
-            href={`https://wa.me/${siteConfig.whatsapp}`}
+            href={whatsAppHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-emerald-800 underline underline-offset-4 transition-colors hover:text-emerald-950"
+            data-umami-event="inquiry_whatsapp_handoff"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-emerald-950 px-7 text-sm font-medium text-white transition-colors hover:bg-emerald-800"
           >
-            Or message the desk on WhatsApp
+            <MessageSquare aria-hidden className="h-4 w-4" /> Send this request on WhatsApp
           </a>
           <button
             type="button"
@@ -109,7 +132,13 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+      {submitError && (
+        <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-4 text-sm font-normal text-red-700">
+          {submitError}{" "}
+          <a href={whatsAppHref} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Open WhatsApp</a>
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className={labelCls}>Name</span>
@@ -118,7 +147,7 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
         </label>
         <label className="block">
           <span className={labelCls}>Phone</span>
-          <input placeholder="+880 1..." {...register("phone")} className={cn(field, errors.phone && "border-red-500")} />
+          <input type="tel" inputMode="tel" autoComplete="tel" placeholder={PHONE_HINT} aria-invalid={!!errors.phone} {...register("phone")} className={cn(field, errors.phone && "border-red-500")} />
           {errors.phone && <p className={errorCls}>{errors.phone.message}</p>}
         </label>
       </div>
@@ -152,11 +181,11 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
         </label>
         <label className="block">
           <span className={labelCls}>From</span>
-          <input type="date" {...register("start_date")} className={field} />
+          <DateField min={todayInDhaka()} {...register("start_date")} className={field} />
         </label>
         <label className="block">
           <span className={labelCls}>Until</span>
-          <input type="date" {...register("end_date")} className={field} />
+          <DateField min={todayInDhaka()} {...register("end_date")} className={field} />
         </label>
       </div>
 
@@ -183,7 +212,7 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
       </label>
 
       <div className="flex flex-col gap-4 border-t border-emerald-950/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="type-label text-emerald-950/50">No deposit. A reply inside the hour.</p>
+        <p className="type-label text-emerald-950/50">No deposit. {RESPONSE_PROMISE.sentence}</p>
         <button
           type="submit"
           disabled={isSubmitting}

@@ -35,6 +35,11 @@ export type BusinessIdentity = {
   priceRange?: string;
   openingHours?: string[];
   sameAs: string[];
+  /** Official profiles not live yet; listed so the gaps stay visible. */
+  pendingProfiles: Array<{ name: string; note: string }>;
+  founder: { name: string; jobTitle: string };
+  /** Outstation cities the site has route pages for. */
+  routeCities: string[];
   serviceAreas: string[];
   description: string;
   foundingYear: number;
@@ -62,16 +67,26 @@ export const businessIdentity: BusinessIdentity = {
     latitude: 23.7937,
     longitude: 90.4049,
   },
-  priceRange: "$$",
+  // Lowest to highest published day rate (content/fleet-prices.ts).
+  priceRange: "৳3,000–৳15,000 per day",
   openingHours: [
     "Mo-Th 09:00-20:00",
     "Sa-Su 09:00-20:00",
     "Fr 10:00-18:00",
   ],
   sameAs: [
-    "https://facebook.com/jiniaenterprise",
-    "https://linkedin.com/company/jiniaenterprise",
+    "https://www.facebook.com/jiniaenterprise",
+    "https://www.linkedin.com/company/jiniaenterprise",
   ],
+  // TODO(owner): add each URL to sameAs above once it exists and is verified.
+  pendingProfiles: [
+    { name: "Google Business Profile", note: "TODO(owner): the maps.app.goo.gl or g.page link once verified" },
+    { name: "Bikroy shop", note: "TODO(owner): bikroy.com shop URL" },
+    { name: "Facebook / LinkedIn", note: "TODO(owner): confirm both URLs above are the official pages" },
+  ],
+  // Named on the About page as founder and Managing Director.
+  founder: { name: "MD. Shahab Uddin", jobTitle: "Managing Director" },
+  routeCities: ["Cox's Bazar", "Sylhet", "Chattogram", "Sreemangal"],
   serviceAreas: [
     "Dhaka",
     "Gulshan",
@@ -91,6 +106,18 @@ export const businessIdentity: BusinessIdentity = {
   logoPath: "/images/logo.png",
 };
 
+/**
+ * The one response-time promise, used everywhere the site makes one.
+ * TODO(owner): confirm this is true at night and on Fridays. If it is not,
+ * change it here (e.g. "Reply within 2 hours, 8am–10pm") and every page follows.
+ */
+export const RESPONSE_PROMISE = {
+  short: "Reply inside the hour",
+  sentence: "A real person replies inside the hour.",
+  bn: "এক ঘণ্টার মধ্যে উত্তর",
+  bnSentence: "একজন মানুষ এক ঘণ্টার মধ্যে উত্তর দেবেন।",
+} as const;
+
 export function getBusinessIdentity(): BusinessIdentity {
   return businessIdentity;
 }
@@ -101,6 +128,11 @@ export function getFormattedAddress(): string {
     /\s+/g,
     " ",
   ).trim();
+}
+
+/** Google Maps link for the office, used by the footer and contact page. */
+export function getMapHref(): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(getFormattedAddress())}`;
 }
 
 export function getTelHref(phone = businessIdentity.phone): string {

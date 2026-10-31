@@ -1,16 +1,15 @@
 import { SITE_URL } from "@/lib/seo/canonical";
 
 /**
- * IndexNow helper for Bing and participating engines.
- * Set INDEXNOW_KEY in the environment and host the key file at /{key}.txt
- * before calling submitIndexNow in publish/update workflows.
+ * IndexNow helper for Bing (and through it Copilot and ChatGPT search) and the
+ * other participating engines. The key is public by design: it is served at
+ * /{key}.txt (public/23ef0eb9538231463a02ae89db78b5ce.txt) to prove ownership.
+ * INDEXNOW_KEY overrides it if the key is ever rotated.
  */
+export const INDEXNOW_KEY = process.env.INDEXNOW_KEY || "23ef0eb9538231463a02ae89db78b5ce";
+
 export async function submitIndexNow(urls: string | string[]): Promise<boolean> {
-  const key = process.env.INDEXNOW_KEY;
-  if (!key) {
-    console.warn("INDEXNOW_KEY is not set; skipping IndexNow submission.");
-    return false;
-  }
+  const key = INDEXNOW_KEY;
 
   const host = new URL(SITE_URL).host;
   const urlList = (Array.isArray(urls) ? urls : [urls]).map((url) =>

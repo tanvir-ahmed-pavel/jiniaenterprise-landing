@@ -6,8 +6,8 @@ import { ArrowRight, Eye, Fuel, ShieldCheck, Users } from "lucide-react";
 import { ImageCarousel } from "./ImageCarousel";
 import { orderVehicleImages } from "@/lib/vehicles/images";
 import { getVehiclePath } from "@/lib/vehicles/slugs";
+import { CITY_DAY_HOURS, formatBdt, getFleetPrice } from "@/content/fleet-prices";
 
-const formatPrice = (price: number) => "৳" + price.toLocaleString("en-BD");
 
 interface Vehicle {
   id: string;
@@ -43,11 +43,18 @@ export const VehicleCard = memo(function VehicleCard({
     () => orderVehicleImages(vehicle.images, vehicle.image_url),
     [vehicle.images, vehicle.image_url],
   );
+  // Price and seats from the shared table, so the card matches the vehicle
+  // page, the pricing page and the estimator exactly.
+  const row = getFleetPrice(vehicle.slug);
+  const dayRate = row ? row.dayRate : vehicle.starting_price ?? null;
+  const seats = row?.seats ?? vehicle.seats;
+  const model = row?.model ?? vehicle.name;
+  const alt = `${model} ${seats}-seater${row ? ` ${row.kind.toLowerCase()}` : ""} for rent with driver in Dhaka`;
 
   return (
     <article className="group/card flex h-full flex-col overflow-hidden rounded-lg border border-emerald-950/12 bg-white transition-[border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-emerald-950/30 hover:shadow-[0_14px_30px_-24px_rgba(6,52,38,.35)]">
       <div className="relative aspect-[16/10] overflow-hidden border-b border-emerald-950/10">
-        <ImageCarousel images={images} vehicleName={vehicle.name} priority={priority} />
+        <ImageCarousel images={images} vehicleName={model} alt={alt} priority={priority} />
         <span className="type-label absolute left-4 top-4 border-l-2 border-amber-400 bg-white/90 py-1 pl-2.5 pr-3 text-emerald-950">
           {vehicle.category}
         </span>
@@ -66,12 +73,16 @@ export const VehicleCard = memo(function VehicleCard({
               {vehicle.description || "Chauffeur-driven comfort, maintained and ready on schedule."}
             </p>
           </div>
-          {vehicle.starting_price && (
-            <p className="shrink-0 text-right text-sm font-medium text-emerald-950">
-              {formatPrice(vehicle.starting_price)}
-              <span className="type-label mt-1 block text-emerald-950/45">{vehicle.price_label || "from / day"}</span>
-            </p>
-          )}
+          <p className="shrink-0 text-right text-sm font-medium tabular-nums text-emerald-950">
+            {dayRate ? (
+              <>
+                From {formatBdt(dayRate)}<span className="font-normal text-emerald-950/60"> / day</span>
+                <span className="mt-1 block text-[11px] font-normal text-emerald-950/55">{CITY_DAY_HOURS}, Dhaka city</span>
+              </>
+            ) : (
+              <span className="font-normal text-emerald-950/65">Price on request</span>
+            )}
+          </p>
         </div>
 
         {/* Pushed to the bottom so specs and actions line up across a row no
@@ -81,7 +92,7 @@ export const VehicleCard = memo(function VehicleCard({
             <div>
               <Users className="mx-auto h-4 w-4 text-emerald-700" aria-hidden />
               <dt className="type-label mt-2 text-emerald-950/45">Seats</dt>
-              <dd className="mt-1 text-sm font-medium text-emerald-950">{vehicle.seats}</dd>
+              <dd className="mt-1 text-sm font-medium tabular-nums text-emerald-950">{seats}</dd>
             </div>
             <div className="border-x border-emerald-950/10">
               <Fuel className="mx-auto h-4 w-4 text-emerald-700" aria-hidden />
@@ -91,7 +102,7 @@ export const VehicleCard = memo(function VehicleCard({
             <div>
               <ShieldCheck className="mx-auto h-4 w-4 text-emerald-700" aria-hidden />
               <dt className="type-label mt-2 text-emerald-950/45">Service</dt>
-              <dd className="mt-1 text-sm font-medium text-emerald-950">Driver</dd>
+              <dd className="mt-1 text-sm font-medium text-emerald-950">With driver</dd>
             </div>
           </dl>
 

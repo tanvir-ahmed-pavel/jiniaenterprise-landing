@@ -5,26 +5,35 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Vehicle } from "@/lib/supabase/admin-service";
-import { ArrowDown, ArrowRight, CheckCircle2, ChevronUp, Check, Loader2, Search } from "lucide-react";
+import { ArrowDown, ArrowRight, CheckCircle2, ChevronUp, Check, Loader2, MessageSquare, Plane, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select } from "@/components/ui/select";
+import { DateField } from "@/components/forms/DateField";
+import { PHONE_ERROR, PHONE_HINT, isValidPhone, normalizePhone } from "@/lib/forms/phone";
+import { todayInDhaka } from "@/lib/forms/date";
+import { buildWhatsAppRequestHref } from "@/lib/forms/whatsapp";
+import { RESPONSE_PROMISE } from "@/lib/business/identity";
 
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
+  phone: z.string().refine(isValidPhone, PHONE_ERROR),
   email: z.string().email("Please enter a valid email address"),
   vehicle_id: z.string().optional(),
   rental_type: z.string().min(1, "Please select a rental type"),
   pickup_date: z.string().min(1, "Please select a pickup date"),
   return_date: z.string().optional(),
   pickup_location: z.string().optional(),
+  flight_number: z.string().optional(),
   message: z.string().optional(),
 });
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface BookingFormProps {
+  /** Vehicle id to preselect. */
   preselectedVehicle?: string;
+  /** Rental type to preselect, e.g. "airport" from the airport pages. */
+  preselectedType?: string;
   vehicles?: Vehicle[];
 }
 
@@ -174,10 +183,11 @@ function VehicleTypeahead({
   );
 }
 
-export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormProps) {
+export function BookingForm({ preselectedVehicle, preselectedType, vehicles = [] }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [whatsAppHref, setWhatsAppHref] = useState(() => buildWhatsAppRequestHref({}));
 
   const {
     register,
@@ -185,13 +195,15 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       vehicle_id: preselectedVehicle || "",
-      rental_type: "daily",
+      rental_type: preselectedType || "daily",
     },
   });
+  const isAirport = watch("rental_type") === "airport";
 
   const rentalTypes = [
     { value: "daily", label: "Daily" },
@@ -207,11 +219,31 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
 
     try {
       const vehicle = data.vehicle_id ? vehicles.find((v) => v.id === data.vehicle_id) : null;
+      const phone = normalizePhone(data.phone) ?? data.phone;
+      const flight = isAirport ? data.flight_number?.trim() : "";
+      // The bookings table has no flight column; the number travels in the
+      // message so the desk sees it in the email and the admin list.
+      const message = [flight && `Flight: ${flight.toUpperCase()}`, data.message].filter(Boolean).join("\n");
+      const rentalLabel = rentalTypes.find((t) => t.value === data.rental_type)?.label ?? data.rental_type;
+
+      setWhatsAppHref(
+        buildWhatsAppRequestHref({
+          name: data.name,
+          phone,
+          rentalType: rentalLabel,
+          vehicle: vehicle?.name,
+          date: data.pickup_date,
+          endDate: data.return_date,
+          pickup: data.pickup_location,
+          flight: flight || undefined,
+          message: data.message,
+        }),
+      );
 
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, vehicle_name: vehicle?.name || null }),
+        body: JSON.stringify({ ...data, phone, message, vehicle_name: vehicle?.name || null }),
       });
 
       if (!response.ok) throw new Error("Failed to submit booking");
@@ -219,7 +251,7 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
       setIsSuccess(true);
       reset();
     } catch {
-      setError("We could not send that. Please try again, or call the desk directly.");
+      setError("We could not send that. Please try again, call the desk, or send it on WhatsApp.");
     } finally {
       setIsSubmitting(false);
     }
@@ -232,9 +264,18 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
           <CheckCircle2 className="h-5 w-5 text-emerald-700" /> Request received.
         </p>
         <p className="mx-auto max-w-md text-sm leading-relaxed text-emerald-950/60">
-          The desk will contact you within two hours to confirm the vehicle, the driver, and the
-          price for your dates.
+          {RESPONSE_PROMISE.sentence} The desk confirms the vehicle, the driver and the price for
+          your dates. Prefer WhatsApp? Send the same request there in one tap.
         </p>
+        <a
+          href={whatsAppHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-umami-event="booking_whatsapp_handoff"
+          className="mx-auto flex h-12 w-fit items-center justify-center gap-2 rounded-full bg-emerald-950 px-7 text-sm font-medium text-white transition-colors hover:bg-emerald-800"
+        >
+          <MessageSquare aria-hidden className="h-4 w-4" /> Send this request on WhatsApp
+        </a>
         <button
           type="button"
           onClick={() => setIsSuccess(false)}
@@ -249,8 +290,9 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm font-normal text-red-700">
-          {error}
+        <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-4 text-sm font-normal text-red-700">
+          {error}{" "}
+          <a href={whatsAppHref} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Open WhatsApp</a>
         </p>
       )}
 
@@ -264,7 +306,7 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
           </label>
           <label className="block">
             <span className={labelCls}>Phone</span>
-            <input type="tel" placeholder="+880 1..." className={cn(field, errors.phone && "border-red-500")} {...register("phone")} />
+            <input type="tel" inputMode="tel" autoComplete="tel" placeholder={PHONE_HINT} aria-invalid={!!errors.phone} className={cn(field, errors.phone && "border-red-500")} {...register("phone")} />
             {errors.phone && <p className={errorCls}>{errors.phone.message}</p>}
           </label>
           <label className="block">
@@ -313,9 +355,8 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <label className="block">
             <span className={labelCls}>Pickup date</span>
-            <input
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
+            <DateField
+              min={todayInDhaka()}
               className={cn(field, errors.pickup_date && "border-red-500")}
               {...register("pickup_date")}
             />
@@ -323,13 +364,28 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
           </label>
           <label className="block">
             <span className={labelCls}>Return date</span>
-            <input type="date" className={field} {...register("return_date")} />
+            <DateField min={todayInDhaka()} className={field} {...register("return_date")} />
           </label>
           <label className="block">
             <span className={labelCls}>Pickup</span>
             <input placeholder="Airport, Gulshan..." className={field} {...register("pickup_location")} />
           </label>
         </div>
+
+        {isAirport && (
+          <label className="mt-4 block sm:max-w-xs">
+            <span className={cn(labelCls, "flex items-center gap-1.5")}>
+              <Plane aria-hidden className="h-3.5 w-3.5 text-emerald-700" /> Flight number
+            </span>
+            <input
+              placeholder="e.g. BG 084"
+              autoCapitalize="characters"
+              className={field}
+              {...register("flight_number")}
+            />
+            <span className="mt-1.5 block text-xs text-emerald-950/55">We track your flight, so a delay never means a missed pickup.</span>
+          </label>
+        )}
 
         <label className="mt-4 block">
           <span className={labelCls}>Anything else</span>

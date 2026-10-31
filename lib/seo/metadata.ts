@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { businessIdentity } from "@/lib/business/identity";
 import { getCanonicalUrl, SITE_URL } from "@/lib/seo/canonical";
+import { getLanguageAlternates, getLocaleForPath } from "@/lib/i18n/alternates";
 
 type CreateMetadataInput = {
   title: string;
@@ -20,6 +21,9 @@ export function createMetadata({
   keywords,
 }: CreateMetadataInput): Metadata {
   const url = getCanonicalUrl(path);
+  // Pages with a Bangla twin get the hreflang pair automatically, on both sides.
+  const languages = getLanguageAlternates(path);
+  const isBangla = getLocaleForPath(path) === "bn";
   const absoluteImage = image.startsWith("http")
     ? image
     : `${SITE_URL}${image.startsWith("/") ? image : `/${image}`}`;
@@ -30,10 +34,12 @@ export function createMetadata({
     keywords,
     alternates: {
       canonical: url,
+      ...(languages ? { languages } : {}),
     },
     openGraph: {
       type: "website",
-      locale: "en_BD",
+      locale: isBangla ? "bn_BD" : "en_BD",
+      ...(languages ? { alternateLocale: isBangla ? ["en_BD"] : ["bn_BD"] } : {}),
       url,
       siteName: businessIdentity.brandName,
       title,

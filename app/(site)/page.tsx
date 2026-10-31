@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { withPublishedPrice } from "@/content/fleet-prices";
+import { RESPONSE_PROMISE } from "@/lib/business/identity";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CarFront, Clock3, MessageSquare, Plane, ShieldCheck } from "lucide-react";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
@@ -50,7 +52,7 @@ async function getFeaturedVehicles(): Promise<Vehicle[]> {
     console.error("Error fetching featured vehicles:", error);
     return [];
   }
-  return ((data as Vehicle[]) || []).slice(0, 6);
+  return ((data as Vehicle[]) || []).slice(0, 6).map(withPublishedPrice);
 }
 
 const services = [
@@ -231,7 +233,7 @@ export default async function Home() {
             <div className="mx-auto mt-4 flex max-w-xl flex-col items-center gap-5 border-y border-emerald-950/15 py-5 sm:flex-row sm:justify-between">
               <p className="text-center text-sm leading-snug text-emerald-950/60 sm:text-left">
                 <span className="block font-medium text-emerald-950">A real person replies.</span>
-                Most quotes arrive inside the hour.
+                {RESPONSE_PROMISE.sentence}
               </p>
               <a
                 href={`https://wa.me/${siteConfig.whatsapp}`}

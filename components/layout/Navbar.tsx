@@ -7,6 +7,7 @@ import { Menu, X, Phone, MessageSquare, ChevronDown, ArrowUpRight } from "lucide
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -208,6 +209,7 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitch />
             <div className={cn(
               "hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-medium border transition-colors",
               isTransparent 
@@ -254,6 +256,8 @@ export function Navbar() {
             </a>
           </div>
 
+          <div className="flex items-center gap-1 lg:hidden">
+          <LanguageSwitch className="md:hidden" />
           {/* Mobile Menu Toggle */}
           <button
             ref={mobileMenuTriggerRef}
@@ -271,6 +275,7 @@ export function Navbar() {
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+          </div>
         </div>
 
         {/* Mobile Nav */}

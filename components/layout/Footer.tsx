@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getFormattedAddress, getMapHref } from "@/lib/business/identity";
 import { Phone, Mail, MapPin, MessageSquare, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
@@ -118,7 +119,7 @@ export function Footer() {
             </h4>
             <div className="space-y-4">
               <a
-                href="https://maps.google.com/?q=Unicorn+Plaza+Dhaka"
+                href={getMapHref()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex gap-3 group p-2 rounded-xl hover:bg-white/5 transition-colors"
@@ -127,8 +128,7 @@ export function Footer() {
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div className="text-xs font-medium text-white/70 leading-relaxed group-hover:text-white transition-colors">
-                  40/2, Unicorn Plaza (Level-2), <br />
-                  Shop-9,10, Dhaka 1212
+                  <address className="not-italic">{getFormattedAddress()}</address>
                 </div>
               </a>
 

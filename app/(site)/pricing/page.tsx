@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getVehiclePath } from "@/lib/vehicles/slugs";
+import { formatBdt, getFleetPrice } from "@/content/fleet-prices";
 import { createMetadata } from "@/lib/seo/metadata";
 import { ContentPageShell } from "@/components/seo/ContentPageShell";
 import { pricingPage, pricingFaqs, indicativeFromPrices } from "@/content/pricing";
@@ -45,11 +46,11 @@ export default function PricingPage() {
         { href: "/monthly-car-rental", label: "Monthly packages" },
         { href: "/faq", label: "FAQ" },
       ]}
-      updatedAt="2026-08-21"
+      updatedAt="2026-10-31"
     >
       <section className="space-y-4">
         <h2 className="text-2xl font-heading font-medium text-emerald-950">
-          Indicative “from” day rates
+          Day rates with driver, Dhaka city
         </h2>
         <p className="text-sm text-gray-600 font-medium">
           {pricingPage.priceDisclaimer}
@@ -58,9 +59,10 @@ export default function PricingPage() {
           <table className="w-full text-sm">
             <thead className="bg-emerald-950 text-white">
               <tr>
-                <th className="text-left p-3 font-medium">Vehicle</th>
-                <th className="text-left p-3 font-medium">From (BDT)</th>
-                <th className="text-left p-3 font-medium">Unit</th>
+                <th scope="col" className="text-left p-3 font-medium">Vehicle</th>
+                <th scope="col" className="text-left p-3 font-medium">Seats</th>
+                <th scope="col" className="text-left p-3 font-medium">From</th>
+                <th scope="col" className="text-left p-3 font-medium">Unit</th>
               </tr>
             </thead>
             <tbody>
@@ -71,8 +73,11 @@ export default function PricingPage() {
                       {row.name}
                     </Link>
                   </td>
-                  <td className="p-3 font-medium text-emerald-800">
-                    ৳{row.startingPriceBdt.toLocaleString("en-BD")}
+                  <td className="p-3 tabular-nums text-emerald-950/70">
+                    {getFleetPrice(row.slug)?.seats}
+                  </td>
+                  <td className="p-3 font-medium tabular-nums text-emerald-800">
+                    {formatBdt(row.startingPriceBdt)}
                   </td>
                   <td className="p-3 text-gray-600">{row.priceLabel}</td>
                 </tr>

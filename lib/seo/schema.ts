@@ -25,10 +25,18 @@ export function getLocalBusinessSchema() {
     image: `${SITE_URL}${businessIdentity.logoPath}`,
     logo: `${SITE_URL}${businessIdentity.logoPath}`,
     priceRange: businessIdentity.priceRange,
+    currenciesAccepted: "BDT",
     foundingDate: String(businessIdentity.foundingYear),
+    founder: {
+      "@type": "Person",
+      name: businessIdentity.founder.name,
+      jobTitle: businessIdentity.founder.jobTitle,
+    },
+    // The full street line, including the neighbourhood, exactly as printed
+    // in the footer and on the contact page.
     address: {
       "@type": "PostalAddress",
-      streetAddress: address.street,
+      streetAddress: `${address.street}, ${address.locality}`,
       addressLocality: address.city,
       addressRegion: address.region,
       postalCode: address.postalCode,
@@ -41,11 +49,19 @@ export function getLocalBusinessSchema() {
           longitude: geo.longitude,
         }
       : undefined,
-    areaServed: businessIdentity.serviceAreas.map((name) => ({
-      "@type": "Place",
-      name,
-    })),
+    hasMap: geo
+      ? `https://www.google.com/maps/search/?api=1&query=${geo.latitude},${geo.longitude}`
+      : undefined,
+    areaServed: [
+      { "@type": "City", name: "Dhaka" },
+      ...businessIdentity.routeCities.map((name) => ({ "@type": "City", name })),
+      { "@type": "Airport", name: "Hazrat Shahjalal International Airport", iataCode: "DAC" },
+      { "@type": "Country", name: "Bangladesh" },
+    ],
     sameAs: businessIdentity.sameAs,
+    // Office hours. The phone and WhatsApp line is 24/7 (contactPoint below).
+    // TODO(owner): if the office itself is 24/7, replace with a single
+    // Monday–Sunday 00:00–23:59 entry.
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
@@ -71,9 +87,15 @@ export function getLocalBusinessSchema() {
       {
         "@type": "ContactPoint",
         telephone: businessIdentity.phone,
-        contactType: "customer service",
+        contactType: "reservations",
         areaServed: "BD",
         availableLanguage: ["en", "bn"],
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          opens: "00:00",
+          closes: "23:59",
+        },
       },
     ],
   };
@@ -131,6 +153,7 @@ export function getVehicleSchema({
   image,
   seats,
   category,
+  dayRate,
 }: {
   name: string;
   description: string;
@@ -138,6 +161,8 @@ export function getVehicleSchema({
   image?: string | null;
   seats?: number;
   category?: string;
+  /** BDT per day; must equal the price shown on the page. Omitted = no Offer. */
+  dayRate?: number | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -164,17 +189,34 @@ export function getVehicleSchema({
           },
         ]
       : undefined,
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      priceCurrency: "BDT",
-      url: getCanonicalUrl(path),
-      seller: {
-        "@type": "LocalBusiness",
-        "@id": `${SITE_URL}/#business`,
-        name: businessIdentity.brandName,
-      },
-    },
+    // An Offer without a price is an error in Google's Product report, so
+    // the Offer only exists when the page shows a price.
+    offers: dayRate
+      ? {
+          "@type": "Offer",
+          price: dayRate,
+          priceCurrency: "BDT",
+          availability: "https://schema.org/InStock",
+          url: getCanonicalUrl(path),
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: dayRate,
+            priceCurrency: "BDT",
+            unitText: "DAY",
+            unitCode: "DAY",
+            referenceQuantity: {
+              "@type": "QuantitativeValue",
+              value: 1,
+              unitCode: "DAY",
+            },
+          },
+          seller: {
+            "@type": "LocalBusiness",
+            "@id": `${SITE_URL}/#business`,
+            name: businessIdentity.brandName,
+          },
+        }
+      : undefined,
   };
 }
 

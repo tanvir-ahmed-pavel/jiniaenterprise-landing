@@ -1,6 +1,11 @@
 import { createMetadata } from "@/lib/seo/metadata";
 import { SeoPillarPage } from "@/components/seo/SeoPillarPage";
 import { siteFaqs } from "@/lib/seo/content";
+import { CITY_DAY_HOURS, PRICE_EXTRAS, formatBdt, getLowestDayRate } from "@/content/fleet-prices";
+
+const sedan = getLowestDayRate((r) => r.kind === "Sedan")?.dayRate ?? 0;
+const mpv = getLowestDayRate((r) => r.model === "Toyota Noah")?.dayRate ?? 0;
+const microbus = getLowestDayRate((r) => r.model === "Toyota Hiace")?.dayRate ?? 0;
 
 export const metadata = createMetadata({
   title: "Car Rental in Dhaka with Driver",
@@ -32,7 +37,7 @@ export default function CarRentalDhakaPage() {
       path="/car-rental-dhaka"
       breadcrumbLabel="Car Rental Dhaka"
       serviceName="Car Rental in Dhaka"
-      answer="Jinia Enterprise provides chauffeur-driven car rental in Dhaka for daily, monthly, corporate, and airport needs. Share your pickup point, dates, and passenger count to receive a quote matched to your itinerary."
+      answer={`Jinia Enterprise provides chauffeur-driven car rental in Dhaka for daily, monthly, corporate, and airport needs, from ${formatBdt(sedan)} per day for a sedan with driver. Share your pickup point, dates, and passenger count to receive a quote matched to your itinerary.`}
       sections={[
         {
           heading: "Who this service is for",
@@ -47,8 +52,8 @@ export default function CarRentalDhakaPage() {
           body: "Coverage includes Gulshan, Banani, Uttara, Dhanmondi, Mirpur, Mohammadpur, Baridhara, Bashundhara, Hazrat Shahjalal International Airport, and outstation routes across Bangladesh when arranged in advance.",
         },
         {
-          heading: "How pricing works",
-          body: "Rates depend on vehicle class, duration, city vs outstation use, overtime, and fuel terms. We do not publish a single fixed price for every trip—request today’s rate with your route details for an accurate quote.",
+          heading: "How much it costs",
+          body: `A full day (about ${CITY_DAY_HOURS}) inside Dhaka city with driver starts from ${formatBdt(sedan)} for a sedan, ${formatBdt(mpv)} for a 7-seat Toyota Noah and ${formatBdt(microbus)} for a 12-seat Toyota Hiace. ${PRICE_EXTRAS} See the pricing page for every vehicle.`,
         },
       ]}
       faqs={faqs}

@@ -1,4 +1,5 @@
 import { VehicleGrid } from "@/components/vehicles/VehicleGrid";
+import { withPublishedPrice } from "@/content/fleet-prices";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createClient } from "@/lib/supabase/server";
@@ -46,14 +47,14 @@ async function getVehicles(): Promise<Vehicle[]> {
       .order("sort_order", { ascending: true });
 
     if (!error && data && data.length > 0) {
-      return data as Vehicle[];
+      return (data as Vehicle[]).map(withPublishedPrice);
     }
   } catch (e) {
     console.error("Error fetching vehicles from DB, falling back to sample data:", e);
   }
 
   // Graceful fallback to verified sample vehicle fleet
-  return sampleVehicles as unknown as Vehicle[];
+  return (sampleVehicles as unknown as Vehicle[]).map(withPublishedPrice);
 }
 
 export default async function VehiclesPage() {

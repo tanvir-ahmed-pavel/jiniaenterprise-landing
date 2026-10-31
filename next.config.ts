@@ -12,6 +12,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Two root layouts (English and /bn) need one shared 404 document.
+    globalNotFound: true,
+  },
   images: {
     remotePatterns: [
       // Legacy vehicle rows still point at third-party image hosts, so the

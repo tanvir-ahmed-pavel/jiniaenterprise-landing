@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { getFormattedAddress } from "@/lib/business/identity";
 import { companyHistory, whyChooseUs, siteConfig, teamMembers } from "@/lib/config";
 import { PageHeader } from "@/components/layout/PageHeader";
 import {
@@ -171,7 +172,7 @@ export default function AboutPage() {
             <GhostAction href="/contact" tone="dark">Visit the office</GhostAction>
           </div>
           <p className="type-label mt-8 text-white/45">
-            40/2, Unicorn Plaza (Level-2), Shop-9,10, Dhaka 1212 · {siteConfig.phone}
+            {getFormattedAddress()} · {siteConfig.phone}
           </p>
         </div>
       </DarkPanel>

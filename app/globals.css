@@ -3,6 +3,10 @@
 @theme {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-heading: "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Bangla: Hind Siliguri where the /bn layout loads it, then the Bengali
+     faces that ship with Android, Windows and macOS. */
+  --font-bangla: var(--font-hind, "Hind Siliguri"), "Noto Sans Bengali", "Nirmala UI", "Vrinda", "Bangla Sangam MN", sans-serif;
+  --font-board: var(--font-jetbrains, "JetBrains Mono"), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
 @layer base {
@@ -82,6 +86,11 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Bangla text everywhere it appears, including inside English pages. */
+  :lang(bn) {
+    font-family: var(--font-bangla);
   }
 
   body {
@@ -1144,4 +1153,36 @@
 
 .jinia-on-dark .jinia-outline-pill {
   box-shadow: inset 0 0 0 1.25px rgba(255, 255, 255, 0.85);
+}
+
+/* ── Chat widget above the mobile action bar ──────
+   The widget lives in a shadow root, so the host is
+   lifted as a whole on phone widths. */
+@media (max-width: 767px) {
+  nodi-chat-widget {
+    position: fixed;
+    inset: auto 0 calc(3.5rem + env(safe-area-inset-bottom)) 0;
+    height: 0;
+    z-index: 45;
+    transform: translateZ(0);
+  }
+}
+
+/* ── Date field ────────────────────────────────────
+   The native control keeps its picker and ISO value;
+   its own text (often mm/dd/yyyy) is hidden so the
+   overlay can show "12 Nov 2026". */
+.jinia-date-native {
+  color: transparent;
+}
+.jinia-date-native::-webkit-datetime-edit {
+  color: transparent;
+}
+.jinia-date-native::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }

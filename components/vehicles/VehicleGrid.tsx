@@ -449,9 +449,9 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
                   </div>
                   {inspectVehicle.starting_price && (
                     <div className="text-right">
-                      <span className="text-[10px] uppercase text-emerald-300/80 font-medium block">Starting From</span>
-                      <span className="text-xl sm:text-2xl font-medium text-amber-300">
-                        ৳{inspectVehicle.starting_price.toLocaleString("en-BD")}
+                      <span className="text-[10px] uppercase text-emerald-300/80 font-medium block">From, per day</span>
+                      <span className="text-xl sm:text-2xl font-medium tabular-nums text-amber-300">
+                        ৳{inspectVehicle.starting_price.toLocaleString("en-US")}
                       </span>
                     </div>
                   )}

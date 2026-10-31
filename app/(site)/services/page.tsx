@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { RESPONSE_PROMISE } from "@/lib/business/identity";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { services, groupTransportOptions, siteConfig } from "@/lib/config";
@@ -40,7 +41,7 @@ const serviceLinks: Record<string, string> = {
 
 const advantages = [
   { title: "First-hand fleet", text: "Every vehicle is bought new and maintained on schedule, not sourced per booking." },
-  { title: "Answered within the hour", text: "A person reads your request and replies with a real quote, not an auto-reply." },
+  { title: RESPONSE_PROMISE.short, text: "A person reads your request and replies with a real quote, not an auto-reply." },
   { title: "The whole country", text: "Dhaka daily, and outstation movement to every district in Bangladesh." },
   { title: "Drivers we vetted", text: "BRTA-licensed, police-verified, and briefed on the route before they arrive." },
 ];
