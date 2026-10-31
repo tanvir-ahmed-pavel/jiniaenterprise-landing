@@ -402,7 +402,7 @@ export function ClientConstellation({
       <ul className="container col-start-1 row-start-1 mt-10 grid grid-cols-2 gap-x-6 gap-y-4 md:hidden">
         {clients.map((client) => (
           <li key={client.name}>
-            <span className="type-label block text-amber-600">{client.type}</span>
+            <span className="type-label block text-amber-700">{client.type}</span>
             <span className="mt-1 block text-sm text-emerald-950/70">{client.name}</span>
           </li>
         ))}

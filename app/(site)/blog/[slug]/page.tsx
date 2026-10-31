@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { journalPosts } from "@/content/journal";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { createStaticClient } from "@/lib/supabase/static";
 import { 
   Calendar, 
@@ -60,7 +61,11 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
     if (!error && data) return data as BlogPost;
   }
 
-  return (sampleBlogPosts as BlogPost[]).find((post) => post.slug === slug && post.is_published) ?? null;
+  return (
+    (journalPosts as BlogPost[]).find((post) => post.slug === slug) ??
+    (sampleBlogPosts as BlogPost[]).find((post) => post.slug === slug && post.is_published) ??
+    null
+  );
 }
 
 // Fetch recent posts for sidebar
@@ -85,18 +90,18 @@ async function getRecentPosts(excludeSlug: string): Promise<BlogPost[]> {
 export async function generateStaticParams() {
   const supabase = createStaticClient();
 
-  if (!supabase) return [];
+  if (!supabase) return journalPosts.map((post) => ({ slug: post.slug }));
 
   const { data: posts } = await supabase
     .from("blog_posts")
     .select("slug")
     .eq("is_published", true);
 
-  return (
-    (posts as unknown as { slug: string }[])?.map((post) => ({
-      slug: post.slug,
-    })) || []
-  );
+  const slugs = new Set([
+    ...((posts as unknown as { slug: string }[]) ?? []).map((post) => post.slug),
+    ...journalPosts.map((post) => post.slug),
+  ]);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -345,32 +350,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   href={`https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 text-xs font-medium gap-1.5 cursor-pointer">
+                 className={buttonClasses({ variant: "outline", size: "sm", className: "flex-1 sm:flex-initial w-full h-9 px-4 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 text-xs font-medium gap-1.5 cursor-pointer" })}>
                     <span>WhatsApp</span>
-                  </Button>
-                </a>
+                  </a>
                 <a
                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer">
+                 className={buttonClasses({ variant: "outline", size: "sm", className: "flex-1 sm:flex-initial w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer" })}>
                     <span>LinkedIn</span>
-                  </Button>
-                </a>
+                  </a>
                 <a
                   href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer">
+                 className={buttonClasses({ variant: "outline", size: "sm", className: "flex-1 sm:flex-initial w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer" })}>
                     <span>Facebook</span>
-                  </Button>
-                </a>
+                  </a>
               </div>
             </div>
 
@@ -409,24 +405,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
 
               <div className="space-y-3 pt-1">
-                <Link href="/booking" className="block w-full">
-                  <Button className="w-full h-12 bg-linear-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs rounded-xl shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] shadow-amber-500/25 cursor-pointer">
+                <Link href="/booking" className={buttonClasses({ className: "block w-full w-full h-12 bg-linear-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs rounded-xl shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] shadow-amber-500/25 cursor-pointer" })}>
                     <span>Reserve Vehicle Now</span>
                     <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                  </Button>
-                </Link>
+                  </Link>
 
                 <a 
                   href={`https://wa.me/${siteConfig.whatsapp}?text=Hello%20Jinia%20Enterprise,%20I%20am%20reading%20"${encodeURIComponent(post.title)}"%20and%20would%20like%20to%20inquire%20about%20a%20car%20rental.`} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="block w-full"
-                >
-                  <Button variant="outline" className="w-full h-12 border-white/20 bg-white/10 hover:bg-white/20 text-white font-medium uppercase tracking-wider text-xs rounded-xl backdrop-blur-md cursor-pointer gap-2">
+                 className={buttonClasses({ variant: "outline", className: "block w-full w-full h-12 border-white/20 bg-white/10 hover:bg-white/20 text-white font-medium uppercase tracking-wider text-xs rounded-xl backdrop-blur-md cursor-pointer gap-2" })}>
                     <MessageSquare className="h-4 w-4 text-emerald-400" />
                     <span>WhatsApp Concierge</span>
-                  </Button>
-                </a>
+                  </a>
               </div>
 
               <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60 font-medium">
@@ -489,18 +480,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               Transparent rates, clean air-conditioned vehicles, and verified professional drivers ready at your schedule.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-2">
-              <Link href="/vehicles">
-                <Button size="lg" className="h-12 px-8 rounded-xl bg-linear-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] cursor-pointer">
+              <Link href="/vehicles" className={buttonClasses({ size: "lg", className: "h-12 px-8 rounded-xl bg-linear-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] cursor-pointer" })}>
                   <span>Browse Available Fleet</span>
                   <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                </Button>
-              </Link>
-              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                <Button size="lg" variant="outline" className="h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-medium uppercase tracking-wider text-xs backdrop-blur-md cursor-pointer gap-2">
+                </Link>
+              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className={buttonClasses({ variant: "outline", size: "lg", className: "h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-medium uppercase tracking-wider text-xs backdrop-blur-md cursor-pointer gap-2" })}>
                   <Phone className="h-3.5 w-3.5 text-emerald-400" />
                   <span>Call: {siteConfig.phone}</span>
-                </Button>
-              </a>
+                </a>
             </div>
           </div>
         </div>

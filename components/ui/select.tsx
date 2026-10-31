@@ -83,7 +83,7 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             triggerClassName,
           )}
         >
-          <span className={cn("min-w-0 truncate", !selected && "text-emerald-950/35")}>{selected?.label ?? placeholder}</span>
+          <span className={cn("min-w-0 truncate", !selected && "text-emerald-950/70")}>{selected?.label ?? placeholder}</span>
           <ChevronDown aria-hidden="true" className={cn("h-4 w-4 shrink-0 text-emerald-700 transition-transform duration-200", isOpen && "rotate-180")} />
         </button>
 

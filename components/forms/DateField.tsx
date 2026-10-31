@@ -63,7 +63,7 @@ export const DateField = forwardRef<HTMLInputElement, Props>(function DateField(
           aria-hidden
           className={cn(
             "pointer-events-none absolute inset-y-0 left-0 right-10 flex items-center truncate pl-[inherit] text-sm tabular-nums",
-            display ? "text-emerald-950" : "text-emerald-950/40",
+            display ? "text-emerald-950" : "text-emerald-950/75",
           )}
           style={{ paddingLeft: "0.875rem" }}
         >

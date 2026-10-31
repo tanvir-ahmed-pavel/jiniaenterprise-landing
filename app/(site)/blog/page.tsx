@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { journalPosts } from "@/content/journal";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -33,12 +34,14 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     .eq("is_published", true)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching blog posts:", error);
-    return [];
-  }
+  if (error) console.error("Error fetching blog posts:", error);
 
-  return (data as BlogPost[]) || [];
+  // Journal posts kept in code sit alongside the database posts, newest first.
+  const fromDb = error ? [] : ((data as BlogPost[]) || []);
+  const slugs = new Set(fromDb.map((post) => post.slug));
+  return [...fromDb, ...(journalPosts as BlogPost[]).filter((post) => !slugs.has(post.slug))].sort(
+    (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at),
+  );
 }
 
 export default async function BlogPage() {
@@ -213,16 +216,12 @@ export default async function BlogPage() {
                 Experience the gold standard of concierge mobility in Bangladesh. Our fleet is ready when you are.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
-              <Link href="/vehicles">
-                <Button size="lg" className="h-12 px-7 rounded-lg bg-white text-emerald-950 hover:bg-emerald-50 font-medium uppercase tracking-[0.05em] text-[10px]">
+              <Link href="/vehicles" className={buttonClasses({ size: "lg", className: "h-12 px-7 rounded-lg bg-white text-emerald-950 hover:bg-emerald-50 font-medium uppercase tracking-[0.05em] text-[10px]" })}>
                     Explore The Fleet
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button size="lg" variant="outline" className="h-12 px-7 rounded-lg border-white/30 text-white hover:bg-white/10 font-medium uppercase tracking-[0.05em] text-[10px]">
+                </Link>
+              <Link href="/contact" className={buttonClasses({ variant: "outline", size: "lg", className: "h-12 px-7 rounded-lg border-white/30 text-white hover:bg-white/10 font-medium uppercase tracking-[0.05em] text-[10px]" })}>
                     Consult Concierge
-                </Button>
-              </Link>
+                </Link>
             </div>
           </div>
         </section>

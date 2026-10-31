@@ -39,7 +39,7 @@ interface BookingFormProps {
 
 /** Same field treatment as the home booking rail and the contact form. */
 const field =
-  "h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400";
+  "h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400";
 const labelCls = "type-label mb-2 block text-emerald-950/70";
 const errorCls = "mt-1.5 text-xs font-normal text-red-600";
 
@@ -48,7 +48,7 @@ const errorCls = "mt-1.5 text-xs font-normal text-red-600";
 function Legend({ index, children }: { index: string; children: React.ReactNode }) {
   return (
     <p className="type-label mb-5 flex items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700">
-      <span className="tabular-nums text-amber-600">{index}</span> {children}
+      <span className="tabular-nums text-amber-700">{index}</span> {children}
     </p>
   );
 }

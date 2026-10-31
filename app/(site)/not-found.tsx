@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Home, ArrowRight } from "lucide-react";
 
 export default function NotFound() {
@@ -18,26 +18,18 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-3">
-          <Link href="/">
-            <Button className="gap-2 rounded-full bg-emerald-900">
+          <Link href="/" className={buttonClasses({ className: "gap-2 rounded-full bg-emerald-900" })}>
               <Home className="h-4 w-4" /> Home
-            </Button>
-          </Link>
-          <Link href="/vehicles">
-            <Button variant="outline" className="gap-2 rounded-full">
+            </Link>
+          <Link href="/vehicles" className={buttonClasses({ variant: "outline", className: "gap-2 rounded-full" })}>
               Fleet <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/car-rental-dhaka">
-            <Button variant="ghost" className="rounded-full">
+            </Link>
+          <Link href="/car-rental-dhaka" className={buttonClasses({ variant: "ghost", className: "rounded-full" })}>
               Car rental Dhaka
-            </Button>
-          </Link>
-          <Link href="/contact">
-            <Button variant="ghost" className="rounded-full">
+            </Link>
+          <Link href="/contact" className={buttonClasses({ variant: "ghost", className: "rounded-full" })}>
               Contact
-            </Button>
-          </Link>
+            </Link>
         </div>
       </div>
     </div>

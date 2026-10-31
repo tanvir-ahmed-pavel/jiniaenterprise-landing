@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { clientService } from "@/lib/supabase/admin-service";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Building2, Globe, Landmark, ExternalLink, ArrowRight, MessageSquare } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -151,27 +151,20 @@ export default async function ClientsPage() {
             </p>
 
             <div className="flex flex-wrap justify-center items-center gap-3.5 pt-2">
-              <Link href="/contact">
-                <Button className="h-12 px-6 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 font-medium text-xs uppercase tracking-wider gap-2">
+              <Link href="/contact" className={buttonClasses({ className: "h-12 px-6 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 font-medium text-xs uppercase tracking-wider gap-2" })}>
                   <span>Corporate Inquiry</span>
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+                </Link>
               <a
                 href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(
                   "Hello Jinia Enterprise, I would like to inquire about corporate / embassy vehicle services."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                <Button
-                  variant="outline"
-                  className="h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-medium text-xs uppercase tracking-wider gap-2"
-                >
+               className={buttonClasses({ variant: "outline", className: "h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-medium text-xs uppercase tracking-wider gap-2" })}>
                   <MessageSquare className="h-4 w-4 text-emerald-400" />
                   <span>WhatsApp Corporate Desk</span>
-                </Button>
-              </a>
+                </a>
             </div>
           </div>
         </div>

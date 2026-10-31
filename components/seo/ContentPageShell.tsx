@@ -9,14 +9,7 @@ import {
   getFAQSchema,
   getServiceSchema,
 } from "@/lib/seo/schema";
-import {
-  businessIdentity,
-  getTelHref,
-  getWhatsAppHref,
-} from "@/lib/business/identity";
-import Link from "next/link";
-import { Phone, MessageSquare, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ContactActions } from "@/components/business/ContactActions";
 
 type Section = { heading: string; body: string };
 
@@ -92,29 +85,7 @@ export function ContentPageShell({
           <p className="type-body text-lg leading-relaxed text-emerald-950/85 md:text-xl">
             {answer}
           </p>
-          <div className="flex flex-wrap gap-3">
-            <a href={getTelHref()}>
-              <Button className="h-11 gap-2 rounded-full bg-emerald-950 px-6 text-sm font-medium hover:bg-emerald-800">
-                <Phone className="h-4 w-4" />
-                Call {businessIdentity.phone}
-              </Button>
-            </a>
-            <a
-              href={getWhatsAppHref(`Hello, I need a quote related to ${title}.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" className="h-11 gap-2 rounded-full border-emerald-950/15 px-6 text-sm font-medium hover:border-amber-400">
-                <MessageSquare className="h-4 w-4" />
-                WhatsApp
-              </Button>
-            </a>
-            <Link href="/booking">
-              <Button variant="ghost" className="h-11 gap-2 rounded-full px-5 text-sm font-medium">
-                Booking form <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          <ContactActions whatsappMessage={`Hello Jinia, I need a quote: ${title}`} />
         </section>
 
         {children}

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createMetadata } from "@/lib/seo/metadata";
 import { ContentPageShell } from "@/components/seo/ContentPageShell";
+import { AirportArrival } from "@/components/airport/AirportArrival";
 import {
   getServiceDetailBySlug,
   serviceDetails,
@@ -62,7 +63,9 @@ export default async function ServiceDetailPage({ params }: Props) {
         href,
         label: href.replace(/^\//, "").replace(/-/g, " "),
       }))}
-      updatedAt="2026-08-21"
-    />
+      updatedAt="2026-10-31"
+    >
+      {service.slug === "airport-transfer" && <AirportArrival />}
+    </ContentPageShell>
   );
 }

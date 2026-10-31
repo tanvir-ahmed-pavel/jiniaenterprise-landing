@@ -5,7 +5,7 @@ import { createMetadata } from "@/lib/seo/metadata";
 import { getBreadcrumbSchema, getFAQSchema } from "@/lib/seo/schema";
 import { siteFaqs } from "@/lib/seo/content";
 import { businessIdentity, getTelHref, getWhatsAppHref } from "@/lib/business/identity";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { MessageSquare, Phone } from "lucide-react";
 
 export const metadata = createMetadata({
@@ -57,21 +57,15 @@ export default function FaqPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href={getTelHref()}>
-              <Button className="gap-2 rounded-full bg-emerald-900">
+            <a href={getTelHref()} className={buttonClasses({ className: "gap-2 rounded-full bg-emerald-900" })}>
                 <Phone className="h-4 w-4" /> Call
-              </Button>
-            </a>
-            <a href={getWhatsAppHref()} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="gap-2 rounded-full">
+              </a>
+            <a href={getWhatsAppHref()} target="_blank" rel="noopener noreferrer" className={buttonClasses({ variant: "outline", className: "gap-2 rounded-full" })}>
                 <MessageSquare className="h-4 w-4" /> WhatsApp
-              </Button>
-            </a>
-            <Link href="/booking">
-              <Button variant="ghost" className="rounded-full">
+              </a>
+            <Link href="/booking" className={buttonClasses({ variant: "ghost", className: "rounded-full" })}>
                 Booking form
-              </Button>
-            </Link>
+              </Link>
           </div>
         </div>
       </div>

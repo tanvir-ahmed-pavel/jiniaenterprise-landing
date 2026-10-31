@@ -5,6 +5,7 @@ import { sampleVehicles, sampleBlogPosts } from "@/lib/config";
 import { SITE_URL } from "@/lib/seo/canonical";
 import { getVehiclePath } from "@/lib/vehicles/slugs";
 import { getLastModified } from "@/lib/seo/lastmod";
+import { journalPosts } from "@/content/journal";
 import { BANGLA_PAGES, getLanguageAlternates } from "@/lib/i18n/alternates";
 import { locations } from "@/content/locations";
 import { routes } from "@/content/routes";
@@ -148,5 +149,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
   }
 
-  return [...staticPages, ...vehiclePages, ...blogPages];
+  const listed = new Set(blogPages.map((page) => page.url));
+  const journalPages: MetadataRoute.Sitemap = journalPosts
+    .map((p) => ({
+      url: `${SITE_URL}/blog/${p.slug}`,
+      lastModified: getLastModified(`/blog/${p.slug}`, p.updated_at),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }))
+    .filter((page) => !listed.has(page.url));
+
+  return [...staticPages, ...vehiclePages, ...blogPages, ...journalPages];
 }

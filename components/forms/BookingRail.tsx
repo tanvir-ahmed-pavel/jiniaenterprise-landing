@@ -117,26 +117,26 @@ export function BookingRail() {
             )}
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
               <fieldset className="min-w-0">
-                <legend className="type-label mb-4 flex w-full items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700"><span className="tabular-nums text-amber-600">01</span> Your details</legend>
+                <legend className="type-label mb-4 flex w-full items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700"><span className="tabular-nums text-amber-700">01</span> Your details</legend>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <label className="block">
                     <span className="type-label mb-2 block text-emerald-950/70">Name</span>
-                    <input name="name" required placeholder="Your name" className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    <input name="name" required placeholder="Your name" className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400" />
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 block text-emerald-950/70">Phone</span>
-                    <input name="phone" type="tel" inputMode="tel" autoComplete="tel" required placeholder="01XXXXXXXXX" aria-invalid={!!phoneError} aria-describedby={phoneError ? "rail-phone-error" : undefined} className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    <input name="phone" type="tel" inputMode="tel" autoComplete="tel" required placeholder="01XXXXXXXXX" aria-invalid={!!phoneError} aria-describedby={phoneError ? "rail-phone-error" : undefined} className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400" />
                     {phoneError && <span id="rail-phone-error" role="alert" className="mt-1.5 block text-xs text-red-600">{phoneError}</span>}
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 block text-emerald-950/70">Email</span>
-                    <input name="email" type="email" required placeholder="you@email.com" className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    <input name="email" type="email" required placeholder="you@email.com" className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400" />
                   </label>
                 </div>
               </fieldset>
 
               <fieldset className="min-w-0">
-                <legend className="type-label mb-4 flex w-full items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700"><span className="tabular-nums text-amber-600">02</span> Trip details</legend>
+                <legend className="type-label mb-4 flex w-full items-center gap-2 border-b border-emerald-950/10 pb-3 text-emerald-700"><span className="tabular-nums text-amber-700">02</span> Trip details</legend>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <label className="block">
                     <span className="type-label mb-2 flex items-center gap-1.5 text-emerald-950/70"><CalendarDays className="h-3.5 w-3.5 text-emerald-700" /> Date</span>
@@ -144,7 +144,7 @@ export function BookingRail() {
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 flex items-center gap-1.5 text-emerald-950/70"><MapPin className="h-3.5 w-3.5 text-emerald-700" /> Pickup</span>
-                    <input name="pickup" required placeholder="Gulshan, Airport..." className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400" />
+                    <input name="pickup" required placeholder="Gulshan, Airport..." className="h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400" />
                   </label>
                   <label className="block">
                     <span className="type-label mb-2 flex items-center gap-1.5 text-emerald-950/70"><CarFront className="h-3.5 w-3.5 text-emerald-700" /> Vehicle</span>
@@ -162,7 +162,7 @@ export function BookingRail() {
 
             <input type="hidden" name="rentalType" value="daily" />
             <div className="flex flex-col gap-4 border-t border-emerald-950/12 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <ul className="type-label flex flex-wrap items-center gap-x-5 gap-y-2 text-emerald-950/55">
+              <ul className="type-label flex flex-wrap items-center gap-x-5 gap-y-2 text-emerald-950/75">
                 <li className="flex items-center gap-2">
                   <span aria-hidden className="h-1 w-1 rounded-full bg-amber-400" /> No deposit
                 </li>

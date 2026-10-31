@@ -21,20 +21,20 @@ export function MeetAndGreetSign({
     <div className="grid gap-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-center">
       <figure className="mx-auto w-full max-w-sm">
         <div className="relative rotate-[-1.5deg] rounded-[6px] border border-emerald-950/15 bg-white px-6 pb-7 pt-5 shadow-[0_24px_50px_-30px_rgba(6,52,38,.45)]">
-          <div className="flex items-center justify-between font-board text-[11px] tracking-[0.14em] text-emerald-950/55">
+          <div className="flex items-center justify-between font-board text-[11px] tracking-[0.14em] text-emerald-950/70">
             <span>ARRIVALS · DAC</span>
             <span className="inline-flex items-center gap-1.5">
               <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               ON TIME
             </span>
           </div>
-          <p className="mt-6 text-center font-board text-[1.65rem] font-bold leading-none tracking-[0.04em] text-emerald-950 sm:text-[1.9rem]">
+          <p className="mt-6 text-center font-board text-[1.65rem] font-medium leading-none tracking-[0.04em] text-emerald-950 sm:text-[1.9rem]">
             MR. RAHMAN
           </p>
-          <p className="mt-3 text-center font-board text-sm tracking-[0.3em] text-amber-600">· JINIA ·</p>
+          <p className="mt-3 text-center font-board text-sm tracking-[0.3em] text-amber-700">· JINIA ·</p>
           <span aria-hidden className="absolute -bottom-px left-6 right-6 h-[3px] rounded-full bg-amber-400" />
         </div>
-        <figcaption className="mt-5 text-center text-xs text-emerald-950/55">
+        <figcaption className="mt-5 text-center text-xs text-emerald-950/70">
           {lang === "bn" ? "উদাহরণ: আপনার নাম লেখা সাইনবোর্ড" : "Illustration: the sign carries your name"}
         </figcaption>
       </figure>

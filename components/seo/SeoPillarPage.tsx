@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Phone, MessageSquare, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { ContactActions } from "@/components/business/ContactActions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -8,11 +8,7 @@ import {
   getFAQSchema,
   getServiceSchema,
 } from "@/lib/seo/schema";
-import {
-  businessIdentity,
-  getTelHref,
-  getWhatsAppHref,
-} from "@/lib/business/identity";
+import { businessIdentity } from "@/lib/business/identity";
 import type { FaqItem } from "@/lib/seo/types";
 
 type RelatedLink = { href: string; label: string };
@@ -28,6 +24,8 @@ type SeoPillarPageProps = {
   faqs?: FaqItem[];
   related?: RelatedLink[];
   serviceName: string;
+  /** Extra sections rendered after the answer block. */
+  children?: React.ReactNode;
 };
 
 export function SeoPillarPage({
@@ -41,6 +39,7 @@ export function SeoPillarPage({
   faqs = [],
   related = [],
   serviceName,
+  children,
 }: SeoPillarPageProps) {
   const schemas = [
     getServiceSchema({
@@ -71,35 +70,10 @@ export function SeoPillarPage({
           <p className="type-body text-lg leading-relaxed text-emerald-950/85 md:text-xl">
             {answer}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href={getTelHref()}>
-              <Button className="h-11 gap-2 rounded-full bg-emerald-950 px-6 text-sm font-medium hover:bg-emerald-800">
-                <Phone className="h-4 w-4" />
-                Call {businessIdentity.phone}
-              </Button>
-            </a>
-            <a
-              href={getWhatsAppHref(
-                `Hello, I need a quote for ${serviceName}.`,
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                className="h-11 gap-2 rounded-full border-emerald-950/15 px-6 text-sm font-medium hover:border-amber-400"
-              >
-                <MessageSquare className="h-4 w-4" />
-                WhatsApp
-              </Button>
-            </a>
-            <Link href="/booking">
-              <Button variant="ghost" className="h-11 gap-2 rounded-full px-5 text-sm font-medium">
-                Request booking <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          <ContactActions className="mt-8" whatsappMessage={`Hello Jinia, I need a quote for ${serviceName}.`} bookingLabel="Request booking" />
         </section>
+
+        {children}
 
         {sections.map((section) => (
           <section key={section.heading} className="space-y-3">

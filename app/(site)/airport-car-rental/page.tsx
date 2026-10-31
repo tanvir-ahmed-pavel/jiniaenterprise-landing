@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/seo/metadata";
 import { SeoPillarPage } from "@/components/seo/SeoPillarPage";
+import { AirportArrival } from "@/components/airport/AirportArrival";
 import { siteFaqs } from "@/lib/seo/content";
 
 export const metadata = createMetadata({
@@ -53,6 +54,8 @@ export default function AirportCarRentalPage() {
         { href: "/booking", label: "Book transfer" },
         { href: "/contact", label: "Contact" },
       ]}
-    />
+    >
+      <AirportArrival />
+    </SeoPillarPage>
   );
 }

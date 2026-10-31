@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     globalNotFound: true,
   },
   images: {
+    // AVIF first, WebP fallback: the studio PNGs are the heaviest bytes on the page.
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       // Legacy vehicle rows still point at third-party image hosts, so the
       // https wildcard stays until those assets are replaced with owned

@@ -14,7 +14,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
   const item = (active: boolean) =>
     cn(
       "inline-flex h-11 min-w-11 items-center justify-center px-2 transition-colors",
-      active ? "text-emerald-950" : "text-emerald-950/50 hover:text-emerald-950",
+      active ? "text-emerald-950" : "text-emerald-950/70 hover:text-emerald-950",
     );
 
   return (

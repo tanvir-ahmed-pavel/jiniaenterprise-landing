@@ -51,9 +51,9 @@ export function Footer() {
 
           {/* Navigation Links */}
           <div className="md:pl-0 xl:pl-4 xl:col-span-4">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
               Navigation
-            </h4>
+            </h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
               {[
                 { href: "/vehicles", label: "Fleet Collection" },
@@ -88,9 +88,9 @@ export function Footer() {
 
           {/* Service Menu */}
           <div className="xl:col-span-2">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
               Core Solutions
-            </h4>
+            </h2>
             <ul className="space-y-3 text-xs font-medium text-white/60">
               {[
                 { href: "/car-rental-with-driver", label: "Car rental with driver" },
@@ -114,9 +114,9 @@ export function Footer() {
 
           {/* Contact Details */}
           <div className="space-y-6 xl:col-span-3">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
               Concierge Office
-            </h4>
+            </h2>
             <div className="space-y-4">
               <a
                 href={getMapHref()}
@@ -161,7 +161,7 @@ export function Footer() {
 
         {/* Footer Bottom */}
         <div className="mt-14 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-white/40">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
             &copy; {currentYear} Jinia Enterprise. All rights reserved.
           </p>
           <div className="flex items-center gap-3">

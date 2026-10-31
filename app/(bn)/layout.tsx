@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import { RootDocument } from "@/components/layout/RootDocument";
 import { businessIdentity, SITE_URL } from "@/lib/business/identity";
-import { banglaFont } from "@/lib/fonts";
+import { banglaFont } from "@/lib/fonts-bangla";
 
 export const viewport: Viewport = {
   width: "device-width",

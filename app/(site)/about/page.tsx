@@ -1,5 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
-import { getFormattedAddress } from "@/lib/business/identity";
+import { businessIdentity, getFormattedAddress, getMapHref } from "@/lib/business/identity";
 import { companyHistory, whyChooseUs, siteConfig, teamMembers } from "@/lib/config";
 import { PageHeader } from "@/components/layout/PageHeader";
 import {
@@ -139,6 +139,40 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Verifiable facts, in one place, matching the footer and the
+          LocalBusiness markup. TODO(owner): add the trade licence number
+          (and the issuing city corporation) to BUSINESS_FACTS when ready. */}
+      <section className="border-t border-emerald-950/10 py-20 sm:py-24" aria-labelledby="business-details">
+        <div className="container grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+          <SectionIntro eyebrow="On the record" title="Business details." />
+          <dl id="business-details" className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
+            {[
+              { term: "Registered name", value: businessIdentity.legalName },
+              { term: "In operation since", value: `${businessIdentity.foundingYear} (${new Date().getFullYear() - businessIdentity.foundingYear} years)` },
+              { term: "Managing Director", value: businessIdentity.founder.name },
+              { term: "Phone & WhatsApp", value: businessIdentity.phone },
+              { term: "Email", value: businessIdentity.email },
+              { term: "Office", value: getFormattedAddress() },
+            ].map((fact) => (
+              <div key={fact.term} className="border-t border-emerald-950/15 pt-4">
+                <dt className="type-label text-emerald-950/55">{fact.term}</dt>
+                <dd className="mt-2 text-base text-emerald-950">{fact.value}</dd>
+              </div>
+            ))}
+            <div className="sm:col-span-2">
+              <a
+                href={getMapHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-emerald-800 underline underline-offset-4"
+              >
+                Open the office in Google Maps
+              </a>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       {/* Why choose us — a two-column list, not eighteen bordered icon boxes. */}
       <section className="border-t border-emerald-950/10 py-24 sm:py-32">
         <div className="container">
@@ -146,7 +180,7 @@ export default function AboutPage() {
           <div className="mt-12 grid gap-x-12 gap-y-9 md:grid-cols-2 lg:grid-cols-3">
             {whyChooseUs.map((item, index) => (
               <div key={item.title} className="border-t border-emerald-950/15 pt-5">
-                <span className="type-label tabular-nums text-amber-600">
+                <span className="type-label tabular-nums text-amber-700">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <h3 className="type-heading mt-3 font-heading text-lg text-emerald-950">{item.title}</h3>

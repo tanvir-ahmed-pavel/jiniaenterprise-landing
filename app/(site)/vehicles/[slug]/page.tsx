@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
@@ -204,13 +204,13 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
                 never has to guess which period a number covers. */}
             <dl className="grid grid-cols-2 border-y border-emerald-950/15 py-4 tabular-nums">
               <div>
-                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Day rate</dt>
+                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/70">Day rate</dt>
                 <dd className="mt-1 text-emerald-950">
                   {facts.dayRate ? (
                     <>
                       <span className="text-2xl font-heading font-medium">From {formatBdt(facts.dayRate)}</span>
-                      <span className="text-sm text-emerald-950/60"> / day</span>
-                      <span className="mt-1 block text-xs text-emerald-950/55">{CITY_DAY_HOURS}, Dhaka city</span>
+                      <span className="text-sm text-emerald-950/70"> / day</span>
+                      <span className="mt-1 block text-xs text-emerald-950/70">{CITY_DAY_HOURS}, Dhaka city</span>
                     </>
                   ) : (
                     <span className="text-base font-medium">Quoted on request</span>
@@ -218,7 +218,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
                 </dd>
               </div>
               <div className="border-l border-emerald-950/10 pl-4">
-                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Monthly</dt>
+                <dt className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/70">Monthly</dt>
                 <dd className="mt-1 text-emerald-950">
                   {facts.row?.monthlyFrom ? (
                     <span className="text-2xl font-heading font-medium">From {formatBdt(facts.row.monthlyFrom)}</span>
@@ -267,7 +267,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               {/* Rental Types */}
               {vehicle.rental_types && vehicle.rental_types.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Available for</h3>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/70">Available for</p>
                   <div className="flex flex-wrap gap-x-4 gap-y-2">
                     {vehicle.rental_types.map((type) => (
                       <span key={type} className="border-b border-emerald-950/20 pb-1 text-sm font-normal text-emerald-950">{type} rental</span>
@@ -279,7 +279,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               {/* Features */}
               {vehicle.features && vehicle.features.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Features</h3>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/70">Features</p>
                   <ul className="grid grid-cols-2 gap-2">
                     {vehicle.features.map((feature) => (
                       <li
@@ -296,23 +296,18 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
 
               {/* Quick Contact */}
               <div className="flex gap-3 pt-4">
-                <a href={getTelHref()} className="flex-1">
-                  <Button variant="outline" className="w-full gap-2 rounded-lg border-emerald-950/25">
+                <a href={getTelHref()} className={buttonClasses({ variant: "outline", className: "flex-1 w-full gap-2 rounded-lg border-emerald-950/25" })}>
                     <Phone className="h-4 w-4" />
                     Call Now
-                  </Button>
-                </a>
+                  </a>
                 <a
                   href={getWhatsAppHref(`Hi Jinia, I'd like to rent the ${facts.heading.replace(" rental with driver", "")} with driver.`)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1"
-                >
-                  <Button className="w-full gap-2 rounded-lg bg-emerald-950 text-white hover:bg-emerald-800">
+                 className={buttonClasses({ className: "flex-1 w-full gap-2 rounded-lg bg-emerald-950 text-white hover:bg-emerald-800" })}>
                     <MessageSquare className="h-4 w-4" />
                     WhatsApp
-                  </Button>
-                </a>
+                  </a>
               </div>
             </div>
           </div>

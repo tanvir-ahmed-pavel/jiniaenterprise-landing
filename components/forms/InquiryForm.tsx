@@ -36,7 +36,7 @@ interface InquiryFormProps {
 /** One field treatment, shared with the home booking rail: hairline border,
  *  normal weight, gold on focus, and no ring halo. */
 const field =
-  "h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/35 focus:border-amber-400";
+  "h-12 w-full rounded-md border border-emerald-950/15 bg-white px-3 text-sm font-normal text-emerald-950 outline-none transition-colors placeholder:text-emerald-950/55 focus:border-amber-400";
 const labelCls = "type-label mb-2 block text-emerald-950/70";
 const errorCls = "mt-1.5 text-xs font-normal text-red-600";
 

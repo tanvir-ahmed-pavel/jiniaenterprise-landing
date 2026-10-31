@@ -9,6 +9,44 @@
   --font-board: var(--font-jetbrains, "JetBrains Mono"), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
+/* ── Departures-board tokens ───────────────────────
+   One palette for the new home sections and the
+   shared components. Light is the site default; the
+   dark set applies only where [data-theme="dark"]
+   is set, so a component can never turn dark on a
+   page whose other sections are still light. */
+:root {
+  --jinia-green: #0b3d2e;
+  --jinia-green-soft: #e6efe9;
+  --jinia-gold: #d9a400;
+  --jinia-gold-ink: #8a6700; /* gold that passes 4.5:1 as text on paper */
+  --jinia-paper: #f7f8f5;
+  --jinia-surface: #ffffff;
+  --jinia-ink: #1c2620;
+  --jinia-ink-muted: #4b5a51;
+  --jinia-line: rgba(28, 38, 32, 0.14);
+  --jinia-signal: #10b981;
+  --jinia-board: #0d1612;
+  --jinia-board-ink: #f2efe2;
+  --jinia-board-dim: #9fae9f;
+}
+
+[data-theme="dark"] {
+  --jinia-green: #7fd1ad;
+  --jinia-green-soft: #14261e;
+  --jinia-gold: #f0c03a;
+  --jinia-gold-ink: #f0c03a;
+  --jinia-paper: #0f1713;
+  --jinia-surface: #151f1a;
+  --jinia-ink: #e9eee9;
+  --jinia-ink-muted: #a9b8ae;
+  --jinia-line: rgba(233, 238, 233, 0.16);
+  --jinia-signal: #34d399;
+  --jinia-board: #050907;
+  --jinia-board-ink: #f2efe2;
+  --jinia-board-dim: #8f9e90;
+}
+
 @layer base {
   :root {
     /* Premium Artistic Green */
@@ -1185,4 +1223,45 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+/* ── Departures board ──────────────────────────────
+   Real table text; each cell sits in a flap that
+   folds down once on load and again every 14s.
+   Resting state is the readable state. */
+.jinia-board {
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(217, 164, 0, 0.08), transparent 55%),
+    var(--jinia-board);
+  color: var(--jinia-board-ink);
+  box-shadow: 0 30px 70px -40px rgba(6, 30, 22, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.jinia-board-row > * {
+  background: rgba(255, 255, 255, 0.035);
+}
+.jinia-board-row > *:first-child {
+  border-radius: 4px 0 0 4px;
+}
+.jinia-board-row > *:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.jinia-flap {
+  display: inline-block;
+  white-space: nowrap;
+  transform-origin: 50% 55%;
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jinia-flap {
+    animation: jinia-flap 14s cubic-bezier(0.3, 0.7, 0.4, 1) var(--flap-delay, 0ms) infinite none;
+  }
+}
+
+@keyframes jinia-flap {
+  0% { transform: perspective(200px) rotateX(-88deg); }
+  3% { transform: perspective(200px) rotateX(0deg); }
+  100% { transform: perspective(200px) rotateX(0deg); }
 }

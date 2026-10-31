@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, Phone, MessageSquare, ChevronDown, ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
@@ -220,39 +220,22 @@ export function Navbar() {
               <span>24/7 Concierge</span>
             </div>
 
-            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "gap-2 rounded-full font-medium text-xs h-10 px-3.5 transition-all duration-300",
-                  isTransparent 
-                    ? "text-white hover:bg-white/15" 
-                    : "text-emerald-950 hover:bg-emerald-50"
-                )}
-              >
-                <Phone className="h-3.5 w-3.5" />
-                <span>Call</span>
-              </Button>
+            <a
+              href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
+              className={buttonClasses({ variant: "ghost", size: "sm", className: "gap-2 rounded-full font-medium text-xs h-11 px-3.5 text-emerald-950 hover:bg-emerald-50" })}
+            >
+              <Phone aria-hidden className="h-3.5 w-3.5" />
+              <span>Call</span>
             </a>
 
             <a
               href={`https://wa.me/${siteConfig.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
+              className={buttonClasses({ size: "sm", className: "gap-2 px-5 h-11 rounded-full shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] font-medium uppercase text-[11px] tracking-wider bg-emerald-900 text-white hover:bg-emerald-800 border-emerald-900" })}
             >
-              <Button 
-                size="sm" 
-                className={cn(
-                  "gap-2 px-5 h-10 rounded-full shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] transition-all duration-300 hover:scale-105 font-medium uppercase text-[11px] tracking-wider",
-                  isTransparent 
-                    ? "bg-white text-emerald-950 hover:bg-emerald-50 shadow-white/10" 
-                    : "bg-emerald-900 text-white hover:bg-emerald-800 shadow-emerald-950/20"
-                )}
-              >
-                <MessageSquare className="h-3.5 w-3.5" />
-                <span>WhatsApp</span>
-              </Button>
+              <MessageSquare aria-hidden className="h-3.5 w-3.5" />
+              <span>WhatsApp</span>
             </a>
           </div>
 
@@ -339,23 +322,16 @@ export function Navbar() {
             "flex flex-col gap-3 w-full max-w-sm pt-8 transition-all duration-700 delay-300",
             isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           )}>
-            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-              <Button
-                variant="outline"
-                className="w-full h-14 gap-3 rounded-2xl border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm font-medium uppercase tracking-wider"
-              >
+            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className={buttonClasses({ variant: "outline", className: "w-full h-14 gap-3 rounded-2xl border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm font-medium uppercase tracking-wider" })}>
                 <Phone className="h-4 w-4 text-emerald-400" /> Direct Call: {siteConfig.phone}
-              </Button>
-            </a>
+              </a>
             <a
               href={`https://wa.me/${siteConfig.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
-            >
-              <Button className="w-full h-14 gap-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-sm font-medium uppercase tracking-wider shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] shadow-emerald-500/20">
+             className={buttonClasses({ className: "w-full h-14 gap-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-sm font-medium uppercase tracking-wider shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] shadow-emerald-500/20" })}>
                 <MessageSquare className="h-4 w-4" /> WhatsApp Hotline
-              </Button>
-            </a>
+              </a>
           </div>
         </div>
       </nav>
