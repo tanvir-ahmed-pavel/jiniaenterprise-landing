@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { 
   Calendar, 
@@ -16,13 +15,18 @@ import {
   Quote as QuoteIcon
 } from "lucide-react";
 import type { Metadata } from "next";
-import { siteConfig } from "@/lib/config";
+import { sampleBlogPosts, siteConfig } from "@/lib/config";
+import { SITE_URL } from "@/lib/business/identity";
 import { createMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
 } from "@/lib/seo/schema";
+
+// Rebuilt in the background at most every 5 minutes, so admin edits show up
+// without a redeploy.
+export const revalidate = 300;
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -42,24 +46,27 @@ interface BlogPost {
 }
 
 // Fetch blog post by slug
+// Public content is read with the cookie-free client: reading cookies makes
+// the page dynamic, and a slug that was not prebuilt then fails to render.
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("slug", slug)
-    .single();
-
-  if (error || !data) {
-    return null;
+  const supabase = createStaticClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_published", true)
+      .maybeSingle();
+    if (!error && data) return data as BlogPost;
   }
 
-  return data as BlogPost;
+  return (sampleBlogPosts as BlogPost[]).find((post) => post.slug === slug && post.is_published) ?? null;
 }
 
 // Fetch recent posts for sidebar
 async function getRecentPosts(excludeSlug: string): Promise<BlogPost[]> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
@@ -231,7 +238,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     });
   };
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : `https://jiniaenterprise.com/blog/${post.slug}`;
+  const shareUrl = `${SITE_URL}/blog/${post.slug}`;
   const shareText = encodeURIComponent(`Read "${post.title}" on Jinia Enterprise`);
 
   return (

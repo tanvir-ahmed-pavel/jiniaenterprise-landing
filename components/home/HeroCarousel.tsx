@@ -70,7 +70,7 @@ const HEADLINE_LINES = ["A better way", "to get there."];
 function HeadlineLines() {
   return (
     <>
-      <span className="block">{HEADLINE_LINES[0]}</span>
+      <span className="block">{HEADLINE_LINES[0]}</span>{" "}
       <span className="mt-1 block text-[0.62em] tracking-[-0.03em] opacity-70">{HEADLINE_LINES[1]}</span>
     </>
   );
@@ -187,14 +187,16 @@ export function HeroCarousel({ whatsapp }: { whatsapp: string }) {
 
       {/* Depth 2 — the type. It sits behind the vehicle on purpose. */}
       <div className="jinia-depth jinia-depth--mid container relative z-0 shrink-0 text-center">
-        <p className="jinia-hero-eyebrow flex items-center justify-center gap-3 type-label text-emerald-700">
+        {/* The one H1 says what the business does; the large line is the
+            tagline, so it is a paragraph. */}
+        <h1 className="jinia-hero-eyebrow flex items-center justify-center gap-3 type-label text-emerald-700">
           <span aria-hidden className="h-px w-6 bg-amber-400" />
-          Jinia Enterprise, Bangladesh
-        </p>
-
-        <h1 className="jinia-hero-title type-display mx-auto mt-6 font-heading text-[3.15rem] sm:text-[4.75rem] lg:text-[6.5rem]">
-          <HeadlineLines />
+          Car rental with driver in Dhaka
         </h1>
+
+        <p className="jinia-hero-title type-display mx-auto mt-6 font-heading text-[3.15rem] sm:text-[4.75rem] lg:text-[6.5rem]">
+          <HeadlineLines />
+        </p>
       </div>
 
       {/* Depth 2b — supporting lines set either side of the vehicle, so the type
@@ -268,11 +270,11 @@ export function HeroCarousel({ whatsapp }: { whatsapp: string }) {
         <div className="jinia-depth jinia-depth--mid container shrink-0 text-center">
           <p className="jinia-hero-eyebrow invisible flex items-center justify-center gap-3 type-label">
             <span className="h-px w-6" />
-            Jinia Enterprise, Bangladesh
+            Car rental with driver in Dhaka
           </p>
-          <h1 className="jinia-hero-title jinia-outline-strong type-display mx-auto mt-6 font-heading text-[3.15rem] sm:text-[4.75rem] lg:text-[6.5rem]">
+          <p className="jinia-hero-title jinia-outline-strong type-display mx-auto mt-6 font-heading text-[3.15rem] sm:text-[4.75rem] lg:text-[6.5rem]">
             <HeadlineLines />
-          </h1>
+          </p>
         </div>
 
         <div className="jinia-depth jinia-depth--mid relative mt-7 hidden shrink-0 lg:block">

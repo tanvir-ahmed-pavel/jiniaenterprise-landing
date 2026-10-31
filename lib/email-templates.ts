@@ -1,3 +1,5 @@
+import { SITE_URL } from "@/lib/business/identity";
+
 export type EmailSourceType = 
   | "contact_page" 
   | "hero_widget" 
@@ -39,7 +41,7 @@ const EmailSignature = () => `
     <p style="margin: 0; color: #6b7280; font-size: 12px; line-height: 1.6;">
       40/2, Unicorn Plaza (Level-2), Shop-9,10<br/>
       Dhaka 1212, Bangladesh<br/>
-      <a href="https://jiniaenterprise.com" style="color: #22c55e; text-decoration: none;">www.jiniaenterprise.com</a>
+      <a href="${SITE_URL}" style="color: #22c55e; text-decoration: none;">www.jiniaenterprise.com</a>
     </p>
   </div>
 `;

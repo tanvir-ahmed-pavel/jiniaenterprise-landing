@@ -3,6 +3,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { pillarPages } from "@/lib/seo/content";
 import { sampleVehicles, sampleBlogPosts } from "@/lib/config";
 import { SITE_URL } from "@/lib/seo/canonical";
+import { getVehiclePath } from "@/lib/vehicles/slugs";
 import { locations } from "@/content/locations";
 import { routes } from "@/content/routes";
 import { serviceDetails } from "@/content/service-details";
@@ -98,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (vehicleRows.length) {
       vehiclePages = vehicleRows.map((v) => ({
-        url: `${SITE_URL}/vehicles/${v.slug}`,
+        url: `${SITE_URL}${getVehiclePath(v.slug)}`,
         lastModified: v.updated_at ? new Date(v.updated_at) : now,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -123,7 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     vehiclePages = sampleVehicles
       .filter((v) => v.is_active !== false && v.slug)
       .map((v) => ({
-        url: `${SITE_URL}/vehicles/${v.slug}`,
+        url: `${SITE_URL}${getVehiclePath(v.slug)}`,
         lastModified: now,
         changeFrequency: "weekly" as const,
         priority: 0.7,

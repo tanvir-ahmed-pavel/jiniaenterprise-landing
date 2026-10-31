@@ -8,17 +8,19 @@ import { cn } from "@/lib/utils";
 interface ImageCarouselProps {
   images: string[];
   vehicleName: string;
+  /** Descriptive alt for the first photo, e.g. "Toyota Noah 7-seater for rent with driver in Dhaka". */
+  alt?: string;
   priority?: boolean;
 }
 
 export const ImageCarousel = memo(function ImageCarousel({
   images,
   vehicleName,
+  alt,
   priority = false,
 }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isInteracted, setIsInteracted] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   // Memoize valid images array to prevent unnecessary re-computations and effect triggers
   const validImages = useMemo(() => {
@@ -71,28 +73,27 @@ export const ImageCarousel = memo(function ImageCarousel({
       onMouseEnter={() => !isInteracted && setIsInteracted(true)}
       onTouchStart={() => !isInteracted && setIsInteracted(true)}
     >
-      {/* Lightweight Placeholder */}
-      {!isLoaded && (
-        <div className="jinia-vehicle-plate absolute inset-0 z-10 transition-opacity duration-300 pointer-events-none" />
-      )}
-
       {/* Image Display */}
       <div className="w-full h-full relative overflow-hidden">
         <Image
           key={validImages[currentIndex]}
           src={validImages[currentIndex]}
-          alt={`${vehicleName} - View ${currentIndex + 1}`}
+          alt={
+            currentIndex === 0
+              ? alt ?? `${vehicleName} for rent with driver in Dhaka`
+              : `${vehicleName} for rent with driver in Dhaka, photo ${currentIndex + 1}`
+          }
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           priority={priority && currentIndex === 0}
           loading={priority && currentIndex === 0 ? "eager" : "lazy"}
-          onLoad={() => setIsLoaded(true)}
           className={cn(
             // Fill the card media edge-to-edge. Multiply drops the white studio
             // plate baked into most vehicle shots so mixed sources share one
             // ground instead of each showing its own rectangle.
-            "object-cover mix-blend-multiply transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform motion-safe:group-hover/card:scale-[1.02]",
-            !isLoaded ? "opacity-0 scale-100" : "opacity-100"
+            // Never start transparent: an image gated on onLoad stays blank in
+            // the server HTML and in any capture taken before hydration.
+            "object-cover mix-blend-multiply transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/card:scale-[1.02]"
           )}
         />
       </div>

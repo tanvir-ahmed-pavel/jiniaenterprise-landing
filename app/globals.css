@@ -565,7 +565,7 @@
 }
 
 @keyframes jinia-scroll-rise {
-  from { opacity: 0; transform: translateY(18px); }
+  from { transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1114,25 +1114,18 @@
    Settles once as a block comes into view and then
    stays put. Delay is set per element so a row
    arrives in sequence rather than all at once. */
-/* Only hidden once script has armed it: no JS, no invisible section. */
-[data-reveal].is-armed {
-  opacity: 0;
-  transform: translate3d(0, 20px, 0);
-  transition: opacity 850ms cubic-bezier(0.16, 1, 0.3, 1), transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
-}
-
-[data-reveal].is-armed.is-revealed {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
+/* Animates from a visible state: the block is never transparent, only
+   nudged down a few pixels, so a crawler, a full-page capture or a reader
+   who never scrolls still sees every word and image. */
+@media (prefers-reduced-motion: no-preference) {
   [data-reveal].is-armed {
-    opacity: 1;
+    transform: translate3d(0, 14px, 0);
+    transition: transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal].is-armed.is-revealed {
     transform: none;
-    transition: none;
   }
 }
 

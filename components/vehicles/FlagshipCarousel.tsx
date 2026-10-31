@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, Sparkles, Users, Fuel, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { orderVehicleImages } from "@/lib/vehicles/images";
+import { getVehiclePath } from "@/lib/vehicles/slugs";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Vehicle {
@@ -140,7 +141,7 @@ export function FlagshipCarousel({ vehicles }: FlagshipCarouselProps) {
                   Reserve
                 </Link>
                 <Link
-                  href={`/vehicles/${vehicle.slug}`}
+                  href={getVehiclePath(vehicle.slug)}
                   className="h-11 px-4 rounded-xl border border-white/12 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-white/6 transition-colors group/btn"
                 >
                   View details

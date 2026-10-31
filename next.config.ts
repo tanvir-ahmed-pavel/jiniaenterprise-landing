@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { LEGACY_VEHICLE_SLUGS } from "./lib/vehicles/slugs";
 
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
@@ -65,6 +66,20 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Backstop for the Vercel domain setting: if the bare domain ever reaches
+      // the app instead of being redirected at the edge, send it to www with a
+      // permanent (308) redirect so canonicals never point at a redirecting URL.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "jiniaenterprise.com" }],
+        destination: "https://www.jiniaenterprise.com/:path*",
+        permanent: true,
+      },
+      ...Object.entries(LEGACY_VEHICLE_SLUGS).map(([legacy, clean]) => ({
+        source: `/vehicles/${legacy}`,
+        destination: `/vehicles/${clean}`,
+        permanent: true,
+      })),
       {
         source: "/fleet",
         destination: "/vehicles",

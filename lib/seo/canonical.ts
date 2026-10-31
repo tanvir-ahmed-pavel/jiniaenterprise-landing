@@ -1,6 +1,6 @@
-import { businessIdentity } from "@/lib/business/identity";
+import { SITE_URL } from "@/lib/business/identity";
 
-export const SITE_URL = businessIdentity.url;
+export { SITE_URL };
 
 export function getCanonicalUrl(path = "/"): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;

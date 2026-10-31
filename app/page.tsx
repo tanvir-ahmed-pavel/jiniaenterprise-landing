@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CarFront, Clock3, MessageSquare, Plane, ShieldCheck } from "lucide-react";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
 import { BookingRail } from "@/components/forms/BookingRail";
-import { clientTestimonials, corporateClients, siteConfig } from "@/lib/config";
+import { corporateClients, siteConfig } from "@/lib/config";
 import { clientService } from "@/lib/supabase/admin-service";
 import { createClient } from "@/lib/supabase/server";
 import { createMetadata } from "@/lib/seo/metadata";
@@ -195,7 +195,9 @@ export default async function Home() {
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{featuredVehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div>
       </section>}
 
-      <ClientConstellation clients={clients} testimonials={clientTestimonials} />
+      {/* No testimonials until real, approved quotes exist: the config entries
+          are placeholders and must never render as customer reviews. */}
+      <ClientConstellation clients={clients} />
 
       {/* A quiet closing note. The CTA deliberately shares the page's white
           canvas: no image treatment, no extra atmosphere, just the service

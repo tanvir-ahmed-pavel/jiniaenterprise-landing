@@ -11,7 +11,7 @@ import {
   getLocalBusinessSchema,
   getWebSiteSchema,
 } from "@/lib/seo/schema";
-import { businessIdentity } from "@/lib/business/identity";
+import { businessIdentity, SITE_URL } from "@/lib/business/identity";
 import Script from "next/script";
 
 export const viewport: Viewport = {
@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   ...getSiteMetadata(),
-  metadataBase: new URL(businessIdentity.url),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Car Rental in Dhaka with Driver | Jinia Enterprise",
     template: "%s | Jinia Enterprise",

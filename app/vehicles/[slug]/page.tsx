@@ -13,15 +13,19 @@ import {
   Tag,
 } from "lucide-react";
 import { sampleVehicles, siteConfig } from "@/lib/config";
-import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createMetadata } from "@/lib/seo/metadata";
 import { orderVehicleImages } from "@/lib/vehicles/images";
+import { getPublicVehicleSlug, getStoredSlugCandidates, getVehiclePath } from "@/lib/vehicles/slugs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getBreadcrumbSchema,
   getVehicleSchema,
 } from "@/lib/seo/schema";
+
+// Rebuilt in the background at most every 5 minutes, so admin edits show up
+// without a redeploy.
+export const revalidate = 300;
 
 interface VehiclePageProps {
   params: Promise<{ slug: string }>;
@@ -47,17 +51,23 @@ interface Vehicle {
 }
 
 // Fetch vehicle data from Supabase
+// Cookie-free client: public data, and reading cookies would make a slug that
+// was not prebuilt at deploy time fail to render.
 async function getVehicle(slug: string): Promise<Vehicle | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("vehicles")
-    .select("id,name,slug,category,seats,engine_cc,features,rental_types,description,images,image_url,starting_price,price_label,is_active,sort_order,is_featured")
-    .eq("slug", slug)
-    .single();
+  const supabase = createStaticClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("id,name,slug,category,seats,engine_cc,features,rental_types,description,images,image_url,starting_price,price_label,is_active,sort_order,is_featured")
+      .in("slug", getStoredSlugCandidates(slug))
+      .limit(1)
+      .maybeSingle();
 
-  if (!error && data) return data as Vehicle;
+    if (!error && data) return data as Vehicle;
+  }
 
-  return (sampleVehicles as unknown as Vehicle[]).find((vehicle) => vehicle.slug === slug) || null;
+  const candidates = getStoredSlugCandidates(slug);
+  return (sampleVehicles as unknown as Vehicle[]).find((vehicle) => candidates.includes(vehicle.slug)) || null;
 }
 
 // Generate metadata dynamically
@@ -78,7 +88,7 @@ export async function generateMetadata({
   return createMetadata({
     title: `${vehicle.name} Rental in Dhaka | With Driver`,
     description,
-    path: `/vehicles/${vehicle.slug}`,
+    path: getVehiclePath(vehicle.slug),
     image: orderVehicleImages(vehicle.images, vehicle.image_url)[0] || undefined,
   });
 }
@@ -96,7 +106,7 @@ export async function generateStaticParams() {
 
   return (
     (vehicles as unknown as { slug: string }[])?.map((vehicle) => ({
-      slug: vehicle.slug,
+      slug: getPublicVehicleSlug(vehicle.slug),
     })) || []
   );
 }
@@ -129,7 +139,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
           getVehicleSchema({
             name: vehicle.name,
             description,
-            path: `/vehicles/${vehicle.slug}`,
+            path: getVehiclePath(vehicle.slug),
             image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
             seats: vehicle.seats,
             category: vehicle.category,
@@ -137,7 +147,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
           getBreadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Fleet", path: "/vehicles" },
-            { name: vehicle.name, path: `/vehicles/${vehicle.slug}` },
+            { name: vehicle.name, path: getVehiclePath(vehicle.slug) },
           ]),
         ]}
       />

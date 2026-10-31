@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getVehiclePath } from "@/lib/vehicles/slugs";
 import { createMetadata } from "@/lib/seo/metadata";
 import { ContentPageShell } from "@/components/seo/ContentPageShell";
 import { pricingPage, pricingFaqs, indicativeFromPrices } from "@/content/pricing";
@@ -66,7 +67,7 @@ export default function PricingPage() {
               {indicativeFromPrices.map((row) => (
                 <tr key={row.slug} className="border-t border-emerald-50 bg-white/80">
                   <td className="p-3 font-normal text-emerald-950">
-                    <Link href={`/vehicles/${row.slug}`} className="hover:text-emerald-700">
+                    <Link href={getVehiclePath(row.slug)} className="hover:text-emerald-700">
                       {row.name}
                     </Link>
                   </td>

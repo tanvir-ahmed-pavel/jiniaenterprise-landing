@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Eye, Fuel, ShieldCheck, Users } from "lucide-react";
 import { ImageCarousel } from "./ImageCarousel";
 import { orderVehicleImages } from "@/lib/vehicles/images";
+import { getVehiclePath } from "@/lib/vehicles/slugs";
 
 const formatPrice = (price: number) => "৳" + price.toLocaleString("en-BD");
 
@@ -95,7 +96,7 @@ export const VehicleCard = memo(function VehicleCard({
           </dl>
 
           <div className="mt-5 flex items-center justify-between gap-3">
-            <Link href={`/vehicles/${vehicle.slug || vehicle.id}`} className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950 transition-colors hover:text-emerald-600">
+            <Link href={vehicle.slug ? getVehiclePath(vehicle.slug) : `/vehicles/${vehicle.id}`} className="inline-flex items-center gap-2 text-sm font-medium text-emerald-950 transition-colors hover:text-emerald-600">
               View vehicle <ArrowRight className="h-4 w-4 transition-transform group-hover/card:translate-x-1" />
             </Link>
             {onQuickInspect ? (

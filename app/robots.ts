@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/business/identity";
 
 const isProduction = process.env.VERCEL_ENV
   ? process.env.VERCEL_ENV === "production"
@@ -52,7 +53,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/api/"],
       },
     ],
-    sitemap: "https://jiniaenterprise.com/sitemap.xml",
-    host: "https://jiniaenterprise.com",
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

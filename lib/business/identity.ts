@@ -1,4 +1,12 @@
 /**
+ * The one public origin for the site. Every canonical, og:url, JSON-LD id,
+ * sitemap entry and robots line is built from this, so they can never point
+ * at a host that redirects. www is primary because that is the host Vercel
+ * serves; the bare domain 308-redirects to it.
+ */
+export const SITE_URL = "https://www.jiniaenterprise.com";
+
+/**
  * Canonical business identity — single source of truth for NAP,
  * schema.org, and on-page contact consistency.
  */
@@ -36,7 +44,7 @@ export type BusinessIdentity = {
 export const businessIdentity: BusinessIdentity = {
   legalName: "Jinia Enterprise",
   brandName: "Jinia Enterprise",
-  url: "https://jiniaenterprise.com",
+  url: SITE_URL,
   phone: "+88 01716 633445",
   phoneSecondary: "+88 01976 633445",
   phoneLandline: "+88 02 989 9500",
