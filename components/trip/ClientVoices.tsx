@@ -15,6 +15,14 @@ const KIND: Record<string, string> = {
 
 type Client = { name: string; type: string };
 
+/** What Jinia does for each kind of client, shown under the name. */
+const WORK: Record<string, string> = {
+  Embassy: "Airport runs, official visits and delegation cars, on protocol time.",
+  "International Organization": "Staff moving safely between Dhaka and field sites, with drivers who know the roads.",
+  Government: "Official movement with matched vehicles and one coordinator.",
+  Corporate: "Executive days, visiting teams and monthly cars with a steady driver.",
+};
+
 /**
  * One client at a time on a soft tint, the full list beside it. With real,
  * approved quotes it shows the quote; until then it shows the client's name
@@ -22,9 +30,9 @@ type Client = { name: string; type: string };
  */
 export function ClientVoices({ items: quotes = [], clients = [], sample = false }: { items?: ClientTestimonial[]; clients?: Client[]; sample?: boolean }) {
   const named = quotes.length === 0;
-  const items: Array<{ head: string; sub: string; label: string; embassy?: boolean }> = named
-    ? clients.map((c) => ({ head: c.name, sub: KIND[c.type] ?? "Company", label: c.name, embassy: c.type === "Embassy" }))
-    : quotes.map((q) => ({ head: q.quote, sub: `${q.author} · ${q.role}`, label: q.role }));
+  const items: Array<{ head: string; sub: string; label: string; work?: string; embassy?: boolean }> = named
+    ? clients.map((c) => ({ head: c.name, sub: KIND[c.type] ?? "Company", label: c.name, work: WORK[c.type] ?? WORK.Corporate, embassy: c.type === "Embassy" }))
+    : quotes.map((q) => ({ head: q.quote, sub: q.author && q.author !== q.client ? `${q.author}, ${q.client}` : q.client, label: q.client }));
   const list = useRef<HTMLOListElement>(null);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -66,7 +74,11 @@ export function ClientVoices({ items: quotes = [], clients = [], sample = false 
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{t.sub}</p>
               <p className={`mt-4 font-heading text-[clamp(2.2rem,5.4vw,4.4rem)] font-semibold leading-[1.02] tracking-[-0.045em] ${t.embassy ? "type-accent font-normal" : ""}`}>{t.head}</p>
-              <figcaption className="mt-6 text-sm text-ink/55">Moving with Jinia Enterprise in Dhaka.</figcaption>
+              <p className="mt-6 max-w-md text-base leading-relaxed text-ink/70 sm:text-lg">{t.work}</p>
+              <figcaption className="mt-8 flex items-center gap-3 text-sm text-ink/55">
+                <span aria-hidden className="h-px w-10 bg-gold-deep" />
+                A Jinia Enterprise client in Dhaka
+              </figcaption>
             </>
           ) : (
             <>
@@ -75,7 +87,7 @@ export function ClientVoices({ items: quotes = [], clients = [], sample = false 
               <figcaption className="mt-8 flex items-center gap-3 text-sm">
                 <span aria-hidden className="h-px w-10 bg-gold-deep" />
                 <span className="text-ink/75">{t.sub}</span>
-                {sample && <span className="rounded-full bg-ink/10 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-ink/60">Sample</span>}
+                {sample && <span className="rounded-full bg-ink/10 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-ink/60">Draft · not live</span>}
               </figcaption>
             </>
           )}

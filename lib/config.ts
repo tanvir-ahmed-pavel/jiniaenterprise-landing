@@ -222,12 +222,26 @@ export type ClientTestimonial = {
 };
 
 export const clientTestimonials: ClientTestimonial[] = [
-  // SAMPLE COPY for layout review only (shown on the dev server, never live).
-  // Replace each with a real, approved quote and set approved: true.
-  { quote: "Ten years of airport runs and not one missed pickup.", author: "Head of Administration", role: "Embassy, Dhaka", client: "Embassy", approved: false },
-  { quote: "Our directors stopped thinking about transport entirely.", author: "Admin Manager", role: "Construction company, Gulshan", client: "Company", approved: false },
-  { quote: "They move a twelve-car delegation like it is one car.", author: "Protocol Officer", role: "International organisation", client: "International body", approved: false },
-  { quote: "The driver knows the route before we do.", author: "Country Director", role: "NGO, Dhaka", client: "NGO", approved: false },
+  // DRAFTS awaiting each client's sign-off (see docs/testimonial-drafts.md).
+  // The live site shows only quotes with approved: true. When a client
+  // approves, update the wording to what they agreed, set author/role to the
+  // person who signed off, and flip approved to true.
+  { quote: "Our guests land, and the car is already at the rail. Every time.", author: "Administration team", role: "Thai Embassy", client: "Thai Embassy", approved: false },
+  { quote: "Official visits run on protocol time. Jinia keeps to it, down to the minute.", author: "Administration team", role: "Indonesian Embassy Dhaka", client: "Indonesian Embassy Dhaka", approved: false },
+  { quote: "Early shows, late events, odd hours. The car turns up regardless.", author: "Operations team", role: "Radio Foorti Ltd.", client: "Radio Foorti Ltd.", approved: false },
+  { quote: "Visiting colleagues get the same driver all week. That familiarity matters.", author: "Admin team", role: "Lankan Alliance", client: "Lankan Alliance", approved: false },
+  { quote: "One call and the week’s transport is sorted. We stopped worrying about it.", author: "Management", role: "Sajna", client: "Sajna", approved: false },
+  { quote: "Clean cars, careful drivers, and a coordinator who actually picks up the phone.", author: "Admin department", role: "SK+F", client: "SK+F", approved: false },
+  { quote: "For visiting teams, reliability is everything. Jinia has been reliable.", author: "General affairs", role: "Samsung", client: "Samsung", approved: false },
+  { quote: "Field visits outside Dhaka are planned properly: rest stops, timings, overnights.", author: "Operations team", role: "Fair Distribution", client: "Fair Distribution", approved: false },
+  { quote: "Our staff move safely between sites, and the drivers know the routes.", author: "Logistics team", role: "Terre des Hommes", client: "Terre des Hommes", approved: false },
+  { quote: "Our engineers reach the site on time, every working day.", author: "Project office", role: "Kunhwa", client: "Kunhwa", approved: false },
+  { quote: "A dedicated car and driver for our team, with backup when we need it.", author: "Project office", role: "YoungDong Construction Co., Ltd.", client: "YoungDong Construction Co., Ltd.", approved: false },
+  { quote: "Site to office to client meeting. The driver waits, and plans the route.", author: "Dhaka office", role: "Heerim Architects & Planners", client: "Heerim Architects & Planners", approved: false },
+  { quote: "Long days on the road with no surprises. That is what we need.", author: "Project team", role: "Korea Expressway Corporation", client: "Korea Expressway Corporation", approved: false },
+  { quote: "Buyers visiting the factory are picked up and dropped without a hitch.", author: "Admin team", role: "Norwest Industries Ltd.", client: "Norwest Industries Ltd.", approved: false },
+  { quote: "When plans change at short notice, Jinia changes with us.", author: "Logistics team", role: "Turk Kizilay", client: "Turk Kizilay", approved: false },
+  { quote: "Monthly billing, a steady driver, no fuss. Exactly what we wanted.", author: "Management", role: "KGS Sourcing", client: "KGS Sourcing", approved: false },
 ];
 
 export const companyHistory = {
