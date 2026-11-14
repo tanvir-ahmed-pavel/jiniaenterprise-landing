@@ -1332,7 +1332,7 @@
 .jx-timer { animation: jx-timer 5000ms linear forwards; }
 @keyframes jx-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .jx-timer { animation: none; } }
-.jx-timer-fast { animation: jx-timer 4000ms linear forwards; }
+.jx-timer-fast { animation: jx-timer 3200ms linear forwards; }
 @media (prefers-reduced-motion: reduce) { .jx-timer-fast { animation: none; } }
 
 /* Tailwind v4 resets buttons to the default arrow; anything clickable shows
