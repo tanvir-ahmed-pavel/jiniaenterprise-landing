@@ -97,10 +97,10 @@ export default async function Home() {
 
   const floors = Object.fromEntries(vehicleClasses.map((c) => [c.id, classFloor(c, rows)])) as Record<ClassId, number | null>;
   const storeVehicles = toStoreVehicles(rows);
-  // Real, approved quotes on the live site. The dev server shows sample quotes
-  // (tagged) so the layout can be reviewed; live falls back to client names.
+  // Only approved quotes are shown, locally and live alike, so the preview
+  // matches production. Set SHOW_TESTIMONIAL_DRAFTS=1 to review the drafts.
   const approvedVoices = clientTestimonials.filter((t) => t.approved);
-  const sampleVoices = approvedVoices.length === 0 && process.env.NODE_ENV !== "production";
+  const sampleVoices = approvedVoices.length === 0 && process.env.SHOW_TESTIMONIAL_DRAFTS === "1";
   const voiceItems = approvedVoices.length ? approvedVoices : sampleVoices ? clientTestimonials : [];
   const liveStats = stats.map((s) => (s.l === "Models in the fleet" ? { ...s, v: String(rows.length || 16) } : s));
 
