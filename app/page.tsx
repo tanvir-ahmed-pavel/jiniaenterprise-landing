@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, CheckCheck, Phone, Plus } from "lucide-react";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
-import { clientTestimonials, corporateClients, siteConfig } from "@/lib/config";
+import { corporateClients, siteConfig, type ClientTestimonial } from "@/lib/config";
 import { clientService } from "@/lib/supabase/admin-service";
 import { createMetadata } from "@/lib/seo/metadata";
 import { siteFaqs } from "@/content/faqs";
@@ -97,11 +97,19 @@ export default async function Home() {
 
   const floors = Object.fromEntries(vehicleClasses.map((c) => [c.id, classFloor(c, rows)])) as Record<ClassId, number | null>;
   const storeVehicles = toStoreVehicles(rows);
-  // Only approved quotes are shown, locally and live alike, so the preview
-  // matches production. Set SHOW_TESTIMONIAL_DRAFTS=1 to review the drafts.
-  const approvedVoices = clientTestimonials.filter((t) => t.approved);
+  // Testimonials are managed per client in admin. Only published ones show,
+  // locally and live alike. SHOW_TESTIMONIAL_DRAFTS=1 previews the drafts.
+  const toVoice = (c: (typeof activeClients)[number]): ClientTestimonial => ({
+    quote: c.testimonial_quote ?? "",
+    author: c.testimonial_author ?? "",
+    role: c.testimonial_role ?? "",
+    client: c.name,
+    approved: !!c.testimonial_published,
+  });
+  const withQuote = activeClients.filter((c) => c.testimonial_quote?.trim());
+  const approvedVoices = withQuote.filter((c) => c.testimonial_published).map(toVoice);
   const sampleVoices = approvedVoices.length === 0 && process.env.SHOW_TESTIMONIAL_DRAFTS === "1";
-  const voiceItems = approvedVoices.length ? approvedVoices : sampleVoices ? clientTestimonials : [];
+  const voiceItems = approvedVoices.length ? approvedVoices : sampleVoices ? withQuote.map(toVoice) : [];
   const liveStats = stats.map((s) => (s.l === "Models in the fleet" ? { ...s, v: String(rows.length || 16) } : s));
 
   return (

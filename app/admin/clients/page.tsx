@@ -59,6 +59,10 @@ export default function AdminClientsPage() {
   const [formWebsiteUrl, setFormWebsiteUrl] = useState("");
   const [formIsActive, setFormIsActive] = useState(true);
   const [formSortOrder, setFormSortOrder] = useState<number>(0);
+  const [formQuote, setFormQuote] = useState("");
+  const [formAuthor, setFormAuthor] = useState("");
+  const [formRole, setFormRole] = useState("");
+  const [formPublished, setFormPublished] = useState(false);
 
   async function loadClients() {
     setIsLoading(true);
@@ -84,6 +88,10 @@ export default function AdminClientsPage() {
     setFormWebsiteUrl("");
     setFormIsActive(true);
     setFormSortOrder(clients.length);
+    setFormQuote("");
+    setFormAuthor("");
+    setFormRole("");
+    setFormPublished(false);
     setIsFormOpen(true);
   };
 
@@ -95,6 +103,10 @@ export default function AdminClientsPage() {
     setFormWebsiteUrl(client.website_url || "");
     setFormIsActive(client.is_active);
     setFormSortOrder(client.sort_order);
+    setFormQuote(client.testimonial_quote || "");
+    setFormAuthor(client.testimonial_author || "");
+    setFormRole(client.testimonial_role || "");
+    setFormPublished(!!client.testimonial_published);
     setIsFormOpen(true);
   };
 
@@ -113,6 +125,10 @@ export default function AdminClientsPage() {
           website_url: formWebsiteUrl.trim() || null,
           is_active: formIsActive,
           sort_order: Number(formSortOrder) || 0,
+          testimonial_quote: formQuote.trim() || null,
+          testimonial_author: formAuthor.trim() || null,
+          testimonial_role: formRole.trim() || null,
+          testimonial_published: formPublished && !!formQuote.trim(),
         });
 
         if (updated) {
@@ -129,6 +145,10 @@ export default function AdminClientsPage() {
           website_url: formWebsiteUrl.trim() || null,
           is_active: formIsActive,
           sort_order: Number(formSortOrder) || 0,
+          testimonial_quote: formQuote.trim() || null,
+          testimonial_author: formAuthor.trim() || null,
+          testimonial_role: formRole.trim() || null,
+          testimonial_published: formPublished && !!formQuote.trim(),
         });
 
         if (created) {
@@ -391,7 +411,11 @@ export default function AdminClientsPage() {
                               {client.name}
                             </span>
                             <span className="text-[11px] text-gray-400 font-medium">
-                              ID: {client.id.substring(0, 14)}...
+                              {client.testimonial_quote
+                                ? client.testimonial_published
+                                  ? "Testimonial live"
+                                  : "Testimonial draft"
+                                : `ID: ${client.id.substring(0, 14)}...`}
                             </span>
                           </div>
                         </div>
@@ -588,6 +612,49 @@ export default function AdminClientsPage() {
                   placeholder="https://example.com"
                   className="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
+              </div>
+
+              {/* Testimonial */}
+              <div className="space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <label className="text-xs font-bold text-gray-700">Testimonial (Optional)</label>
+                  <label className={cn("flex items-center gap-2", formQuote.trim() ? "cursor-pointer" : "cursor-not-allowed opacity-50")}>
+                    <input
+                      type="checkbox"
+                      checked={formPublished && !!formQuote.trim()}
+                      disabled={!formQuote.trim()}
+                      onChange={(e) => setFormPublished(e.target.checked)}
+                      className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span className="text-xs font-bold text-gray-800">Publish on website</span>
+                  </label>
+                </div>
+                <textarea
+                  value={formQuote}
+                  onChange={(e) => setFormQuote(e.target.value)}
+                  rows={3}
+                  placeholder="The quote, exactly as the client approved it"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    value={formAuthor}
+                    onChange={(e) => setFormAuthor(e.target.value)}
+                    placeholder="Name (e.g. Jane Doe)"
+                    className="w-full h-10 px-3 rounded-xl border border-gray-300 bg-white text-sm font-semibold"
+                  />
+                  <input
+                    type="text"
+                    value={formRole}
+                    onChange={(e) => setFormRole(e.target.value)}
+                    placeholder="Title (e.g. Admin Manager)"
+                    className="w-full h-10 px-3 rounded-xl border border-gray-300 bg-white text-sm font-semibold"
+                  />
+                </div>
+                <p className="text-[11px] leading-relaxed text-gray-500">
+                  Only publish wording the client has approved in writing. Unpublished quotes are saved as drafts and never shown.
+                </p>
               </div>
 
               {/* Sort Order & Active */}

@@ -1,6 +1,6 @@
 # Client testimonial drafts
 
-Draft wording for each client to approve, edit or decline. Nothing here is on the live site until it is approved and marked `approved: true` in `lib/config.ts`.
+Draft wording for each client to approve, edit or decline. These drafts are already saved on each client in admin (Clients → Edit → Testimonial), unpublished. When a client approves, edit the wording to match, add their name and title, tick "Publish on website" and save.
 
 For each one, ask the client:
 1. Is this wording OK, or how would you like it changed?

@@ -32,7 +32,7 @@ export function ClientVoices({ items: quotes = [], clients = [], sample = false 
   const named = quotes.length === 0;
   const items: Array<{ head: string; sub: string; label: string; work?: string; embassy?: boolean }> = named
     ? clients.map((c) => ({ head: c.name, sub: KIND[c.type] ?? "Company", label: c.name, work: WORK[c.type] ?? WORK.Corporate, embassy: c.type === "Embassy" }))
-    : quotes.map((q) => ({ head: q.quote, sub: q.author && q.author !== q.client ? `${q.author}, ${q.client}` : q.client, label: q.client }));
+    : quotes.map((q) => ({ head: q.quote, sub: [q.author, q.role, q.client].filter(Boolean).join(", "), label: q.client }));
   const list = useRef<HTMLOListElement>(null);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);

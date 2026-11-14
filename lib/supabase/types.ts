@@ -216,6 +216,10 @@ export interface Database {
           website_url: string | null;
           is_active: boolean;
           sort_order: number;
+          testimonial_quote: string | null;
+          testimonial_author: string | null;
+          testimonial_role: string | null;
+          testimonial_published: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -227,6 +231,10 @@ export interface Database {
           website_url?: string | null;
           is_active?: boolean;
           sort_order?: number;
+          testimonial_quote?: string | null;
+          testimonial_author?: string | null;
+          testimonial_role?: string | null;
+          testimonial_published?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -238,6 +246,10 @@ export interface Database {
           website_url?: string | null;
           is_active?: boolean;
           sort_order?: number;
+          testimonial_quote?: string | null;
+          testimonial_author?: string | null;
+          testimonial_role?: string | null;
+          testimonial_published?: boolean;
           created_at?: string;
           updated_at?: string;
         };
