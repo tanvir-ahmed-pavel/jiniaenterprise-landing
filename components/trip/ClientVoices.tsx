@@ -49,7 +49,7 @@ export function ClientVoices({ items: quotes = [], clients = [], sample = false 
   useEffect(() => {
     if (paused || !seen || items.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setI((n) => (n + 1) % items.length), named ? 2200 : 2800);
+    const id = window.setInterval(() => setI((n) => (n + 1) % items.length), named ? 3200 : 4200);
     return () => window.clearInterval(id);
   }, [paused, seen, items.length, i, named]);
   useEffect(() => {

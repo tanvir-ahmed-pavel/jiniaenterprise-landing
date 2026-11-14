@@ -1329,10 +1329,10 @@
 .jinia-site img.object-cover[src*="/vehicles/cutouts/"] + .absolute { display: none; }
 
 /* Testimonial autoplay timer. Durations match the 2.8s and 2.2s intervals. */
-.jx-timer { animation: jx-timer 2800ms linear forwards; }
+.jx-timer { animation: jx-timer 4200ms linear forwards; }
 @keyframes jx-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .jx-timer { animation: none; } }
-.jx-timer-fast { animation: jx-timer 2200ms linear forwards; }
+.jx-timer-fast { animation: jx-timer 3200ms linear forwards; }
 @media (prefers-reduced-motion: reduce) { .jx-timer-fast { animation: none; } }
 
 /* Tailwind v4 resets buttons to the default arrow; anything clickable shows
