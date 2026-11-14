@@ -89,7 +89,7 @@ function Card({ v, onView }: { v: StoreVehicle; onView: () => void }) {
 
 function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void }) {
   const [angle, setAngle] = useState<Angle>("side");
-  const { req, chooseModel, focusPlanner } = useRequest();
+  const { req, chooseModel } = useRequest();
   const close = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!v) return;
@@ -143,7 +143,7 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
                 <div><dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Hire</dt><dd className="mt-1 font-semibold">{terms(v)}</dd></div>
               </dl>
               <div className="mt-auto grid gap-3 pt-8 sm:grid-cols-2">
-                <button type="button" onClick={() => { chooseModel({ id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id }); onClose(); window.setTimeout(focusPlanner, 350); }} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ink py-4 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft">
+                <button type="button" onClick={() => { chooseModel({ id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id }); onClose(); window.setTimeout(() => window.dispatchEvent(new CustomEvent("jinia:open-wizard", { detail: { step: req.date ? 3 : 1 } })), 350); }} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ink py-4 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft">
                   {req.model?.id === v.id ? <><Check className="h-4 w-4" /> Chosen · back to request</> : "Choose for my request"}
                 </button>
                 <Link href={`/booking?vehicle=${encodeURIComponent(v.slug)}`} className="inline-flex h-13 items-center justify-center gap-2 rounded-full py-4 text-sm font-semibold ring-1 ring-ink/15 transition-colors hover:ring-ink">

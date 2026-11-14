@@ -31,13 +31,13 @@ export function VehicleStage({ v }: { v: StoreVehicle }) {
 
 /** Put this exact car on the trip request, then open the planner with it. */
 export function VehicleActions({ v, whatsapp, phone }: { v: StoreVehicle; whatsapp: string; phone: string }) {
-  const { req, chooseModel, focusPlanner } = useRequest();
+  const { req, chooseModel } = useRequest();
   const chosen = req.model?.id === v.id;
   const c = classOf(v);
   const plan = () => {
     if (!chosen) chooseModel({ id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id });
-    // Let the provider persist the choice before the planner page loads.
-    window.setTimeout(focusPlanner, 60);
+    // Open the request panel here, with this car, instead of leaving the page.
+    window.setTimeout(() => window.dispatchEvent(new CustomEvent("jinia:open-wizard", { detail: { step: req.date ? 3 : 1 } })), 60);
   };
   const msg = `Hi Jinia Enterprise, I would like a quote for the ${clean(v.name)} with driver.`;
   return (
