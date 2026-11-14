@@ -1,24 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
-import { 
-  Calendar, 
-  Clock, 
-  ArrowLeft, 
-  User, 
-  Share2, 
-  MessageSquare, 
-  Phone, 
-  ArrowRight,
-  CheckCircle2,
-  Quote as QuoteIcon
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/config";
 import { createMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { OpenWizardButton } from "@/components/wizard/OpenWizardButton";
+import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
@@ -112,6 +103,17 @@ export async function generateMetadata({
   });
 }
 
+/** Soft grounds the related cards rotate through. */
+const TINTS = ["bg-tile-sand", "bg-tile-sage", "bg-tile-mist", "bg-tile-stone", "bg-tile-butter"];
+
+/** Split off the last word so it takes the serif accent, as PageHeader does. */
+function accentTitle(title: string) {
+  const trimmed = title.trim();
+  const cut = trimmed.lastIndexOf(" ");
+  if (cut < 0) return { head: "", tail: trimmed };
+  return { head: trimmed.slice(0, cut + 1), tail: trimmed.slice(cut + 1) };
+}
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
@@ -142,7 +144,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return parts.map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
         return (
-          <strong key={i} className="font-medium text-emerald-950">
+          <strong key={i} className="font-semibold text-ink">
             {part.slice(2, -2)}
           </strong>
         );
@@ -151,7 +153,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     });
   };
 
-  // Rich Editorial Markdown Parser with luxury styling
+  // Lightweight markdown renderer, styled in the site's type system
   const renderContent = (content: string) => {
     const lines = content.split("\n");
     return lines.map((line, index) => {
@@ -160,7 +162,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         return (
           <h2
             key={index}
-            className="text-2xl sm:text-3xl md:text-4xl font-heading font-medium text-emerald-950 mt-12 mb-5 tracking-tight border-b border-emerald-900/10 pb-3"
+            className="type-heading mb-4 mt-12 font-heading text-[clamp(1.6rem,4.5vw,2.2rem)] text-ink [overflow-wrap:anywhere]"
           >
             {line.replace("## ", "")}
           </h2>
@@ -171,7 +173,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         return (
           <h3
             key={index}
-            className="text-xl sm:text-2xl font-heading font-medium text-emerald-900 mt-8 mb-3 tracking-tight"
+            className="type-heading mb-3 mt-9 font-heading text-xl text-ink sm:text-2xl"
           >
             {line.replace("### ", "")}
           </h3>
@@ -180,25 +182,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       // Blockquotes
       if (line.startsWith("> ")) {
         return (
-          <div
+          <blockquote
             key={index}
-            className="my-8 p-6 sm:p-8 rounded-2xl bg-linear-to-r from-emerald-50 via-white to-emerald-50/50 border-l-4 border-emerald-600 shadow-xs"
+            className="my-9 rounded-[1.6rem] bg-tile-butter px-6 py-7 sm:px-9 sm:py-9"
           >
-            <div className="flex gap-4 items-start">
-              <QuoteIcon className="h-6 w-6 text-emerald-600 shrink-0 mt-1" />
-              <p className="text-base sm:text-lg font-heading font-medium text-emerald-950 italic leading-relaxed">
-                {formatInlineText(line.replace("> ", ""))}
-              </p>
-            </div>
-          </div>
+            <p className="type-accent font-heading text-[clamp(1.3rem,3.5vw,1.65rem)] leading-snug text-ink">
+              {formatInlineText(line.replace("> ", ""))}
+            </p>
+          </blockquote>
         );
       }
       // Unordered Lists
       if (line.startsWith("- ") || line.startsWith("* ")) {
         return (
-          <li key={index} className="ml-4 sm:ml-6 flex items-start gap-3 text-gray-700 mb-3.5 list-none">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 mt-2 shrink-0 ring-4 ring-emerald-100" />
-            <span className="text-base sm:text-lg font-medium leading-relaxed">
+          <li key={index} className="mb-3 flex list-none items-start gap-3 text-ink/70">
+            <span aria-hidden className="mt-[0.7em] h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+            <span className="text-[1.0625rem] leading-relaxed sm:text-lg">
               {formatInlineText(line.replace(/^[-*]\s+/, ""))}
             </span>
           </li>
@@ -208,11 +207,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       if (/^\d+\.\s/.test(line)) {
         const num = line.match(/^(\d+)\./)?.[1] || "1";
         return (
-          <li key={index} className="ml-4 sm:ml-6 flex items-start gap-3.5 text-gray-700 mb-3.5 list-none">
-            <span className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-900 text-xs font-medium flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200/60">
+          <li key={index} className="mb-3 flex list-none items-start gap-3 text-ink/70">
+            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-tile-sand text-xs font-semibold tabular-nums text-ink">
               {num}
             </span>
-            <span className="text-base sm:text-lg font-medium leading-relaxed">
+            <span className="text-[1.0625rem] leading-relaxed sm:text-lg">
               {formatInlineText(line.replace(/^\d+\.\s+/, ""))}
             </span>
           </li>
@@ -224,7 +223,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       }
       // Standard Paragraphs
       return (
-        <p key={index} className="text-gray-700 text-base sm:text-lg md:text-[19px] font-normal leading-relaxed mb-6">
+        <p key={index} className="mb-5 text-[1.0625rem] leading-relaxed text-ink/70 sm:text-lg">
           {formatInlineText(line)}
         </p>
       );
@@ -233,9 +232,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : `https://jiniaenterprise.com/blog/${post.slug}`;
   const shareText = encodeURIComponent(`Read "${post.title}" on Jinia Enterprise`);
+  const { head, tail } = accentTitle(post.title);
+
+  const shareLinks = [
+    { label: "WhatsApp", href: `https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}` },
+    { label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}` },
+    { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}` },
+  ];
 
   return (
-    <div className="pb-24">
+    <div className="bg-white pb-24 pt-24 text-ink sm:pt-32">
       <JsonLd
         data={[
           getArticleSchema({
@@ -254,250 +260,165 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           ]),
         ]}
       />
-      <section className="border-b border-emerald-950/10 pt-32 pb-14 sm:pt-40 sm:pb-20">
-        <div className="container relative z-10">
-          <div className="max-w-4xl space-y-8">
-            {/* Back Navigation */}
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 border-b border-emerald-950/25 pb-1 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950 transition-colors hover:border-emerald-700 hover:text-emerald-700 group"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 text-emerald-600 group-hover:-translate-x-1 transition-transform" />
-              <span>Back to Journal</span>
-            </Link>
 
-            <div className="space-y-4">
-              {/* Meta pills */}
-              <div className="flex flex-wrap items-center gap-5 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-700">
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-emerald-700" />
-                  {formatDate(post.created_at)}
-                </span>
-                <span className="flex items-center gap-1.5 text-emerald-950/55">
-                  <Clock className="h-3.5 w-3.5 text-amber-600" />
-                  {getReadingTime(post.content)} min read
-                </span>
-                <span className="flex items-center gap-1.5 text-emerald-950/55">
-                  <User className="h-3.5 w-3.5 text-emerald-700" />
-                  By {post.author}
-                </span>
-              </div>
+      <div className="container">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8rem] text-ink/45">
+          <Link href="/" className="hover:text-ink">Home</Link>
+          <span aria-hidden className="text-ink/25">/</span>
+          <Link href="/blog" className="hover:text-ink">Journal</Link>
+          <span aria-hidden className="text-ink/25">/</span>
+          <span aria-current="page" className="line-clamp-1 max-w-[24ch] text-ink/70 sm:max-w-[48ch]">{post.title}</span>
+        </nav>
 
-              {/* Title */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-heading font-medium text-emerald-950 tracking-tight leading-[1.1]">
-                {post.title}
-              </h1>
+        {/* Title block */}
+        <header className="mt-8 max-w-4xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">
+            <time dateTime={post.created_at}>{formatDate(post.created_at)}</time> · {getReadingTime(post.content)} min read
+          </p>
+          <h1 className="type-display mt-4 font-heading text-[clamp(2.4rem,8vw,4.8rem)] [overflow-wrap:anywhere]">
+            {head}
+            <span className="type-accent text-gold-deep">{tail}</span>
+          </h1>
+          <p className="mt-6 max-w-[60ch] text-base leading-relaxed text-ink/60 sm:text-lg">
+            {post.excerpt}
+          </p>
+          <p className="mt-5 text-sm text-ink/50">
+            By <span className="font-semibold text-ink/80">{post.author}</span>
+          </p>
+        </header>
 
-              {/* Excerpt Lead */}
-              <p className="max-w-3xl border-l-2 border-amber-400 pl-5 text-base font-medium leading-relaxed text-emerald-950/65 sm:text-xl">
-                {post.excerpt}
-              </p>
-            </div>
+        {/* Cover */}
+        {post.cover_image && (
+          <div className="relative mt-10 aspect-[4/3] overflow-hidden rounded-[2rem] bg-tile-sand sm:aspect-[16/9]">
+            <Image
+              src={post.cover_image}
+              alt={post.title}
+              fill
+              priority
+              sizes="(max-width: 1280px) 100vw, 1200px"
+              className="object-contain p-5 sm:p-10"
+            />
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* ── Main Article & Sticky Sidebar ── */}
-      <section className="container relative z-10">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          {/* Main Article Content */}
-          <div className="lg:col-span-8 space-y-10">
-            {/* Featured Cover Photography Frame */}
-            {post.cover_image && (
-              <div className="relative aspect-video overflow-hidden border border-emerald-950/15 bg-[#fbfcfa] group">
-                <img
-                  src={post.cover_image}
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-              </div>
-            )}
+        {/* Article + sidebar */}
+        <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-14">
+          <article className="min-w-0 lg:col-span-8">
+            <div className="max-w-[68ch]">
+              {renderContent(post.content)}
+            </div>
 
-            {/* Editorial Content Surface */}
-            <article className="border-y border-emerald-950/15 bg-white p-6 sm:p-10 md:p-12">
-              <div className="prose-custom max-w-none">
-                {renderContent(post.content)}
-              </div>
-            </article>
-
-            {/* Social Share & Broadcast Bar */}
-            <div className="flex flex-col items-center justify-between gap-5 border-y border-emerald-950/15 py-6 sm:flex-row sm:py-8">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center border border-emerald-950/15 text-emerald-900">
-                  <Share2 className="h-4 w-4" />
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-emerald-950 block">Share This Guide</span>
-                  <span className="text-[11px] text-gray-500 font-medium">Forward to colleagues or travel coordinators</span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                <a
-                  href={`https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-emerald-200 text-emerald-950 hover:bg-emerald-50 text-xs font-medium gap-1.5 cursor-pointer">
-                    <span>WhatsApp</span>
-                  </Button>
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer">
-                    <span>LinkedIn</span>
-                  </Button>
-                </a>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <Button variant="outline" size="sm" className="w-full h-9 px-4 rounded-xl border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-medium gap-1.5 cursor-pointer">
-                    <span>Facebook</span>
-                  </Button>
-                </a>
+            {/* Share */}
+            <div className="mt-12 max-w-[68ch] border-t border-ink/10 pt-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">Share this guide</p>
+              <p className="mt-2 text-sm text-ink/55">Forward it to a colleague or whoever books the cars.</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {shareLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex h-11 items-center gap-1.5 rounded-full px-5 text-sm font-semibold ring-1 ring-ink/15 transition-colors hover:ring-ink"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="h-3.5 w-3.5 text-ink/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                ))}
               </div>
             </div>
 
-            {/* Author Attribution Card */}
-            <div className="flex items-center gap-5 border-l-2 border-amber-400 bg-white p-6 sm:p-8">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-emerald-950 text-2xl font-heading font-medium text-white">
+            {/* Author */}
+            <div className="mt-8 flex max-w-[68ch] items-center gap-4 rounded-[1.6rem] bg-paper-deep p-5 sm:p-6">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ink font-heading text-xl font-semibold text-paper">
                 {post.author.charAt(0)}
-              </div>
-              <div className="space-y-1">
-                <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-700">
-                  Verified Author
-                </span>
-                <h4 className="text-xl font-heading font-medium text-emerald-950 tracking-tight">{post.author}</h4>
-                <p className="text-xs text-gray-600 font-medium">
-                  Mobility Specialist & Executive Logistics Coordinator at Jinia Enterprise.
-                </p>
-              </div>
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Written by</span>
+                <span className="type-heading mt-0.5 block font-heading text-lg">{post.author}</span>
+                <span className="mt-0.5 block text-sm text-ink/55">Jinia Enterprise, Dhaka</span>
+              </span>
             </div>
-          </div>
+          </article>
 
-          {/* ── Sticky Sidebar ── */}
-          <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-28">
-            {/* Quick Concierge Dispatch Card */}
-            <div className="space-y-6 border-l-2 border-amber-400 bg-emerald-950 p-7 text-white sm:p-8">
-
-              <div className="space-y-2">
-                <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-amber-300">
-                  Direct Concierge
-                </span>
-                <h3 className="text-2xl font-heading font-medium text-white tracking-tight leading-tight">
-                  Book Your Ride in Dhaka
-                </h3>
-                <p className="text-xs text-emerald-100/75 font-medium leading-relaxed">
-                  Need a reliable sedan, VIP Prado, or luxury microbus with a professional driver today?
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-1">
-                <Link href="/booking" className="block w-full">
-                  <Button className="w-full h-12 bg-linear-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs rounded-xl shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] shadow-amber-500/25 cursor-pointer">
-                    <span>Reserve Vehicle Now</span>
-                    <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                  </Button>
-                </Link>
-
-                <a 
-                  href={`https://wa.me/${siteConfig.whatsapp}?text=Hello%20Jinia%20Enterprise,%20I%20am%20reading%20"${encodeURIComponent(post.title)}"%20and%20would%20like%20to%20inquire%20about%20a%20car%20rental.`} 
-                  target="_blank" 
+          {/* Plan a ride */}
+          <aside className="min-w-0 lg:col-span-4">
+            <div className="rounded-[1.8rem] bg-tile-sage p-6 sm:p-8 lg:sticky lg:top-28">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">Plan a ride</p>
+              <h2 className="type-display mt-3 font-heading text-[clamp(2rem,5vw,2.6rem)]">
+                A car, a driver, <span className="type-accent text-gold-deep">sorted.</span>
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-ink/65">
+                Sedan, Prado or microbus with a professional driver. Tell us the trip and a person replies with one fixed price.
+              </p>
+              <div className="mt-6 grid gap-3">
+                <OpenWizardButton className="group flex h-12 w-full items-center justify-between gap-3 rounded-full bg-ink pl-5 pr-1.5 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft">
+                  Request a car
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-ink transition-transform duration-300 group-hover:translate-x-0.5">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </OpenWizardButton>
+                <a
+                  href={`https://wa.me/${siteConfig.whatsapp}?text=Hello%20Jinia%20Enterprise,%20I%20am%20reading%20"${encodeURIComponent(post.title)}"%20and%20would%20like%20to%20inquire%20about%20a%20car%20rental.`}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full"
+                  aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`}
+                  className="group flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold transition-colors hover:bg-paper"
                 >
-                  <Button variant="outline" className="w-full h-12 border-white/20 bg-white/10 hover:bg-white/20 text-white font-medium uppercase tracking-wider text-xs rounded-xl backdrop-blur-md cursor-pointer gap-2">
-                    <MessageSquare className="h-4 w-4 text-emerald-400" />
-                    <span>WhatsApp Concierge</span>
-                  </Button>
+                  <WhatsAppIcon className="h-[1.1rem] w-[1.1rem]" />
+                  <span className="tabular-nums">{whatsappDisplay}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-ink/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
               </div>
-
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60 font-medium">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-amber-300" />
-                  Guaranteed Punctuality
-                </span>
-                <span>24/7 Helpline</span>
-              </div>
+              <p className="mt-5 text-xs text-ink/50">The desk is open 24/7. No deposit to ask.</p>
             </div>
-
-            {/* Related Recent Stories */}
-            {relatedPosts.length > 0 && (
-              <div className="space-y-5 border border-emerald-950/15 bg-white p-6 sm:p-8">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-emerald-700">
-                    Latest Insights
-                  </span>
-                  <h3 className="text-xl font-heading font-medium text-emerald-950 tracking-tight">
-                    Related Articles
-                  </h3>
-                </div>
-
-                <div className="space-y-4 divide-y divide-gray-100">
-                  {relatedPosts.map((relatedPost) => (
-                    <Link
-                      key={relatedPost.id}
-                      href={`/blog/${relatedPost.slug}`}
-                      className="group block pt-4 first:pt-0 space-y-2 cursor-pointer"
-                    >
-                      <h4 className="font-heading font-medium text-sm text-gray-800 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
-                        {relatedPost.title}
-                      </h4>
-                      <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-wider text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(relatedPost.created_at)}
-                        </span>
-                        <span className="text-emerald-700">
-                          {getReadingTime(relatedPost.content)} min
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </aside>
         </div>
-      </section>
 
-      {/* ── Bottom Quote & Callout ── */}
-      <section className="container mt-20">
-        <div className="border-l-2 border-amber-400 bg-emerald-950 p-8 text-center text-white sm:p-14 md:p-16">
-          <div className="mx-auto max-w-3xl space-y-6">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-heading font-medium text-white leading-tight">
-              Ready to Experience Dhaka&apos;s Premier Car Rental Service?
-            </h2>
-            <p className="text-sm sm:text-base text-emerald-100/80 font-medium max-w-xl mx-auto">
-              Transparent rates, clean air-conditioned vehicles, and verified professional drivers ready at your schedule.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 pt-2">
-              <Link href="/vehicles">
-                <Button size="lg" className="h-12 px-8 rounded-xl bg-linear-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-emerald-950 font-medium uppercase tracking-wider text-xs shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] cursor-pointer">
-                  <span>Browse Available Fleet</span>
-                  <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                </Button>
+        {/* Related */}
+        {relatedPosts.length > 0 && (
+          <section className="mt-20 border-t border-ink/10 pt-12 sm:mt-24" aria-labelledby="related-posts">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <h2 id="related-posts" className="type-display font-heading text-[clamp(2rem,5vw,3.2rem)]">
+                Keep <span className="type-accent text-gold-deep">reading.</span>
+              </h2>
+              <Link
+                href="/blog"
+                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]"
+              >
+                <ArrowLeft className="h-4 w-4" /> All guides
               </Link>
-              <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-                <Button size="lg" variant="outline" className="h-12 px-6 rounded-xl border-white/20 text-white hover:bg-white/10 font-medium uppercase tracking-wider text-xs backdrop-blur-md cursor-pointer gap-2">
-                  <Phone className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Call: {siteConfig.phone}</span>
-                </Button>
-              </a>
             </div>
-          </div>
-        </div>
-      </section>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-3">
+              {relatedPosts.map((relatedPost, idx) => (
+                <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`} className="group flex flex-col">
+                  <span className={`relative block aspect-[16/10] overflow-hidden rounded-[1.6rem] ${TINTS[idx % TINTS.length]}`}>
+                    {relatedPost.cover_image ? (
+                      <Image
+                        src={relatedPost.cover_image}
+                        alt={relatedPost.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        className="object-contain p-5 transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span className="type-accent font-heading text-xl text-ink/30">Jinia Journal</span>
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-4 block px-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink/45">
+                    {formatDate(relatedPost.created_at)} · {getReadingTime(relatedPost.content)} min
+                  </span>
+                  <h3 className="type-heading mt-2 line-clamp-3 px-1 font-heading text-[clamp(1.25rem,2.5vw,1.45rem)] [overflow-wrap:anywhere]">
+                    {relatedPost.title}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 }

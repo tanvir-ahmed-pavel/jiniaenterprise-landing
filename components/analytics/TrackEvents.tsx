@@ -6,6 +6,7 @@ import {
 } from "react";
 import { detectAiReferrer } from "@/lib/analytics/ai-referrer";
 import type { AnalyticsEventName } from "@/lib/analytics/events";
+import { pushEvent } from "@/lib/analytics/datalayer";
 
 type TrackPayload = Record<string, string | number | boolean | null | undefined>;
 
@@ -22,6 +23,7 @@ function trackClientEvent(name: string, data?: TrackPayload) {
     Object.entries(data ?? {}).filter(([, value]) => value !== undefined),
   );
 
+  pushEvent(name, cleaned);
   try {
     window.umami?.track(name, cleaned);
   } catch {

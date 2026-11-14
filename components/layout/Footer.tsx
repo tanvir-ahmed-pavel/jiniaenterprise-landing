@@ -1,177 +1,126 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Phone, Mail, MapPin, MessageSquare, ArrowUpRight } from "lucide-react";
+import { OpenWizardButton } from "@/components/wizard/OpenWizardButton";
+import { ArrowRight, ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
 import { siteConfig } from "@/lib/config";
 
+const columns = [
+  {
+    title: "Ride",
+    links: [
+      { href: "/booking", label: "Booking form" },
+      { href: "/vehicles", label: "The fleet" },
+      { href: "/airport-car-rental", label: "Airport transfers" },
+      { href: "/corporate-car-rental", label: "Corporate & embassy" },
+      { href: "/monthly-car-rental", label: "Monthly with driver" },
+      { href: "/car-rental-with-driver", label: "Car rental with driver" },
+    ],
+  },
+  {
+    title: "Explore",
+    links: [
+      { href: "/routes", label: "Outstation routes" },
+      { href: "/locations", label: "Areas we cover" },
+      { href: "/pricing", label: "Pricing" },
+      { href: "/compare", label: "Compare" },
+      { href: "/reviews", label: "Reviews" },
+      { href: "/blog", label: "Journal" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About Jinia" },
+      { href: "/faq", label: "FAQ" },
+      { href: "/policies", label: "Policies" },
+      { href: "/glossary", label: "Glossary" },
+      { href: "/contact", label: "Contact" },
+    ],
+  },
+];
+
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
+  const tel = siteConfig.phone.replace(/\s/g, "");
 
   return (
-    <footer className="relative mt-0 overflow-hidden border-t border-amber-400/35 bg-emerald-950 pb-12 pt-16">
-
-      {/* ── Sleek, Subtle Golden Top Rim Line ── */}
-      <div className="absolute top-0 inset-x-0 h-px bg-amber-400/60 z-10" />
-
-      <div className="container relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-10 xl:gap-8">
-          {/* Brand Identity */}
-          <div className="space-y-6 xl:col-span-3">
-            <Link href="/" className="group inline-flex flex-col">
-              <span className="text-2xl font-heading font-medium tracking-wider text-white group-hover:text-emerald-400 transition-colors">
-                JINIA
-              </span>
-              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-400 mt-1">
-                Enterprise
-              </span>
-            </Link>
-            
-            <p className="text-xs text-white/60 leading-relaxed font-medium">
-              {siteConfig.tagline}. Dedicated to delivering premium, secure, and punctual transportation for corporate leaders, embassies, and distinguished travelers.
-            </p>
-
-            <div className="flex gap-3">
-              {[
-                { icon: MessageSquare, href: `https://wa.me/${siteConfig.whatsapp}`, label: "WhatsApp Hotline" },
-                { icon: Phone, href: `tel:${siteConfig.phone.replace(/\s/g, "")}`, label: "Direct Call" },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-medium text-white hover:bg-emerald-500 hover:text-emerald-950 transition-all duration-300 shadow-[0_6px_18px_-14px_rgba(6,52,38,.30)]"
-                  aria-label={social.label}
-                >
-                  <social.icon className="h-4 w-4" />
-                  <span>{social.label}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="md:pl-0 xl:pl-4 xl:col-span-4">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
-              Navigation
-            </h4>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
-              {[
-                { href: "/vehicles", label: "Fleet Collection" },
-                { href: "/car-rental-dhaka", label: "Car Rental Dhaka" },
-                { href: "/airport-car-rental", label: "Airport Transfer" },
-                { href: "/corporate-car-rental", label: "Corporate Rental" },
-                { href: "/monthly-car-rental", label: "Monthly Rental" },
-                { href: "/pricing", label: "Pricing" },
-                { href: "/locations", label: "Locations" },
-                { href: "/routes", label: "Routes" },
-                { href: "/compare", label: "Compare" },
-                { href: "/reviews", label: "Reviews" },
-                { href: "/policies", label: "Policies" },
-                { href: "/glossary", label: "Glossary" },
-                { href: "/faq", label: "FAQ" },
-                { href: "/booking", label: "Reserve Vehicle" },
-                { href: "/about", label: "About Jinia" },
-                { href: "/contact", label: "Contact Desk" },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="group flex items-center gap-1.5 text-xs font-normal text-white/70 hover:text-emerald-400 transition-colors"
-                  >
-                    <span>{link.label}</span>
-                    <ArrowUpRight className="h-3 w-3 shrink-0 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Service Menu */}
-          <div className="xl:col-span-2">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
-              Core Solutions
-            </h4>
-            <ul className="space-y-3 text-xs font-medium text-white/60">
-              {[
-                { href: "/car-rental-with-driver", label: "Car rental with driver" },
-                { href: "/airport-car-rental", label: "Airport meet & greet" },
-                { href: "/corporate-car-rental", label: "Corporate & embassy fleet" },
-                { href: "/monthly-car-rental", label: "Monthly chauffeur hire" },
-                { href: "/services", label: "All concierge services" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-2 hover:text-emerald-400 transition-colors"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Details */}
-          <div className="space-y-6 xl:col-span-3">
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-400/80 mb-6">
-              Concierge Office
-            </h4>
-            <div className="space-y-4">
-              <a
-                href="https://maps.google.com/?q=Unicorn+Plaza+Dhaka"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex gap-3 group p-2 rounded-xl hover:bg-white/5 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-emerald-950 transition-colors">
-                  <MapPin className="h-4 w-4" />
-                </div>
-                <div className="text-xs font-medium text-white/70 leading-relaxed group-hover:text-white transition-colors">
-                  40/2, Unicorn Plaza (Level-2), <br />
-                  Shop-9,10, Dhaka 1212
-                </div>
-              </a>
-
-              <div className="flex gap-3 p-2 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 text-emerald-400">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <div className="flex flex-col text-xs font-medium text-white/80">
-                  <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="hover:text-emerald-400 transition-colors">
-                    {siteConfig.phone}
-                  </a>
-                  <span className="text-[10px] text-emerald-400/70 font-normal mt-0.5">24/7 Priority Support</span>
-                </div>
-              </div>
-
-              <div className="flex gap-3 p-2 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 text-emerald-400">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <a
-                  href={`mailto:jiniaenterprise.com@gmail.com`}
-                  className="text-xs font-normal text-white/80 hover:text-emerald-400 transition-colors self-center"
-                >
-                  jiniaenterprise.com@gmail.com
-                </a>
-              </div>
-            </div>
+    <footer className="relative -mt-8 overflow-hidden rounded-t-[2.5rem] bg-forest-deep text-paper">
+      <div className="container pt-14 sm:pt-16">
+        {/* Brand + actions */}
+        <div className="flex flex-col gap-8 border-b border-paper/10 pb-10 lg:flex-row lg:items-center lg:justify-between">
+          <Link href="/" className="inline-flex items-center gap-3" aria-label="Jinia Enterprise, home">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-paper p-1.5">
+              <Image src="/images/logo.png" alt="" width={300} height={242} className="h-full w-auto" />
+            </span>
+            <span className="flex flex-col leading-none">
+              <span className="font-heading text-2xl font-semibold tracking-[-0.03em]">Jinia Enterprise</span>
+              <span className="mt-1.5 text-sm text-paper/55">Chauffeur-driven cars across Dhaka and Bangladesh, since 2014.</span>
+            </span>
+          </Link>
+          <div className="flex flex-wrap gap-2">
+            <OpenWizardButton className="group inline-flex h-12 items-center gap-2 rounded-full bg-gold pl-5 pr-1.5 text-sm font-semibold text-ink transition-colors hover:bg-paper">
+              Request a car <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-paper transition-transform group-hover:translate-x-0.5"><ArrowRight className="h-3.5 w-3.5" /></span>
+            </OpenWizardButton>
+            <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`} className="group inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-semibold ring-1 ring-paper/20 transition-colors hover:bg-paper hover:text-ink">
+              <WhatsAppIcon className="h-4 w-4 text-[#25D366]" /> <span className="tabular-nums">{whatsappDisplay}</span> <ArrowUpRight className="h-3.5 w-3.5 opacity-50" />
+            </a>
+            <a href={`tel:${tel}`} className="inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-semibold ring-1 ring-paper/20 transition-colors hover:bg-paper hover:text-ink">
+              <Phone className="h-4 w-4" /> Call
+            </a>
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="mt-14 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-white/40">
-            &copy; {currentYear} Jinia Enterprise. All rights reserved.
-          </p>
-          <div className="flex items-center gap-3">
-            <span aria-hidden className="hidden h-px w-8 shrink-0 bg-amber-400/70 sm:block" />
-            <span className="max-w-md text-[11px] font-medium leading-relaxed text-white/55">
-              {siteConfig.philosophy}
-            </span>
+        {/* Links + office */}
+        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12">
+          {columns.map((col) => (
+            <nav key={col.title} aria-label={col.title} className="lg:col-span-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper/40">{col.title}</p>
+              <ul className="mt-4 space-y-2.5">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="group inline-flex items-center gap-1 text-sm text-paper/75 transition-colors hover:text-paper">
+                      {l.label}
+                      <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+          <div className="space-y-4 text-sm sm:col-span-2 lg:col-span-4 lg:col-start-9">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper/40">Office</p>
+            <a href="https://maps.google.com/?q=Unicorn+Plaza+Gulshan+Dhaka" target="_blank" rel="noopener noreferrer" className="flex gap-3 text-paper/75 transition-colors hover:text-paper">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              <span>{siteConfig.address.line1}, {siteConfig.address.line2}<br />{siteConfig.address.city}, {siteConfig.address.country}</span>
+            </a>
+            <a href={`tel:${siteConfig.phone2.replace(/\s/g, "")}`} className="flex gap-3 text-paper/75 transition-colors hover:text-paper">
+              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              <span>{siteConfig.phone} · {siteConfig.phone2}<br />{siteConfig.phone3}</span>
+            </a>
+            <a href={`mailto:${siteConfig.email}`} className="flex gap-3 break-all text-paper/75 transition-colors hover:text-paper">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              <span>{siteConfig.email}</span>
+            </a>
+            <p className="pl-7 text-paper/50">Sat–Thu 9am–8pm · Fri 10am–6pm</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 border-t border-paper/10 py-6 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {year} Jinia Enterprise. All rights reserved.</p>
+          <div className="flex gap-5">
+            <Link href="/policies" className="hover:text-paper">Policies</Link>
+            <Link href="/contact" className="hover:text-paper">Contact</Link>
+            <a href="#top" className="hover:text-paper">Back to top ↑</a>
           </div>
         </div>
       </div>
+
+      {/* Wordmark: the brand set once, large and quiet. */}
+      <p aria-hidden className="pointer-events-none -mb-[3vw] select-none whitespace-nowrap text-center leading-[0.8]">
+        <span className="font-heading text-[19vw] font-semibold tracking-[-0.06em] text-paper/[0.07]">Jinia</span>
+        <span className="type-accent text-[19vw] text-gold/[0.18]"> Ent.</span>
+      </p>
     </footer>
   );
 }

@@ -13,26 +13,26 @@ export const metadata = createMetadata({
 
 export default function CompareIndexPage() {
   return (
-    <div className="pb-24">
+    <div className="bg-white pb-20 text-ink sm:pb-28">
       <PageHeader
         title="Compare options."
         subtitle="Choose by use case"
         description="Side-by-side guides so you pick capacity and package type with confidence."
         breadcrumbs={[{ label: "Compare" }]}
       />
-      <div className="container grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="container grid gap-3 pt-10 sm:grid-cols-2 sm:pt-14 lg:grid-cols-3">
         {comparisons.map((c) => (
           <Link
             key={c.slug}
             href={`/compare/${c.slug}`}
-            className="rounded-3xl border border-emerald-100 bg-white/70 p-6 hover:border-emerald-300 transition-colors group"
+            className="group flex min-h-full flex-col rounded-[1.6rem] bg-paper-deep p-6 transition-colors hover:bg-tile-sand sm:p-7"
           >
-            <h2 className="text-lg font-heading font-medium text-emerald-950 group-hover:text-emerald-700">
+            <h2 className="type-heading font-heading text-xl text-ink sm:text-2xl">
               {c.title}
             </h2>
-            <p className="mt-2 text-sm text-gray-600 line-clamp-3">{c.answer}</p>
-            <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-emerald-800">
-              Open comparison <ArrowRight className="h-3.5 w-3.5" />
+            <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/60">{c.answer}</p>
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-ink">
+              Open comparison <ArrowRight className="h-4 w-4 text-gold-deep transition-transform group-hover:translate-x-0.5" />
             </span>
           </Link>
         ))}

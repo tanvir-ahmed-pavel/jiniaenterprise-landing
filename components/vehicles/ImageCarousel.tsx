@@ -91,7 +91,7 @@ export const ImageCarousel = memo(function ImageCarousel({
             // Fill the card media edge-to-edge. Multiply drops the white studio
             // plate baked into most vehicle shots so mixed sources share one
             // ground instead of each showing its own rectangle.
-            "object-cover mix-blend-multiply transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform motion-safe:group-hover/card:scale-[1.02]",
+            "object-cover transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform motion-safe:group-hover/card:scale-[1.02]",
             !isLoaded ? "opacity-0 scale-100" : "opacity-100"
           )}
         />

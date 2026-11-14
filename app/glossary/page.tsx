@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { definitions } from "@/content/definitions";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbSchema } from "@/lib/seo/schema";
-import { RelatedLinks } from "@/components/seo/RelatedLinks";
+import { PillLinks } from "@/components/seo/ContentPageShell";
 
 export const metadata = createMetadata({
   title: "Car Rental Definitions — Dhaka",
@@ -14,7 +14,7 @@ export const metadata = createMetadata({
 
 export default function GlossaryPage() {
   return (
-    <div className="pb-24">
+    <div className="bg-white pb-20 text-ink sm:pb-28">
       <JsonLd
         data={getBreadcrumbSchema([
           { name: "Home", path: "/" },
@@ -27,31 +27,36 @@ export default function GlossaryPage() {
         description="What we mean when we say full-day, outstation, or with driver."
         breadcrumbs={[{ label: "Glossary" }]}
       />
-      <div className="container max-w-3xl space-y-4">
-        {definitions.map((d) => (
-          <article
-            key={d.slug}
-            id={d.slug}
-            className="rounded-2xl border border-emerald-100 bg-white/70 p-6 scroll-mt-28"
-          >
-            <h2 className="text-xl font-heading font-medium text-emerald-950">
-              {d.term}
-            </h2>
-            <p className="mt-2 text-gray-700 font-medium leading-relaxed">
-              {d.shortDefinition}
-            </p>
-            {d.details.length > 0 && (
-              <ul className="mt-3 space-y-1.5">
-                {d.details.map((line) => (
-                  <li key={line} className="text-sm text-gray-500 leading-relaxed">
-                    • {line}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </article>
-        ))}
-        <RelatedLinks
+      <div className="container space-y-16 pt-10 sm:pt-14">
+        <div className="max-w-4xl divide-y divide-ink/10 border-y border-ink/10">
+          {definitions.map((d) => (
+            <article
+              key={d.slug}
+              id={d.slug}
+              className="grid scroll-mt-28 gap-3 py-8 sm:grid-cols-12 sm:gap-8"
+            >
+              <div className="sm:col-span-4">
+                <h2 className="type-heading font-heading text-xl text-ink sm:text-2xl">{d.term}</h2>
+              </div>
+              <div className="sm:col-span-8">
+                <p className="text-base font-medium leading-relaxed text-ink/80">
+                  {d.shortDefinition}
+                </p>
+                {d.details.length > 0 && (
+                  <ul className="mt-4 space-y-2">
+                    {d.details.map((line) => (
+                      <li key={line} className="flex gap-3 text-sm leading-relaxed text-ink/60">
+                        <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gold" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+        <PillLinks
           links={[
             { href: "/faq", label: "FAQ" },
             { href: "/pricing", label: "Pricing" },

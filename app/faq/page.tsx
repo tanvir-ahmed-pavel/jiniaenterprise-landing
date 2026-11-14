@@ -1,12 +1,10 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { createMetadata } from "@/lib/seo/metadata";
 import { getBreadcrumbSchema, getFAQSchema } from "@/lib/seo/schema";
 import { siteFaqs } from "@/lib/seo/content";
-import { businessIdentity, getTelHref, getWhatsAppHref } from "@/lib/business/identity";
-import { Button } from "@/components/ui/button";
-import { MessageSquare, Phone } from "lucide-react";
+import { Plus } from "lucide-react";
+import { ClosingCta, PillLinks } from "@/components/seo/ContentPageShell";
 
 export const metadata = createMetadata({
   title: "Car Rental FAQ — Dhaka",
@@ -17,7 +15,7 @@ export const metadata = createMetadata({
 
 export default function FaqPage() {
   return (
-    <div className="pb-24">
+    <div className="bg-white pb-20 text-ink sm:pb-28">
       <JsonLd
         data={[
           getFAQSchema(siteFaqs),
@@ -34,46 +32,36 @@ export default function FaqPage() {
         breadcrumbs={[{ label: "FAQ" }]}
       />
 
-      <div className="container max-w-3xl space-y-6">
-        {siteFaqs.map((faq) => (
-          <article
-            key={faq.question}
-            className="rounded-2xl border border-emerald-100 bg-white/70 p-6 md:p-8"
-          >
-            <h2 className="text-xl font-heading font-medium text-emerald-950">
-              {faq.question}
-            </h2>
-            <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
-          </article>
-        ))}
-
-        <div className="rounded-3xl border border-emerald-200 bg-emerald-50/80 p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <div>
-            <p className="font-heading font-medium text-emerald-950 text-lg">
-              Still need a quote?
-            </p>
-            <p className="text-sm text-emerald-900/70 mt-1">
-              {businessIdentity.phone} · {businessIdentity.email}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a href={getTelHref()}>
-              <Button className="gap-2 rounded-full bg-emerald-900">
-                <Phone className="h-4 w-4" /> Call
-              </Button>
-            </a>
-            <a href={getWhatsAppHref()} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="gap-2 rounded-full">
-                <MessageSquare className="h-4 w-4" /> WhatsApp
-              </Button>
-            </a>
-            <Link href="/booking">
-              <Button variant="ghost" className="rounded-full">
-                Booking form
-              </Button>
-            </Link>
-          </div>
+      <div className="container space-y-16 pt-10 sm:space-y-20 sm:pt-14">
+        <div className="max-w-4xl">
+          {siteFaqs.map((faq) => (
+            <details
+              key={faq.question}
+              className="jx-faq group mb-3 rounded-2xl bg-paper-deep px-5 transition-colors open:bg-tile-sand sm:px-6"
+            >
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left sm:gap-6 [&::-webkit-details-marker]:hidden">
+                <h2 className="text-base font-semibold tracking-tight sm:text-lg">{faq.question}</h2>
+                <span
+                  aria-hidden
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-paper transition-transform duration-300 group-open:rotate-45"
+                >
+                  <Plus className="h-4 w-4" />
+                </span>
+              </summary>
+              <p className="max-w-2xl pb-6 pr-2 text-[0.95rem] leading-relaxed text-ink/65 sm:pr-12">{faq.answer}</p>
+            </details>
+          ))}
         </div>
+
+        <PillLinks
+          links={[
+            { href: "/booking", label: "Booking form" },
+            { href: "/pricing", label: "Pricing" },
+            { href: "/glossary", label: "Definitions" },
+          ]}
+        />
+
+        <ClosingCta title="Still need a quote?" />
       </div>
     </div>
   );

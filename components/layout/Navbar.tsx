@@ -2,358 +2,256 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, Phone, MessageSquare, ChevronDown, ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, ArrowUpRight, ChevronDown, Menu, Phone, X } from "lucide-react";
+import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
+type Item = { label: string; description: string; href: string };
+type Group = { label: string; href?: string; items?: Item[]; feature?: { title: string; body: string; image: string; tint: string; href: string } };
+
+const NAV: Group[] = [
+  {
+    label: "Fleet",
+    items: [
+      { label: "All cars", description: "Sedans, SUVs, MPVs, microbuses and coaches, every one with a driver.", href: "/vehicles" },
+      { label: "Pricing", description: "How day, monthly and outstation rates are worked out.", href: "/pricing" },
+      { label: "Compare classes", description: "Sedan or SUV, MPV or microbus: which fits your group.", href: "/compare" },
+    ],
+    feature: { title: "Land Cruiser Prado", body: "The protocol favourite. See it in the fleet.", image: "/images/vehicles/photos/toyota-land-cruiser-prado-2016-20-side.webp", tint: "var(--color-tile-sage)", href: "/vehicles/toyota-prado" },
+  },
+  {
+    label: "Services",
+    items: [
+      { label: "Airport transfers", description: "Flight-tracked pickups at Hazrat Shahjalal, name board at arrivals.", href: "/airport-car-rental" },
+      { label: "Corporate & embassy", description: "Daily, monthly and delegation transport with one coordinator.", href: "/corporate-car-rental" },
+      { label: "Monthly with driver", description: "A dedicated car and driver, billed monthly.", href: "/monthly-car-rental" },
+      { label: "Car rental in Dhaka", description: "City hire by the day, with a driver who knows the roads.", href: "/car-rental-dhaka" },
+    ],
+    feature: { title: "Delegations", body: "Matched vehicles moving together on protocol time.", image: "/images/services/delegation.webp", tint: "var(--color-tile-stone)", href: "/services" },
+  },
+  {
+    label: "Travel",
+    items: [
+      { label: "Outstation routes", description: "Chattogram, Sylhet, Cox’s Bazar, Sreemangal and more.", href: "/routes" },
+      { label: "Areas we cover", description: "Gulshan, Banani, Baridhara, Uttara and every part of Dhaka.", href: "/locations" },
+      { label: "Journal", description: "Guides to getting around Dhaka and Bangladesh.", href: "/blog" },
+    ],
+    feature: { title: "Out of town", body: "Driver rest, overnights and timings agreed before you leave.", image: "/images/vehicles/photos/toyota-x-noah-2015-18-side.webp", tint: "var(--color-tile-sand)", href: "/routes" },
+  },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
+const openWizard = () => window.dispatchEvent(new Event("jinia:open-wizard"));
+
+function Logo({ onClick }: { onClick?: () => void }) {
+  return (
+    <Link href="/" onClick={onClick} className="group flex shrink-0 items-center gap-2.5" aria-label="Jinia Enterprise, home">
+      <Image src="/images/logo.png" alt="" width={300} height={242} priority className="h-10 w-auto transition-transform duration-500 group-hover:-rotate-3 sm:h-11" />
+      <span className="flex flex-col leading-none">
+        <span className="font-heading text-[1.15rem] font-semibold tracking-[-0.03em] text-ink">Jinia</span>
+        <span className="mt-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold-deep">Enterprise</span>
+      </span>
+    </Link>
+  );
+}
+
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  /** At the very top the bar sits on the hero with no plate of its own; the
-   *  white background and rule fade in once the page has moved under it.
-   *  Type stays dark throughout — the hero is light, not a dark photograph. */
-  const [isAtTop, setIsAtTop] = useState(true);
-  /** Tucks away on the way down and comes back on the way up. */
-  const [isHidden, setIsHidden] = useState(false);
-  const isTransparent = false;
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const mobileMenuCloseRef = useRef<HTMLButtonElement>(null);
-  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const path = usePathname();
+  const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState<string | null>(null);
+  const [atTop, setAtTop] = useState(true);
+  const [hidden, setHidden] = useState(false);
+  const sheet = useRef<HTMLDivElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    const onScroll = () => {
+    // One read per frame, and a little hysteresis: the bar only hides after
+    // a deliberate 24px downward scroll and only returns after 12px upward,
+    // so small trackpad jitters don't make it bounce.
+    let last = window.scrollY;
+    let anchor = last;
+    let dir = 0;
+    let raf = 0;
+    const read = () => {
+      raf = 0;
       const y = window.scrollY;
-      setIsAtTop(y < 8);
-      setIsHidden(y > 140 && y > lastScrollY);
-      lastScrollY = y;
+      setAtTop(y < 24);
+      const d = y > last ? 1 : y < last ? -1 : 0;
+      if (d && d !== dir) { dir = d; anchor = last; }
+      if (dir === 1 && y > 160 && y - anchor > 24) setHidden(true);
+      if (dir === -1 && anchor - y > 12) setHidden(false);
+      if (y < 160) setHidden(false);
+      if (Math.abs(y - last) > 4) setMenu(null);
+      last = y;
     };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    raf = requestAnimationFrame(read);
     window.addEventListener("scroll", onScroll, { passive: true });
-    const initial = requestAnimationFrame(onScroll);
-    return () => {
-      cancelAnimationFrame(initial);
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); };
   }, []);
 
+  // Close menus on navigation.
   useEffect(() => {
-    if (!isOpen) return;
+    const id = requestAnimationFrame(() => { setOpen(false); setMenu(null); });
+    return () => cancelAnimationFrame(id);
+  }, [path]);
 
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-
-    const focusableSelector =
-      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-    const handleMenuKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-
-      const focusable = Array.from(
-        mobileMenuRef.current?.querySelectorAll<HTMLElement>(focusableSelector) || []
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
+  useEffect(() => {
+    if (!open) return;
+    window.dispatchEvent(new CustomEvent("jinia:overlay", { detail: 1 }));
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handleMenuKeyDown);
-    requestAnimationFrame(() => mobileMenuCloseRef.current?.focus());
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", k);
+    requestAnimationFrame(() => closeBtn.current?.focus());
+    return () => { document.body.style.overflow = prev; document.removeEventListener("keydown", k); window.dispatchEvent(new CustomEvent("jinia:overlay", { detail: -1 })); };
+  }, [open]);
 
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleMenuKeyDown);
-      if (previouslyFocused && document.contains(previouslyFocused)) {
-        requestAnimationFrame(() => previouslyFocused.focus());
-      }
-    };
-  }, [isOpen]);
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/vehicles", label: "Fleet" },
-    { href: "/services", label: "Services" },
-    { href: "/car-rental-dhaka", label: "Dhaka" },
-    { href: "/blog", label: "Journal" },
-    { href: "/booking", label: "Reserve" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/about", label: "Story" },
-    { href: "/contact", label: "Connect" },
-  ];
-
-  // Labels are the vocabulary of a chauffeur service, not of a SaaS product.
-  const menus = {
-    Fleet: [
-      { label: "The fleet", description: "Premium cars, SUVs, microbuses, and buses for every journey.", href: "/vehicles" },
-      { label: "Start a booking", description: "Share your dates and route; the desk will return a clear quote.", href: "/booking" },
-      { label: "Airport transfers", description: "A calm, reliable handoff from Hazrat Shahjalal to your destination.", href: "/airport-car-rental" },
-      { label: "Corporate mobility", description: "Daily, monthly, and delegation transport for busy teams.", href: "/corporate-car-rental" },
-      { label: "Self-drive rental", description: "Flexible vehicle rental when you want to take the wheel.", href: "/self-drive-car-rental" },
-    ],
-    Services: [
-      { label: "For businesses", description: "Reliable transport programs for offices, events, and teams.", href: "/corporate-car-rental" },
-      { label: "For travelers", description: "Airport pickups, city rides, and long-distance travel across Bangladesh.", href: "/car-rental-bangladesh" },
-      { label: "For delegations", description: "Synchronized VIP convoys with one point of contact.", href: "/services" },
-      { label: "For monthly needs", description: "A dedicated car and driver for the rhythm of your month.", href: "/monthly-car-rental" },
-    ],
-    Company: [
-      { label: "How it works", description: "From first message to a car at your door.", href: "/faq" },
-      { label: "Journal", description: "Guides to getting around Dhaka and Bangladesh.", href: "/blog" },
-      { label: "About Jinia", description: "The people and standards behind the service.", href: "/about" },
-      { label: "Contact concierge", description: "Ask a question or request a tailored quote.", href: "/contact" },
-    ],
-  } as const;
+  const enter = (label: string) => { window.clearTimeout(closeTimer.current); setMenu(label); };
+  const leave = () => { closeTimer.current = window.setTimeout(() => setMenu(null), 140); };
+  const active = NAV.find((g) => g.label === menu && g.items);
+  const isOn = (g: Group) => (g.href ? path === g.href : g.items?.some((i) => path.startsWith(i.href)));
 
   return (
-    <header className={cn("fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.455,0.03,0.515,0.955)]", isHidden && "-translate-y-full")}>
-      <nav
-        className={cn(
-          "jinia-nav pointer-events-auto mx-auto border-b px-4 py-3 sm:px-6 lg:px-10",
-          isTransparent
-            ? "border-white/15"
-            : isAtTop
-              ? "border-transparent bg-transparent"
-              : "is-solid border-emerald-950/10 bg-white/95"
-        )}
-      >
-        <div className="flex items-center justify-between">
-          {/* Logo Section */}
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative p-1 transition-transform duration-500 group-hover:scale-105">
-              <Image
-                src="/images/logo.png"
-                alt="Jinia Enterprise"
-                width={144}
-                height={48}
-                className={cn(
-                  "h-8 sm:h-9 w-auto transition-transform duration-500",
-                  isTransparent && "drop-shadow-[0_6px_18px_-14px_rgba(6,52,38,.30)] brightness-0 invert"
-                )}
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className={cn(
-                "text-base sm:text-lg font-heading font-medium tracking-[0.05em] leading-none transition-colors duration-500",
-                isTransparent ? "text-white" : "text-emerald-950"
-              )}>
-                JINIA
-              </span>
-              <span className={cn(
-                "text-[9px] font-medium uppercase tracking-[0.08em] leading-none mt-0.5 transition-colors duration-500",
-                isTransparent ? "text-emerald-300" : "text-emerald-700"
-              )}>
-                Enterprise
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-7" onMouseLeave={() => setActiveMenu(null)}>
-            {(Object.keys(menus) as Array<keyof typeof menus>).map((label) => (
-              <div key={label} className="relative" onMouseEnter={() => setActiveMenu(label)}>
-                <button
-                  type="button"
-                  onFocus={() => setActiveMenu(label)}
-                  className={cn("group relative flex items-center gap-1.5 py-2 text-sm font-medium transition-colors", activeMenu === label ? "text-emerald-950" : "text-emerald-950/60 hover:text-emerald-950")}
-                  aria-expanded={activeMenu === label}
-                >
-                  {label}<ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-500", activeMenu === label && "rotate-180")} />
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "absolute inset-x-0 bottom-0 h-px origin-left bg-amber-400 transition-transform duration-300 ease-out",
-                      activeMenu === label ? "scale-x-100" : "scale-x-0"
-                    )}
-                  />
-                </button>
-                <div className={cn("absolute left-1/2 top-full w-[min(760px,calc(100vw-48px))] -translate-x-1/2 pt-4 transition-all duration-300 ease-[cubic-bezier(0.165,0.84,0.44,1)]", activeMenu === label ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0 pointer-events-none")}>
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-5 rounded-[4px] border border-emerald-950/10 bg-white p-7 shadow-[0_24px_80px_-24px_rgba(6,52,38,0.28)]">
-                    <div className="col-span-2 border-b border-emerald-950/10 pb-4">
-                      <p className="type-label text-emerald-700">Jinia Enterprise</p>
-                      <p className="mt-1 text-sm text-emerald-950/55">A considered way to move through Dhaka.</p>
-                    </div>
-                    {menus[label].map((item) => (
-                      <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)} className="group flex gap-3 rounded-sm p-2 -m-2 transition-colors hover:bg-emerald-50/70">
-                        <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        <span><span className="block text-sm font-medium text-emerald-950">{item.label}</span><span className="mt-1 block max-w-[250px] text-xs leading-relaxed text-emerald-950/55">{item.description}</span></span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Link
-              href="/booking"
-              className="group relative flex items-center py-2 text-sm font-medium text-emerald-950 transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-4"
-            >
-              Reserve
-              <span aria-hidden className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-amber-400 transition-transform duration-300 group-hover:scale-x-100" />
-            </Link>
-          </div>
-
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <div className={cn(
-              "hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-medium border transition-colors",
-              isTransparent 
-                ? "text-emerald-300 border-emerald-400/30 bg-emerald-950/40" 
-                : "text-emerald-800 border-emerald-200 bg-emerald-50/70"
-            )}>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>24/7 Concierge</span>
-            </div>
-
-            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "gap-2 rounded-full font-medium text-xs h-10 px-3.5 transition-all duration-300",
-                  isTransparent 
-                    ? "text-white hover:bg-white/15" 
-                    : "text-emerald-950 hover:bg-emerald-50"
-                )}
-              >
-                <Phone className="h-3.5 w-3.5" />
-                <span>Call</span>
-              </Button>
-            </a>
-
-            <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button 
-                size="sm" 
-                className={cn(
-                  "gap-2 px-5 h-10 rounded-full shadow-[0_12px_30px_-24px_rgba(6,52,38,.35)] transition-all duration-300 hover:scale-105 font-medium uppercase text-[11px] tracking-wider",
-                  isTransparent 
-                    ? "bg-white text-emerald-950 hover:bg-emerald-50 shadow-white/10" 
-                    : "bg-emerald-900 text-white hover:bg-emerald-800 shadow-emerald-950/20"
-                )}
-              >
-                <MessageSquare className="h-3.5 w-3.5" />
-                <span>WhatsApp</span>
-              </Button>
-            </a>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            ref={mobileMenuTriggerRef}
-            type="button"
+    <>
+      <header className={cn("fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform", hidden && !menu && "-translate-y-[120%]")}>
+        <div className={cn("transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", atTop ? "px-0 pt-0" : "px-3 pt-2 sm:px-4 sm:pt-3")}>
+          <nav
+            aria-label="Main"
+            onMouseLeave={leave}
             className={cn(
-              "flex items-center lg:hidden w-11 h-11 rounded-xl justify-center transition-all duration-300 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-              isTransparent
-                ? "bg-white/15 text-white hover:bg-white/25 border border-white/20"
-                : "bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border border-emerald-200/60"
+              "mx-auto flex items-center justify-between gap-4 rounded-full transition-[max-width,padding,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              atTop
+                ? "max-w-[100rem] bg-white/0 px-4 py-3 shadow-none ring-1 ring-transparent sm:px-6 lg:px-10"
+                : "max-w-6xl bg-white/92 py-2 pl-3 pr-2 shadow-[0_14px_40px_-24px_rgba(8,30,20,.45)] ring-1 ring-ink/8 backdrop-blur-xl sm:pl-4",
             )}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-controls="mobile-navigation"
-            aria-expanded={isOpen}
-            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
+            <Logo />
 
-        {/* Mobile Nav */}
-        <div
-          ref={mobileMenuRef}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="mobile-navigation-title"
-          aria-hidden={!isOpen}
-          inert={!isOpen}
-          className={cn(
-            "fixed inset-0 w-full min-h-dvh overflow-y-auto bg-emerald-950/98 backdrop-blur-3xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] z-40 lg:hidden flex flex-col items-center justify-between px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]",
-            isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none -translate-y-8"
-          )}
-        >
-          <div className="flex w-full max-w-sm items-center justify-between border-b border-white/15 pb-4">
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-400 opacity-80">
-                Jinia Enterprise
-              </p>
-              <h2 id="mobile-navigation-title" className="mt-1 text-sm font-medium text-white">
-                Menu navigation
-              </h2>
-            </div>
-            <button
-              ref={mobileMenuCloseRef}
-              type="button"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close navigation menu"
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-white/5 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950"
-            >
-              <X className="h-5 w-5" aria-hidden="true" />
-            </button>
-          </div>
-
-          <nav aria-label="Mobile primary navigation" className="w-full max-w-sm py-10">
-            <ul className="space-y-1">
-              {navLinks.map((link, idx) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "group flex min-h-12 items-center justify-between rounded-xl px-3 transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-inset",
-                      isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-                    )}
-                    style={{ transitionDelay: `${100 + idx * 50}ms` }}
-                  >
-                    <span className="type-display text-3xl sm:text-4xl font-heading text-white transition-colors group-hover:text-emerald-400">
-                      {link.label}
-                    </span>
-                    <ArrowUpRight className="h-4 w-4 text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
-                  </Link>
+            <ul className="hidden items-center gap-1 lg:flex">
+              {NAV.map((g) => (
+                <li key={g.label} onMouseEnter={() => (g.items ? enter(g.label) : setMenu(null))}>
+                  {g.items ? (
+                    <button
+                      type="button"
+                      aria-expanded={menu === g.label}
+                      onClick={() => setMenu(menu === g.label ? null : g.label)}
+                      className={cn("flex h-10 items-center gap-1 rounded-full px-4 text-sm font-semibold transition-colors", menu === g.label || isOn(g) ? "bg-paper-deep text-ink" : "text-ink/65 hover:text-ink")}
+                    >
+                      {g.label}
+                      <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300", menu === g.label && "rotate-180")} />
+                    </button>
+                  ) : (
+                    <Link href={g.href!} className={cn("flex h-10 items-center rounded-full px-4 text-sm font-semibold transition-colors", isOn(g) ? "bg-paper-deep text-ink" : "text-ink/65 hover:text-ink")}>
+                      {g.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
+
+            <div className="flex items-center gap-1.5">
+              <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`} className="group hidden h-10 items-center gap-2 rounded-full px-3 text-sm font-semibold text-ink/75 transition-colors hover:text-ink xl:flex">
+                <WhatsAppIcon className="h-[1.1rem] w-[1.1rem] text-[#128C4B]" /> <span className="tabular-nums">{whatsappDisplay}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-ink/35 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+              <button type="button" onClick={openWizard} className="group flex h-10 items-center gap-2 rounded-full bg-ink pl-4 pr-1.5 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft sm:h-11">
+                <span className="hidden sm:inline">Request a car</span>
+                <span className="sm:hidden">Request</span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gold text-ink transition-transform group-hover:translate-x-0.5 sm:h-8 sm:w-8"><ArrowRight className="h-3.5 w-3.5" /></span>
+              </button>
+              <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="site-menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep text-ink lg:hidden">
+                <Menu className="h-[1.1rem] w-[1.1rem]" />
+              </button>
+            </div>
           </nav>
-          
-          <div className={cn(
-            "flex flex-col gap-3 w-full max-w-sm pt-8 transition-all duration-700 delay-300",
-            isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          )}>
-            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}>
-              <Button
-                variant="outline"
-                className="w-full h-14 gap-3 rounded-2xl border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm font-medium uppercase tracking-wider"
-              >
-                <Phone className="h-4 w-4 text-emerald-400" /> Direct Call: {siteConfig.phone}
-              </Button>
-            </a>
-            <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button className="w-full h-14 gap-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-sm font-medium uppercase tracking-wider shadow-[0_18px_44px_-32px_rgba(6,52,38,.40)] shadow-emerald-500/20">
-                <MessageSquare className="h-4 w-4" /> WhatsApp Hotline
-              </Button>
-            </a>
+
+          {/* Desktop mega panel */}
+          <div onMouseEnter={() => menu && enter(menu)} onMouseLeave={leave} className={cn("mx-auto hidden max-w-6xl px-0 pt-2 transition-[opacity,transform] duration-300 lg:block", active ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0")}>
+            {active && (
+              <div className="grid grid-cols-12 gap-2 rounded-[2rem] bg-white p-2 shadow-[0_30px_80px_-30px_rgba(8,30,20,.4)] ring-1 ring-ink/8">
+                <ul className="col-span-7 grid content-start gap-1 p-2">
+                  {active.items!.map((it) => (
+                    <li key={it.href}>
+                      <Link href={it.href} onClick={() => setMenu(null)} className="group flex items-start justify-between gap-4 rounded-2xl p-4 transition-colors hover:bg-paper-deep">
+                        <span>
+                          <span className="block font-semibold">{it.label}</span>
+                          <span className="mt-0.5 block text-sm text-ink/55">{it.description}</span>
+                        </span>
+                        <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-ink/30 transition-colors group-hover:text-ink" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {active.feature && (
+                  <Link href={active.feature.href} onClick={() => setMenu(null)} className="group col-span-5 flex flex-col justify-between overflow-hidden rounded-[1.6rem] p-6" style={{ backgroundColor: active.feature.tint }}>
+                    <span>
+                      <span className="block font-heading text-2xl font-semibold tracking-[-0.03em]">{active.feature.title}</span>
+                      <span className="mt-1 block text-sm text-ink/60">{active.feature.body}</span>
+                    </span>
+                    <span className="relative mt-4 block aspect-[16/8]">
+                      <Image src={active.feature.image} alt="" fill sizes="420px" className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-x-2 group-hover:scale-105" />
+                    </span>
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
-      </nav>
-    </header>
+      </header>
+
+      {/* Phone menu sheet */}
+      <div aria-hidden onClick={() => setOpen(false)} className={cn("fixed inset-0 z-[58] bg-ink/40 transition-opacity duration-300 lg:hidden", open ? "opacity-100" : "pointer-events-none opacity-0")} />
+      <div
+        ref={sheet}
+        id="site-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+        inert={!open}
+        className={cn("fixed inset-y-0 right-0 z-[59] flex w-full max-w-md flex-col bg-paper transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden", open ? "translate-x-0" : "translate-x-full")}
+      >
+        <div className="flex items-center justify-between px-4 py-3">
+          <Logo onClick={() => setOpen(false)} />
+          <button ref={closeBtn} type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep"><X className="h-[1.1rem] w-[1.1rem]" /></button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
+          {NAV.map((g, n) => (
+            <div key={g.label} className="border-b border-ink/10 py-4">
+              {g.items ? (
+                <details className="group" open={n === 0}>
+                  <summary className="flex cursor-pointer list-none items-center justify-between">
+                    <span className="font-heading text-[2rem] font-semibold tracking-[-0.04em]"><span className="mr-3 align-top text-xs tabular-nums text-gold-deep">0{n + 1}</span>{g.label}</span>
+                    <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <ul className="mt-3 grid gap-1 pl-7">
+                    {g.items.map((it) => (
+                      <li key={it.href}><Link href={it.href} onClick={() => setOpen(false)} className="block rounded-xl py-2 text-base text-ink/70 hover:text-ink">{it.label}</Link></li>
+                    ))}
+                  </ul>
+                </details>
+              ) : (
+                <Link href={g.href!} onClick={() => setOpen(false)} className="flex items-center justify-between font-heading text-[2rem] font-semibold tracking-[-0.04em]">
+                  <span><span className="mr-3 align-top text-xs tabular-nums text-gold-deep">0{n + 1}</span>{g.label}</span>
+                  <ArrowUpRight className="h-5 w-5" />
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-2 border-t border-ink/10 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
+          <button type="button" onClick={() => { setOpen(false); openWizard(); }} className="flex h-14 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-paper">Request a car <ArrowRight className="h-4 w-4" /></button>
+          <div className="grid grid-cols-2 gap-2">
+            <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#25D366] text-sm font-semibold text-ink"><WhatsAppIcon className="h-4 w-4" /> {whatsappDisplay}</a>
+            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="flex h-12 items-center justify-center gap-2 rounded-full text-sm font-semibold ring-1 ring-ink/15"><Phone className="h-4 w-4" /> Call</a>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

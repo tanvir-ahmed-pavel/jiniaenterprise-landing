@@ -6,17 +6,28 @@ import { Footer } from "@/components/layout/Footer";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AiReferralCapture } from "@/components/analytics/TrackEvents";
+import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
 import { getSiteMetadata } from "@/lib/seo/metadata";
 import {
   getLocalBusinessSchema,
   getWebSiteSchema,
 } from "@/lib/seo/schema";
 import { businessIdentity } from "@/lib/business/identity";
-import Script from "next/script";
+import { Familjen_Grotesk, Hanken_Grotesk, Instrument_Serif } from "next/font/google";
+
+/** Storefront pairing: a tight, characterful grotesk for display, a serif
+ *  italic for the one or two words per headline that carry the voice, and a
+ *  quiet grotesk for reading. Exposed as CSS variables; globals.css owns use. */
+const display = Familjen_Grotesk({ subsets: ["latin"], variable: "--font-display", display: "swap", weight: ["400", "500", "600", "700"] });
+const accent = Instrument_Serif({ subsets: ["latin"], variable: "--font-accent", display: "swap", weight: "400", style: ["normal", "italic"] });
+const text = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-text", display: "swap" });
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // When the on-screen keyboard opens, resize the page (and dvh units) instead
+  // of overlaying it, so bottom sheets sit above the keyboard.
+  interactiveWidget: "resizes-content",
   themeColor: "#0a1912",
 };
 
@@ -51,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-BD" suppressHydrationWarning>
+    <html lang="en-BD" className={cn(display.variable, accent.variable, text.variable)} suppressHydrationWarning>
       <head>
         <JsonLd data={[getLocalBusinessSchema(), getWebSiteSchema()]} />
         <script
@@ -66,6 +77,8 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
+        <GoogleTagManagerNoScript />
+        <GoogleTagManager />
         <AiReferralCapture />
         <SiteShell
           navbar={<Navbar />}
@@ -81,13 +94,6 @@ export default function RootLayout({
         >
           {children}
         </SiteShell>
-
-        <Script
-          id="nodi-chat-script"
-          src="https://cdn.chat-widget-source.usenodi.com/staging/index.js"
-          data-widget-id="wc_b9a30cb72b357f06dbd346314dcfb404"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );

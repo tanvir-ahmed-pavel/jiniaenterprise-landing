@@ -211,32 +211,23 @@ export const corporateClients = [
   { name: "KGS Sourcing", type: "Corporate" },
 ];
 
-/**
- * PLACEHOLDER COPY — not real quotes. Written so the constellation can be
- * designed and reviewed with testimonial nodes in place; replace every entry
- * with an approved quote before this goes anywhere near production.
- */
-export const clientTestimonials = [
-  {
-    quote: "Ten years of airport runs and not one missed pickup.",
-    author: "Placeholder name",
-    role: "Embassy of Placeholder, Dhaka",
-  },
-  {
-    quote: "Our directors stopped thinking about transport entirely.",
-    author: "Placeholder name",
-    role: "Head of Admin, Placeholder Ltd.",
-  },
-  {
-    quote: "They move a twelve-car delegation like it is one car.",
-    author: "Placeholder name",
-    role: "Protocol Officer",
-  },
-  {
-    quote: "The driver knows the route before we do.",
-    author: "Placeholder name",
-    role: "Country Director, Placeholder",
-  },
+export type ClientTestimonial = {
+  quote: string;
+  author: string;
+  role: string;
+  /** Organisation name as it should appear beside the quote. */
+  client: string;
+  /** Only approved, real quotes are shown on the live site. */
+  approved: boolean;
+};
+
+export const clientTestimonials: ClientTestimonial[] = [
+  // SAMPLE COPY for layout review only (shown on the dev server, never live).
+  // Replace each with a real, approved quote and set approved: true.
+  { quote: "Ten years of airport runs and not one missed pickup.", author: "Head of Administration", role: "Embassy, Dhaka", client: "Embassy", approved: false },
+  { quote: "Our directors stopped thinking about transport entirely.", author: "Admin Manager", role: "Construction company, Gulshan", client: "Company", approved: false },
+  { quote: "They move a twelve-car delegation like it is one car.", author: "Protocol Officer", role: "International organisation", client: "International body", approved: false },
+  { quote: "The driver knows the route before we do.", author: "Country Director", role: "NGO, Dhaka", client: "NGO", approved: false },
 ];
 
 export const companyHistory = {

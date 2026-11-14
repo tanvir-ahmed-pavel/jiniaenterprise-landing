@@ -11,7 +11,7 @@ export default function NotFound() {
           <h1 className="text-3xl font-heading font-medium text-emerald-950">
             Page not found
           </h1>
-          <p className="text-gray-600">
+          <p className="text-ink/60">
             That URL is not available. Try the fleet, services, or contact desk
             instead.
           </p>

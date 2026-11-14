@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Eyebrow } from "@/components/layout/Section";
 import { createMetadata } from "@/lib/seo/metadata";
+import { ArrowUpRight, Check, Phone } from "lucide-react";
+import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
 
 export const metadata = createMetadata({
   title: "Book Car Rental in Dhaka",
@@ -41,84 +43,80 @@ export default async function BookingPage({
     : undefined;
 
   return (
-    <div>
+    <div className="bg-white text-ink">
       <PageHeader
         title="Request a vehicle."
         subtitle="Booking"
-        description="Tell us the date, the pickup, and how long you need the car. We will come back with a clear price for that exact trip."
+        description="Tell us the date, the pickup and how long you need the car. Nothing is charged here; the desk replies with a fixed price for that exact trip."
         breadcrumbs={[{ label: "Booking" }]}
       />
 
-      <section className="container py-20 sm:py-28">
-        <div className="grid gap-16 lg:grid-cols-[1.35fr_0.65fr] lg:gap-20">
-          <div>
-            <Eyebrow>Booking request</Eyebrow>
-            <h2 className="type-display mt-5 max-w-[14ch] font-heading text-[2.25rem] text-emerald-950 sm:text-[3rem]">
-              The details we need.
-            </h2>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-emerald-950/60">
-              Nothing is charged here. The desk reads every request and replies with a quote you can
-              accept, change, or ignore.
-            </p>
-
-            <div className="mt-10 border-t border-emerald-950/10 pt-10">
-              <BookingForm vehicles={vehicles || []} preselectedVehicle={preselectedVehicle} />
-            </div>
+      <section className="container py-12 sm:py-20">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
+          <div className="min-w-0 lg:col-span-7">
+            <BookingForm vehicles={vehicles || []} preselectedVehicle={preselectedVehicle} />
           </div>
 
-          {/* Sidebar: three hairline blocks, no glass, no floating badge. */}
-          <aside className="space-y-12 lg:sticky lg:top-28 lg:self-start">
-            <div>
+          <aside className="min-w-0 space-y-10 lg:col-span-5 lg:sticky lg:top-28 lg:self-start">
+            <div className="rounded-[1.6rem] bg-tile-sand p-6 sm:p-8">
               <Eyebrow>Rather talk</Eyebrow>
-              <div className="mt-5 divide-y divide-emerald-950/10 border-y border-emerald-950/10">
-                <a
-                  href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
-                  className="group flex items-baseline justify-between gap-4 py-4 transition-colors hover:text-emerald-700"
-                >
-                  <span className="type-label text-emerald-950/50">Call the desk</span>
-                  <span className="type-heading font-heading text-base text-emerald-950 group-hover:text-emerald-700">
-                    {siteConfig.phone}
-                  </span>
-                </a>
+              <h2 className="type-display mt-3 font-heading text-[clamp(1.9rem,5vw,2.6rem)]">
+                The desk is <span className="type-accent text-gold-deep">open.</span>
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-ink/65">
+                A person answers, usually inside the hour. Send the trip in one message.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href={`https://wa.me/${siteConfig.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-baseline justify-between gap-4 py-4 transition-colors hover:text-emerald-700"
+                  aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`}
+                  className="group inline-flex h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold transition-colors hover:bg-paper"
                 >
-                  <span className="type-label text-emerald-950/50">WhatsApp</span>
-                  <span className="type-heading font-heading text-base text-emerald-950 group-hover:text-emerald-700">
-                    Live chat
-                  </span>
+                  <WhatsAppIcon className="h-[1.1rem] w-[1.1rem] text-[#128C4B]" />
+                  <span className="tabular-nums">{whatsappDisplay}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-ink/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
-              </div>
-            </div>
-
-            <div>
-              <Eyebrow>The office</Eyebrow>
-              <address className="mt-5 not-italic text-sm leading-relaxed text-emerald-950/65">
-                {siteConfig.address.line1}
-                <br />
-                {siteConfig.address.line2}
-                <br />
-                {siteConfig.address.area}, {siteConfig.address.city}
-              </address>
-              <div className="mt-5 border-t border-emerald-950/10 pt-5 text-sm leading-relaxed text-emerald-950/55">
-                <p>Saturday to Thursday, 9:00 AM – 8:00 PM</p>
-                <p>Friday, 10:00 AM – 6:00 PM</p>
+                <a
+                  href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
+                  className="inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-semibold ring-1 ring-ink/15 transition-colors hover:bg-white"
+                >
+                  <Phone className="h-4 w-4 text-gold-deep" /> Call the desk
+                </a>
               </div>
             </div>
 
             <div>
               <Eyebrow>What you get</Eyebrow>
-              <ul className="mt-5 divide-y divide-emerald-950/10 border-y border-emerald-950/10">
+              <ul className="mt-4 divide-y divide-ink/10 border-y border-ink/10">
                 {promises.map((item) => (
-                  <li key={item} className="flex items-baseline gap-3 py-3.5 text-sm text-emerald-950/65">
-                    <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
+                  <li key={item} className="flex items-start gap-3 py-3.5 text-sm text-ink/70">
+                    <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
                     {item}
                   </li>
                 ))}
               </ul>
+            </div>
+
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <div>
+                <Eyebrow>The office</Eyebrow>
+                <address className="mt-4 not-italic text-sm leading-relaxed text-ink/65">
+                  {siteConfig.address.line1}
+                  <br />
+                  {siteConfig.address.line2}
+                  <br />
+                  {siteConfig.address.area}, {siteConfig.address.city}
+                </address>
+              </div>
+              <div>
+                <Eyebrow>Hours</Eyebrow>
+                <div className="mt-4 text-sm leading-relaxed text-ink/65">
+                  <p>Saturday to Thursday, 9:00 AM – 8:00 PM</p>
+                  <p>Friday, 10:00 AM – 6:00 PM</p>
+                </div>
+              </div>
             </div>
           </aside>
         </div>

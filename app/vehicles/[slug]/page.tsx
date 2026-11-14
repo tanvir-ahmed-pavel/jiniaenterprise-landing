@@ -1,17 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { InquiryForm } from "@/components/forms/InquiryForm";
-import { ImageCarousel } from "@/components/vehicles/ImageCarousel";
-import {
-  Users,
-  Check,
-  Phone,
-  MessageSquare,
-  Fuel,
-  Tag,
-} from "lucide-react";
+import { RequestProvider } from "@/components/trip/RequestProvider";
+import { classOfName, hireTerms } from "@/lib/vehicles/fleet";
+import { SimilarCars, VehicleActions, VehicleStage } from "@/components/trip/VehicleDetail";
+import { getFleetRows, toStoreVehicles, type FleetRow } from "@/lib/vehicles/store";
 import { sampleVehicles, siteConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
@@ -103,184 +97,138 @@ export async function generateStaticParams() {
 
 export default async function VehicleDetailPage({ params }: VehiclePageProps) {
   const { slug } = await params;
-  const vehicle = await getVehicle(slug);
+  const [vehicle, rows] = await Promise.all([getVehicle(slug), getFleetRows()]);
 
   if (!vehicle) {
     notFound();
   }
 
-  // Format price helper
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-BD", {
-      style: "currency",
-      currency: "BDT",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const [car] = toStoreVehicles([vehicle as unknown as FleetRow]);
+  const cls = classOfName(car.name);
+  const similar = toStoreVehicles(rows)
+    .filter((v) => v.id !== car.id && cls && classOfName(v.name)?.id === cls.id)
+    .slice(0, 3);
 
   const description =
     vehicle.description ||
     `Rent a ${vehicle.name} with a professional driver in Dhaka.`;
 
+  // "Hyundai H1 (2019-20)" → name in grotesk, model years in the serif accent.
+  const name = vehicle.name.trim();
+  const yearAt = name.indexOf("(");
+  const title = yearAt > 0 ? name.slice(0, yearAt).trim() : name;
+  const years = yearAt > 0 ? name.slice(yearAt).replace(/[()]/g, "").trim() : "";
+  const ac = car.features.some((f) => /air/i.test(f));
+
+  const specs = [
+    { k: "Seats", v: String(vehicle.seats) },
+    { k: "Driver", v: "Included" },
+    { k: "Hire", v: hireTerms(car.rental_types) },
+    vehicle.engine_cc ? { k: "Engine", v: `${vehicle.engine_cc} cc` } : { k: "Cabin", v: ac ? "Air-conditioned" : "Standard" },
+  ];
+
   return (
-    <div className="pb-24 pt-28 sm:pt-36">
-      <JsonLd
-        data={[
-          getVehicleSchema({
-            name: vehicle.name,
-            description,
-            path: `/vehicles/${vehicle.slug}`,
-            image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
-            seats: vehicle.seats,
-            category: vehicle.category,
-          }),
-          getBreadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "Fleet", path: "/vehicles" },
-            { name: vehicle.name, path: `/vehicles/${vehicle.slug}` },
-          ]),
-        ]}
-      />
-      <div className="container">
-        <div className="mb-12 max-w-3xl">
-          <p className="border-l-2 border-amber-400 pl-3 text-[11px] font-medium uppercase tracking-[0.08em] text-emerald-700">Jinia Fleet / {vehicle.category}</p>
-          <h1 className="mt-5 text-5xl font-heading font-medium leading-[0.94] text-emerald-950 sm:text-7xl">{vehicle.name}</h1>
-          <p className="mt-6 max-w-2xl text-base font-medium leading-relaxed text-emerald-950/60 sm:text-lg">{description}</p>
-        </div>
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Left: Vehicle Info */}
-          <div className="space-y-6">
-            {/* Image Gallery */}
-            <div className="relative aspect-16/10 overflow-hidden rounded-lg border border-emerald-950/15 bg-[#fbfcfa]">
-              <ImageCarousel
-                images={orderVehicleImages(vehicle.images, vehicle.image_url)}
-                vehicleName={vehicle.name}
-                priority
-              />
-              <span className="absolute left-4 top-4 z-30 border-l-2 border-amber-400 bg-white/90 py-1 pl-2.5 pr-3 text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950">
-                {vehicle.category}
-              </span>
-            </div>
+    <RequestProvider>
+      <div className="bg-white pb-24 pt-24 text-ink sm:pt-32">
+        <JsonLd
+          data={[
+            getVehicleSchema({
+              name: vehicle.name,
+              description,
+              path: `/vehicles/${vehicle.slug}`,
+              image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
+              seats: vehicle.seats,
+              category: vehicle.category,
+            }),
+            getBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Fleet", path: "/vehicles" },
+              { name: vehicle.name, path: `/vehicles/${vehicle.slug}` },
+            ]),
+          ]}
+        />
 
-            {/* Price Card if available */}
-            {vehicle.starting_price && (
-              <div className="flex items-center justify-between border-y border-emerald-950/15 py-4">
-                <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Starting price</span>
-                <div className="text-right">
-                  <span className="text-2xl font-heading font-medium text-emerald-950">
-                    {formatPrice(vehicle.starting_price)}
-                  </span>
-                  <span className="ml-1 text-sm text-emerald-950/50">
-                    / {vehicle.price_label || "day"}
-                  </span>
-                </div>
-              </div>
-            )}
+        <div className="container">
+          <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-2 text-[0.8rem] text-ink/45">
+            <Link href="/" className="hover:text-ink">Home</Link>
+            <span aria-hidden className="text-ink/25">/</span>
+            <Link href="/vehicles" className="hover:text-ink">Fleet</Link>
+            <span aria-hidden className="text-ink/25">/</span>
+            <span aria-current="page" className="text-ink/70">{title}</span>
+          </nav>
 
-            {/* Vehicle Details */}
-            <div className="space-y-6">
-
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-emerald-950/10 pb-5 text-emerald-950/65">
-                <span className="flex items-center gap-2 text-sm">
-                  <Users className="h-4 w-4" />
-                  {vehicle.seats} Seats
-                </span>
-
-                {vehicle.engine_cc && (
-                  <span className="flex items-center gap-2 text-sm">
-                    <Fuel className="h-4 w-4" />
-                    {vehicle.engine_cc} CC
-                  </span>
-                )}
-
-                <span className="flex items-center gap-2 text-sm">
-                  <Tag className="h-4 w-4" />
-                  {vehicle.category} Class
-                </span>
-              </div>
-
-              {vehicle.description && (
-                <div
-                  className="max-w-none text-base leading-relaxed text-emerald-950/65"
-                  dangerouslySetInnerHTML={{
-                    __html: vehicle.description.replace(/\n/g, "<br/>"),
-                  }}
-                />
-              )}
-
-              {/* Rental Types */}
-              {vehicle.rental_types && vehicle.rental_types.length > 0 && (
-                <div className="space-y-2 pt-2">
-                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Available for</h3>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2">
-                    {vehicle.rental_types.map((type) => (
-                      <span key={type} className="border-b border-emerald-950/20 pb-1 text-sm font-normal text-emerald-950">{type} rental</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Features */}
-              {vehicle.features && vehicle.features.length > 0 && (
-                <div className="space-y-2 pt-2">
-                  <h3 className="text-[10px] font-medium uppercase tracking-[0.05em] text-emerald-950/55">Features</h3>
-                  <ul className="grid grid-cols-2 gap-2">
-                    {vehicle.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-center gap-2 text-sm text-emerald-950/65"
-                      >
-                        <Check className="h-4 w-4 text-green-500" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Quick Contact */}
-              <div className="flex gap-3 pt-4">
-                <a href={`tel:${siteConfig.phone}`} className="flex-1">
-                  <Button variant="outline" className="w-full gap-2 rounded-lg border-emerald-950/25">
-                    <Phone className="h-4 w-4" />
-                    Call Now
-                  </Button>
-                </a>
-                <a
-                  href={`https://wa.me/${siteConfig.whatsapp}?text=Hi, I'm interested in renting the ${vehicle.name}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1"
-                >
-                  <Button className="w-full gap-2 rounded-lg bg-emerald-950 text-white hover:bg-emerald-800">
-                    <MessageSquare className="h-4 w-4" />
-                    WhatsApp
-                  </Button>
-                </a>
+          <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="min-w-0 lg:col-span-7">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{cls?.label ?? vehicle.category} · {vehicle.seats} seats</p>
+              <h1 className="type-display mt-3 font-heading text-[clamp(2.6rem,8vw,5.2rem)] [overflow-wrap:anywhere]">
+                {title}
+                {years && <> <span className="type-accent text-gold-deep">{years}</span></>}
+              </h1>
+              <div className="mt-8">
+                <VehicleStage v={car} />
               </div>
             </div>
-          </div>
 
-          {/* Right: Inquiry Form */}
-          <div>
-            <Card className="sticky top-24 rounded-lg border-emerald-950/15 bg-white shadow-none">
-              <CardHeader>
-                <CardTitle>Request a Quote</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Fill out the form below and we&apos;ll get back to you within
-                  24 hours.
+            <aside className="min-w-0 lg:col-span-5 lg:pt-24">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Day rate from</p>
+                <p className="mt-1 font-heading text-[clamp(2.4rem,6vw,3.4rem)] font-semibold leading-none tracking-[-0.05em] tabular-nums">
+                  {vehicle.starting_price ? `৳${vehicle.starting_price.toLocaleString("en-US")}` : "On request"}
                 </p>
-              </CardHeader>
-              <CardContent>
-                <InquiryForm
-                  vehicleName={vehicle.name}
-                  vehicleId={vehicle.id}
-                />
-              </CardContent>
-            </Card>
+                <p className="mt-2 text-sm text-ink/55">With driver, inside Dhaka. Fuel, hours and overtime are spelled out in your quote.</p>
+
+                <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-ink/10">
+                  {specs.map((s) => (
+                    <div key={s.k} className="bg-paper-deep p-4">
+                      <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">{s.k}</dt>
+                      <dd className="mt-1 text-sm font-semibold">{s.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="mt-6">
+                  <VehicleActions v={car} whatsapp={siteConfig.whatsapp} phone={siteConfig.phone} />
+                </div>
+              </div>
+            </aside>
           </div>
+
+          <div className="mt-16 grid gap-12 border-t border-ink/10 pt-12 lg:grid-cols-12 lg:gap-14">
+            <div className="min-w-0 lg:col-span-7">
+              <h2 className="type-display font-heading text-[clamp(2rem,5vw,3.2rem)]">About <span className="type-accent text-gold-deep">this car.</span></h2>
+              <p className="mt-5 max-w-2xl whitespace-pre-line text-base leading-relaxed text-ink/65">{description}</p>
+              {car.features.length > 0 && (
+                <ul className="mt-8 flex flex-wrap gap-2">
+                  {car.features.map((f) => (
+                    <li key={f} className="rounded-full bg-paper-deep px-3.5 py-2 text-sm font-medium">{f}</li>
+                  ))}
+                </ul>
+              )}
+              {vehicle.rental_types?.length > 0 && (
+                <p className="mt-6 text-sm text-ink/55">Available for {vehicle.rental_types.map((t) => t.toLowerCase()).join(", ")} hire.</p>
+              )}
+            </div>
+
+            <div className="min-w-0 lg:col-span-5">
+              <h2 className="type-heading font-heading text-2xl">Rather write it out?</h2>
+              <p className="mt-2 text-sm text-ink/55">Send the details and the desk replies with a quote.</p>
+              <div className="mt-6 rounded-[1.6rem] bg-paper-deep p-5 sm:p-7">
+                <InquiryForm vehicleName={vehicle.name} vehicleId={vehicle.id} />
+              </div>
+            </div>
+          </div>
+
+          {similar.length > 0 && (
+            <section className="mt-20">
+              <div className="mb-6 flex items-end justify-between gap-4">
+                <h2 className="type-display font-heading text-[clamp(2rem,5vw,3.2rem)]">Also in <span className="type-accent text-gold-deep">{cls?.label ?? "the fleet"}.</span></h2>
+                <Link href="/vehicles" className="shrink-0 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">All cars</Link>
+              </div>
+              <SimilarCars list={similar} />
+            </section>
+          )}
         </div>
       </div>
-    </div>
+    </RequestProvider>
   );
 }

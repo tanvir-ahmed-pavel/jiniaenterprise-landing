@@ -1,6 +1,8 @@
 import { createMetadata } from "@/lib/seo/metadata";
 import { ContentPageShell } from "@/components/seo/ContentPageShell";
 import { businessIdentity, getWhatsAppHref } from "@/lib/business/identity";
+import { ArrowUpRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/brand/WhatsApp";
 
 export const metadata = createMetadata({
   title: "Reviews & Feedback — Jinia Enterprise",
@@ -40,11 +42,11 @@ export default function ReviewsPage() {
       ]}
       updatedAt="2026-08-21"
     >
-      <section className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-6 space-y-3">
-        <h2 className="text-lg font-heading font-medium text-emerald-950">
-          Leave a note after your ride
+      <section className="rounded-[1.6rem] bg-tile-sage p-6 sm:p-8">
+        <h2 className="type-heading font-heading text-2xl text-ink">
+          Leave a note after <span className="type-accent text-gold-deep">your ride.</span>
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="mt-2 max-w-[56ch] text-sm leading-relaxed text-ink/65">
           Prefer WhatsApp? Open a chat with the booking reference and a short note—praise or complaint both help.
         </p>
         <a
@@ -53,9 +55,11 @@ export default function ReviewsPage() {
           )}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex text-sm font-medium text-emerald-800 hover:text-emerald-600"
+          className="group mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink transition-colors hover:bg-paper"
         >
-          WhatsApp feedback →
+          <WhatsAppIcon className="h-[1.1rem] w-[1.1rem] text-[#128C4B]" />
+          WhatsApp feedback
+          <ArrowUpRight className="h-3.5 w-3.5 text-ink/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       </section>
     </ContentPageShell>

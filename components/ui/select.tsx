@@ -142,7 +142,7 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           )}
         >
           <span className={cn("flex min-w-0 items-center gap-3 truncate", !selected && "text-emerald-950/35")}>
-            {selected?.image && <Image src={selected.image} alt="" width={42} height={30} className="h-7 w-10 shrink-0 object-contain mix-blend-multiply" />}
+            {selected?.image && <Image src={selected.image} alt="" width={42} height={30} className="h-7 w-10 shrink-0 object-contain" />}
             <span className="truncate">{selected?.label ?? placeholder}</span>
           </span>
           <ChevronDown aria-hidden="true" className={cn("h-4 w-4 shrink-0 text-emerald-700 transition-transform duration-200", isOpen && "rotate-180")} />
@@ -168,7 +168,7 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
               return (
                 <button key={option.value} type="button" role="option" aria-selected={isSelected} disabled={option.disabled} onClick={() => choose(option.value)} className={cn("flex min-h-14 w-full items-center justify-between gap-3 rounded-sm px-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-40", isSelected ? "bg-emerald-50 text-emerald-950" : "text-emerald-950/70 hover:bg-emerald-50")}>
                   <span className="flex min-w-0 items-center gap-3">
-                    {option.image && <Image src={option.image} alt="" width={58} height={42} className="h-10 w-14 shrink-0 object-contain mix-blend-multiply" />}
+                    {option.image && <Image src={option.image} alt="" width={58} height={42} className="h-10 w-14 shrink-0 object-contain" />}
                     <span className="min-w-0"><span className="block truncate">{option.label}</span>{option.description && <span className="mt-0.5 block truncate text-xs text-emerald-950/45">{option.description}</span>}</span>
                   </span>
                   {isSelected && <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-emerald-700" />}

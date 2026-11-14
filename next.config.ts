@@ -12,6 +12,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
+    // AVIF first (about 30% smaller than WebP for the car photos), WebP fallback.
+    formats: ["image/avif", "image/webp"],
+    // Static assets change by filename, so optimised copies can be cached long.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       // Legacy vehicle rows still point at third-party image hosts, so the
       // https wildcard stays until those assets are replaced with owned

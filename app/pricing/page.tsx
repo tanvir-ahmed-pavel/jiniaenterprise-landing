@@ -46,34 +46,37 @@ export default function PricingPage() {
       ]}
       updatedAt="2026-08-21"
     >
-      <section className="space-y-4">
-        <h2 className="text-2xl font-heading font-medium text-emerald-950">
-          Indicative “from” day rates
+      <section>
+        <h2 className="type-display font-heading text-[clamp(1.8rem,4.5vw,2.6rem)] text-ink">
+          Indicative “from” <span className="type-accent text-gold-deep">day rates.</span>
         </h2>
-        <p className="text-sm text-gray-600 font-medium">
+        <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-ink/55">
           {pricingPage.priceDisclaimer}
         </p>
-        <div className="overflow-x-auto rounded-2xl border border-emerald-100">
-          <table className="w-full text-sm">
-            <thead className="bg-emerald-950 text-white">
-              <tr>
-                <th className="text-left p-3 font-medium">Vehicle</th>
-                <th className="text-left p-3 font-medium">From (BDT)</th>
-                <th className="text-left p-3 font-medium">Unit</th>
+        <div className="mt-6 overflow-x-auto rounded-[1.4rem] bg-paper-deep">
+          <table className="w-full min-w-[20rem] text-sm">
+            <thead>
+              <tr className="text-left text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">
+                <th scope="col" className="px-4 py-4 font-semibold sm:px-6">Vehicle</th>
+                <th scope="col" className="px-4 py-4 font-semibold sm:px-6">From (BDT)</th>
+                <th scope="col" className="px-4 py-4 font-semibold sm:px-6">Unit</th>
               </tr>
             </thead>
             <tbody>
               {indicativeFromPrices.map((row) => (
-                <tr key={row.slug} className="border-t border-emerald-50 bg-white/80">
-                  <td className="p-3 font-normal text-emerald-950">
-                    <Link href={`/vehicles/${row.slug}`} className="hover:text-emerald-700">
+                <tr key={row.slug} className="border-t border-ink/10">
+                  <td className="px-4 py-1 sm:px-6">
+                    <Link
+                      href={`/vehicles/${row.slug}`}
+                      className="inline-flex min-h-11 items-center font-semibold text-ink underline decoration-ink/15 decoration-2 underline-offset-4 transition-colors hover:decoration-gold"
+                    >
                       {row.name}
                     </Link>
                   </td>
-                  <td className="p-3 font-medium text-emerald-800">
+                  <td className="whitespace-nowrap px-4 py-1 font-heading text-base font-semibold tabular-nums tracking-[-0.02em] text-ink sm:px-6">
                     ৳{row.startingPriceBdt.toLocaleString("en-BD")}
                   </td>
-                  <td className="p-3 text-gray-600">{row.priceLabel}</td>
+                  <td className="px-4 py-1 text-ink/55 sm:px-6">{row.priceLabel}</td>
                 </tr>
               ))}
             </tbody>
