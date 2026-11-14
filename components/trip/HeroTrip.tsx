@@ -112,7 +112,7 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
       set({ cls: order[(order.indexOf(clsRef.current) + 1) % order.length] });
       // One full turn of the ring, then rest so the visitor can take it in.
       if (++turns >= order.length) setAuto(false);
-    }, 3200);
+    }, 4000);
     return () => {
       window.clearInterval(id);
       io.disconnect();
