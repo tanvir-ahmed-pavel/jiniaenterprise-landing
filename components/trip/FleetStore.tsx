@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Check, Snowflake, Users, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { vehicleClasses } from "@/lib/trip/data";
 import { useRequest } from "./RequestProvider";
 import { classOfName, cleanName, hireTerms } from "@/lib/vehicles/fleet";
@@ -105,8 +106,12 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
     };
   }, [v, onClose]);
   const c = v ? classOf(v) : undefined;
+  // Portal to <body>: inside the page sections the drawer sits in their
+  // stacking context, so the fixed header (z-50) painted over it on phones.
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  if (!mounted) return null;
 
-  return (
+  return createPortal(
     <>
       <div aria-hidden onClick={onClose} className={`fixed inset-0 z-[60] bg-ink/40 backdrop-blur-[2px] transition-opacity duration-500 ${v ? "opacity-100" : "pointer-events-none opacity-0"}`} />
       <div role="dialog" aria-modal="true" aria-label={v ? clean(v.name) : "Vehicle"} inert={!v} className={`fixed inset-y-0 right-0 z-[61] flex w-full max-w-xl flex-col overflow-y-auto bg-paper transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? "translate-x-0" : "translate-x-full"}`}>
@@ -149,7 +154,8 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
           </>
         )}
       </div>
-    </>
+    </>,
+    document.body,
   );
 }
 
