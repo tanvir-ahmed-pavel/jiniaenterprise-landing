@@ -147,7 +147,7 @@ export default async function Home() {
           <div className="container">
             <div className="flex items-end justify-between gap-4">
               <h2 className="type-display font-heading text-[clamp(2.4rem,5vw,4.2rem)]">In their <span className="type-accent text-gold-deep">words.</span></h2>
-              <Link href="/clients" className="shrink-0 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">All {clients.length} clients</Link>
+              <Link href="/clients" className="inline-flex shrink-0 items-center py-3 -my-3 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">All {clients.length} clients</Link>
             </div>
             <div className="mt-8">
               <ClientVoices items={voiceItems} sample={sampleVoices} clients={clients} />
@@ -213,7 +213,7 @@ export default async function Home() {
           <div className="container grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <h2 className="type-display font-heading text-[clamp(2.6rem,5vw,4.6rem)]">Good <span className="type-accent text-gold-deep">questions.</span></h2>
-              <Link href="/faq" className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">
+              <Link href="/faq" className="group mt-6 inline-flex items-center gap-2 py-3 -my-3 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">
                 All questions <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -256,13 +256,13 @@ export default async function Home() {
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">Call</dt>
                 <dd className="mt-2 space-y-1">
-                  <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="flex items-center gap-2 text-lg font-semibold hover:text-gold-deep"><Phone className="h-4 w-4 text-gold-deep" />{siteConfig.phone}</a>
-                  <a href={`tel:${siteConfig.phone2.replace(/\s/g, "")}`} className="block pl-6 text-sm text-ink/60 hover:text-gold-deep">{siteConfig.phone2}</a>
+                  <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="flex items-center gap-2 py-2.5 -my-2.5 text-lg font-semibold hover:text-gold-deep"><Phone className="h-4 w-4 text-gold-deep" />{siteConfig.phone}</a>
+                  <a href={`tel:${siteConfig.phone2.replace(/\s/g, "")}`} className="block py-3 -my-3 pl-6 text-sm text-ink/60 hover:text-gold-deep">{siteConfig.phone2}</a>
                 </dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">Email</dt>
-                <dd className="mt-2"><a href={`mailto:${siteConfig.email}`} className="break-all text-sm font-semibold hover:text-gold-deep">{siteConfig.email}</a></dd>
+                <dd className="mt-2"><a href={`mailto:${siteConfig.email}`} className="inline-block py-3 -my-3 break-all text-sm font-semibold hover:text-gold-deep">{siteConfig.email}</a></dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">Office</dt>

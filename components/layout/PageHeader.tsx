@@ -32,12 +32,12 @@ export function PageHeader({ title, subtitle, description, breadcrumbs }: PageHe
       <div className="container">
         {breadcrumbs && (
           <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8rem] text-ink/45 sm:mb-10">
-            <Link href="/" className="transition-colors hover:text-ink">Home</Link>
+            <Link href="/" className="inline-flex items-center py-3 -my-3 transition-colors hover:text-ink">Home</Link>
             {breadcrumbs.map((crumb, idx) => (
               <span key={idx} className="flex items-center gap-2">
                 <span aria-hidden className="text-ink/25">/</span>
                 {crumb.href ? (
-                  <Link href={crumb.href} className="transition-colors hover:text-ink">{crumb.label}</Link>
+                  <Link href={crumb.href} className="inline-flex items-center py-3 -my-3 transition-colors hover:text-ink">{crumb.label}</Link>
                 ) : (
                   <span aria-current="page" className="text-ink/70">{crumb.label}</span>
                 )}

@@ -49,7 +49,7 @@ const openWizard = () => window.dispatchEvent(new Event("jinia:open-wizard"));
 
 function Logo({ onClick }: { onClick?: () => void }) {
   return (
-    <Link href="/" onClick={onClick} className="group flex shrink-0 items-center gap-2.5" aria-label="Jinia Enterprise, home">
+    <Link href="/" onClick={onClick} className="group flex min-h-11 shrink-0 items-center gap-2.5" aria-label="Jinia Enterprise, home">
       <Image src="/images/logo.png" alt="" width={300} height={242} priority className="h-10 w-auto transition-transform duration-500 group-hover:-rotate-3 sm:h-11" />
       <span className="flex flex-col leading-none">
         <span className="font-heading text-[1.15rem] font-semibold tracking-[-0.03em] text-ink">Jinia</span>
@@ -160,12 +160,12 @@ export function Navbar() {
                 <WhatsAppIcon className="h-[1.1rem] w-[1.1rem] text-[#128C4B]" /> <span className="tabular-nums">{whatsappDisplay}</span>
                 <ArrowUpRight className="h-3.5 w-3.5 text-ink/35 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
-              <button type="button" onClick={openWizard} className="group flex h-10 items-center gap-2 rounded-full bg-ink pl-4 pr-1.5 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft sm:h-11">
+              <button type="button" onClick={openWizard} className="group flex h-11 items-center gap-2 rounded-full bg-ink pl-4 pr-1.5 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft sm:h-11">
                 <span className="hidden sm:inline">Request a car</span>
                 <span className="sm:hidden">Request</span>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gold text-ink transition-transform group-hover:translate-x-0.5 sm:h-8 sm:w-8"><ArrowRight className="h-3.5 w-3.5" /></span>
               </button>
-              <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="site-menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep text-ink lg:hidden">
+              <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="site-menu" className="flex h-11 w-11 items-center justify-center rounded-full bg-paper-deep text-ink lg:hidden">
                 <Menu className="h-[1.1rem] w-[1.1rem]" />
               </button>
             </div>
@@ -218,7 +218,7 @@ export function Navbar() {
       >
         <div className="flex items-center justify-between px-4 py-3">
           <Logo onClick={() => setOpen(false)} />
-          <button ref={closeBtn} type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep"><X className="h-[1.1rem] w-[1.1rem]" /></button>
+          <button ref={closeBtn} type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="flex h-11 w-11 items-center justify-center rounded-full bg-paper-deep"><X className="h-[1.1rem] w-[1.1rem]" /></button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
           {NAV.map((g, n) => (

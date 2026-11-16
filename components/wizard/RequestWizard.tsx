@@ -348,7 +348,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
                   <div className="flex gap-1.5" aria-hidden>
                     {STEPS.map((_, i) => <span key={i} className={`h-1 rounded-full transition-all duration-300 ${i === step ? "w-8 bg-ink" : i < step ? "w-4 bg-ink" : "w-4 bg-ink/15"}`} />)}
                   </div>
-                  <button data-autofocus type="button" onClick={shut} aria-label="Close" className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 outline-none hover:bg-white"><X className="h-4 w-4" /></button>
+                  <button data-autofocus type="button" onClick={shut} aria-label="Close" className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 outline-none hover:bg-white"><X className="h-4 w-4" /></button>
                 </div>
                 <div className="grid grid-cols-[minmax(0,1fr)_44%] items-end gap-2 px-5 pb-3 sm:px-6">
                   <div className="min-w-0 pb-2">
@@ -405,7 +405,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
                       {vehicleClasses.map((c) => {
                         const on = c.id === s.cls;
                         return (
-                          <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => set({ cls: c.id, model: s.model && c.id === s.cls ? s.model : null })} className={`h-10 shrink-0 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${on ? "bg-ink text-paper" : "bg-paper-deep text-ink/65 hover:text-ink"}`}>
+                          <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => set({ cls: c.id, model: s.model && c.id === s.cls ? s.model : null })} className={`h-11 shrink-0 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${on ? "bg-ink text-paper" : "bg-paper-deep text-ink/65 hover:text-ink"}`}>
                             {c.label} <span className={`font-normal ${on ? "text-paper/60" : "text-ink/40"}`}>· {c.seats.replace("up to ", "≤")}</span>
                           </button>
                         );
@@ -508,7 +508,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
             </span>
           )}
 
-          <button type="button" onClick={open ? undefined : () => openWizard(touched ? 1 : 0)} disabled={open} className={`min-w-0 flex-1 px-2 text-left disabled:cursor-default ${open ? "max-sm:hidden" : ""}`}>
+          <button type="button" onClick={open ? undefined : () => openWizard(touched ? 1 : 0)} disabled={open} className={`min-h-11 min-w-0 flex-1 px-2 text-left disabled:cursor-default ${open ? "max-sm:hidden" : ""}`}>
             <span className="block text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-gold-deep">
               {open ? (sent ? "Sent to the desk" : `Step ${step + 1} of 4 · ${shortStep[step]}`) : touched ? "Your request" : "Need a car?"}
             </span>
@@ -595,9 +595,9 @@ function Stepper({ label, value, min, max, onChange }: { label: string; value: n
     <div className="flex items-center justify-between rounded-2xl bg-white p-2 pl-4 ring-1 ring-ink/10">
       <span className="text-sm font-semibold">{label}</span>
       <div className="flex items-center gap-1">
-        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label={`Fewer ${label.toLowerCase()}`} className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep disabled:opacity-40"><Minus className="h-4 w-4" /></button>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label={`Fewer ${label.toLowerCase()}`} className="flex h-11 w-11 items-center justify-center rounded-full bg-paper-deep disabled:opacity-40"><Minus className="h-4 w-4" /></button>
         <span className="w-8 text-center font-semibold tabular-nums" aria-live="polite">{value}</span>
-        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label={`More ${label.toLowerCase()}`} className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep disabled:opacity-40"><Plus className="h-4 w-4" /></button>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label={`More ${label.toLowerCase()}`} className="flex h-11 w-11 items-center justify-center rounded-full bg-paper-deep disabled:opacity-40"><Plus className="h-4 w-4" /></button>
       </div>
     </div>
   );

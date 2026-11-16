@@ -257,7 +257,7 @@ export function ClosingCta({
             {phone}
           </a>
           {phoneSecondary && (
-            <a href={getTelHref(phoneSecondary)} className="block text-sm text-ink/60 hover:text-gold-deep">
+            <a href={getTelHref(phoneSecondary)} className="block py-3 -my-3 text-sm text-ink/60 hover:text-gold-deep">
               {phoneSecondary}
             </a>
           )}
