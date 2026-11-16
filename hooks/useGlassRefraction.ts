@@ -7,9 +7,6 @@ type Options = {
   bevel: number;
   /** Largest sideways shift in px, reached at the very edge. */
   maxShift: number;
-  /** Blur in px applied to the backdrop (the frost in the middle). */
-  blur: number;
-  saturate?: number;
 };
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -86,12 +83,13 @@ function buildDisplacementMap(w: number, h: number, radius: number, bevel: numbe
 /**
  * Gives a `.jx-glass` element real edge refraction on Chromium. It sets the
  * `data-refract` attribute (React rewrites `className`, so a class would be
- * lost) and a `--jx-bf` custom property that the stylesheet uses
- * as the backdrop filter. Other browsers keep the plain frosted look.
+ * lost) and a `--jx-ref` custom property holding the SVG filter reference.
+ * The stylesheet puts that first in the backdrop filter, then its own blur, so
+ * the bend is not averaged away. Other browsers keep the plain frosted look.
  */
 export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: Options) {
   const rawId = useId();
-  const { bevel, maxShift, blur, saturate = 1.8 } = options;
+  const { bevel, maxShift } = options;
 
   useEffect(() => {
     const el = ref.current;
@@ -110,6 +108,7 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
     // rebuild adds a new filter under a new id and drops the older ones.
     let version = 0;
     let timer = 0;
+    let disposed = false;
     let builtW = 0;
     let builtH = 0;
     const rebuild = () => {
@@ -132,8 +131,17 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
         `</filter>`;
       svg.appendChild(holder.firstElementChild!);
 
-      el.style.setProperty("--jx-bf", `url(#${id}) blur(${blur}px) saturate(${saturate})`);
-      el.setAttribute("data-refract", "");
+      // Chromium loads the map image lazily and does not repaint the backdrop
+      // when it arrives, so the first paint would have no bend. Decode the
+      // image first, then switch the glass to the filter.
+      const warm = new Image();
+      warm.src = href;
+      const ready = () => {
+        if (disposed || id !== `${baseId}-${version}`) return; // unmounted, or a newer build has replaced this one
+        el.style.setProperty("--jx-ref", `url(#${id})`);
+        el.setAttribute("data-refract", "");
+      };
+      warm.decode().then(ready, ready);
 
       // Keep the current and previous filter; remove anything older.
       while (svg.children.length > 2) svg.removeChild(svg.firstElementChild!);
@@ -153,11 +161,12 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
     const observer = new ResizeObserver(schedule);
     observer.observe(el);
     return () => {
+      disposed = true;
       window.clearTimeout(timer);
       observer.disconnect();
       el.removeAttribute("data-refract");
-      el.style.removeProperty("--jx-bf");
+      el.style.removeProperty("--jx-ref");
       svg.remove();
     };
-  }, [ref, rawId, bevel, maxShift, blur, saturate]);
+  }, [ref, rawId, bevel, maxShift]);
 }

@@ -1317,6 +1317,20 @@
 }
 .wz-input:focus { box-shadow: inset 0 0 0 2px var(--color-ink); }
 
+/* Native date fields on iOS draw their own control at a fixed minimum width
+   and can hide the value, so this one is laid out like the other fields. */
+.wz-date {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: left;
+}
+.wz-date::-webkit-date-and-time-value { text-align: left; min-width: 0; }
+.wz-date::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+
 /* Client credit roll: the next name rises in from below. */
 .jx-roll { animation: jx-roll 700ms cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes jx-roll { from { opacity: 0; transform: translateY(40%); } }
@@ -1389,8 +1403,8 @@
   z-index: -2;
   border-radius: inherit;
   pointer-events: none;
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: var(--jx-blur, blur(16px)) saturate(1.8);
+  backdrop-filter: var(--jx-blur, blur(16px)) saturate(1.8);
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.12),
     inset 2px 3px 4px -1px rgb(255 255 255 / 0.7),
@@ -1425,19 +1439,27 @@
    ramp, so there is no frame. */
 .jx-glass-dock {
   --tile: color-mix(in oklch, white 80%, var(--color-paper));
-  --glass-rim: 66%;
-  --glass-hi: 84%;
-  --glass-lo: 68%;
+  /* See-through: little blur and less tint, so the text and shapes behind
+     show and bend along the edge. */
+  --jx-blur: blur(1px);
+  --glass-rim: 30%;
+  --glass-hi: 42%;
+  --glass-lo: 30%;
   --glass-feather: 6px;
   --glass-soft: 16px;
-  /* No shadow of its own: it inherits the pop-up's soft shadow. */
+  /* A clear lift and a fine edge, so the bar stands out on a white page. */
+  box-shadow:
+    0 26px 48px -14px rgb(10 40 30 / 0.5),
+    0 8px 18px -6px rgb(10 40 30 / 0.3),
+    0 0 0 1px rgb(10 40 30 / 0.1),
+    inset 0 0 0 1px rgb(10 40 30 / 0.1);
 }
 .jx-glass-dock::before {
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.6),
-    inset 2px 3px 4px -1px rgb(255 255 255 / 0.9),
-    inset -2px -3px 4px -2px rgb(255 255 255 / 0.4),
-    inset 0 0 16px rgb(255 255 255 / 0.2);
+    inset 0 0 0 1px rgb(255 255 255 / 0.7),
+    inset 2px 3px 5px -1px rgb(255 255 255 / 1),
+    inset 0 -5px 9px -5px rgb(10 40 30 / 0.24),
+    inset 0 0 18px rgb(255 255 255 / 0.3);
 }
 
 /* Open booking panel: clearly see-through frosted glass. The colour it
@@ -1505,12 +1527,12 @@
 .jx-btn-gold:active:not(:disabled),
 .jx-btn-forest:active:not(:disabled) { transform: translateY(1px); }
 
-/* Chromium only: the hook sets data-refract and --jx-bf to an SVG
-   displacement filter plus a light blur, so the backdrop bends along the
-   edges. Everyone else keeps the frosted look above. */
+/* Chromium only: the hook sets data-refract and --jx-ref to an SVG
+   displacement filter. It runs first, so the backdrop bends, and the blur
+   after it softens that bend. Everyone else keeps the frosted look above. */
 .jx-glass[data-refract]::before {
-  -webkit-backdrop-filter: var(--jx-bf);
-  backdrop-filter: var(--jx-bf);
+  -webkit-backdrop-filter: var(--jx-ref) var(--jx-blur, blur(16px)) saturate(1.8);
+  backdrop-filter: var(--jx-ref) var(--jx-blur, blur(16px)) saturate(1.8);
 }
 
 /* No blur available, or the visitor asked for less transparency: solid. */

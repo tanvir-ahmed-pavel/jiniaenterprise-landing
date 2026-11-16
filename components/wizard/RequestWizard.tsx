@@ -319,7 +319,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
   // Edge refraction on Chromium: the backdrop bends along the rim of the glass.
   // The options stay the same when the panel opens or folds, so the filter is
   // not torn down during the move.
-  useGlassRefraction(panel, { bevel: 34, maxShift: 36, blur: 16 });
+  useGlassRefraction(panel, { bevel: 30, maxShift: 80 });
 
   return (
     <>
@@ -348,7 +348,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
                   <div className="flex gap-1.5" aria-hidden>
                     {STEPS.map((_, i) => <span key={i} className={`h-1 rounded-full transition-all duration-300 ${i === step ? "w-8 bg-ink" : i < step ? "w-4 bg-ink" : "w-4 bg-ink/15"}`} />)}
                   </div>
-                  <button data-autofocus type="button" onClick={shut} aria-label="Close" className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 hover:bg-white"><X className="h-4 w-4" /></button>
+                  <button data-autofocus type="button" onClick={shut} aria-label="Close" className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 outline-none hover:bg-white"><X className="h-4 w-4" /></button>
                 </div>
                 <div className="grid grid-cols-[minmax(0,1fr)_44%] items-end gap-2 px-5 pb-3 sm:px-6">
                   <div className="min-w-0 pb-2">
@@ -384,9 +384,9 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
                   <div className="grid gap-4">
                     <PlaceField label="Pick-up" value={s.from} options={places.map((p) => ({ id: p.id, label: p.label }))} onChange={(from) => set({ from })} placeholder="Hotel, house and road, or a landmark" />
                     <PlaceField label={s.type === "outstation" ? "Destination" : s.type === "day" || s.type === "monthly" ? "Mostly around" : "Drop-off"} value={s.to} options={destinations} onChange={(to) => set({ to })} placeholder={s.type === "outstation" ? "Town or resort" : "Area, address or landmark"} />
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
                       <Field label="Date">
-                        <input type="date" min={min || undefined} value={s.date} onChange={(e) => set({ date: e.target.value })} className="wz-input" />
+                        <input type="date" min={min || undefined} value={s.date} onChange={(e) => set({ date: e.target.value })} className="wz-input wz-date" />
                       </Field>
                       <Field label="Leave around">
                         <select value={s.hour} onChange={(e) => set({ hour: Number(e.target.value) })} className="wz-input">
@@ -583,7 +583,7 @@ function PlaceField({ label, value, options, onChange, placeholder }: { label: s
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="grid gap-1.5">
+    <label className="grid min-w-0 gap-1.5">
       <span className="text-xs font-semibold text-ink/60">{label}</span>
       {children}
     </label>
