@@ -8,6 +8,7 @@ import { siteConfig } from "@/lib/config";
 import { ArrowRight, ArrowUpRight, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
+import posthog from "posthog-js";
 
 const inquirySchema = z.object({
   name: z.string().min(2, "Please tell us your name."),
@@ -90,6 +91,11 @@ export function InquiryForm({ vehicleName, vehicleId, source }: InquiryFormProps
       });
 
       if (response.ok) {
+        posthog.capture("inquiry_submitted", {
+          source: source || (vehicleId ? "vehicle_page" : "contact_page"),
+          rental_type: data.rental_type || "unspecified",
+          has_selected_vehicle: Boolean(vehicleId),
+        });
         setIsSubmitted(true);
         reset();
       }

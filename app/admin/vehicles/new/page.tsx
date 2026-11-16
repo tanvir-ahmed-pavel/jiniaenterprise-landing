@@ -16,6 +16,7 @@ import {
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
 import { vehicleService } from "@/lib/supabase/admin-service";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import posthog from "posthog-js";
 
 export default function AddVehiclePage() {
   const router = useRouter();
@@ -80,6 +81,12 @@ export default function AddVehiclePage() {
 
     try {
       await vehicleService.create(vehicleData);
+      posthog.capture("vehicle_created", {
+        category: vehicleData.category,
+        is_active: vehicleData.is_active,
+        is_featured: vehicleData.is_featured,
+        image_count: filteredImages.length,
+      });
       alert("Vehicle created successfully!");
       router.push("/admin/vehicles"); // Redirect to vehicles list
     } catch (error) {

@@ -16,6 +16,7 @@ import {
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { blogService } from "@/lib/supabase/admin-service";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import posthog from "posthog-js";
 import { generateBlogSlug } from "@/lib/blog/slug";
 
 export default function AddBlogPostPage() {
@@ -46,6 +47,7 @@ export default function AddBlogPostPage() {
 
     try {
       await blogService.create(blogData);
+      posthog.capture("blog_created", { is_published: blogData.is_published, has_cover_image: Boolean(blogData.cover_image) });
       alert("Blog post created successfully!");
       router.push("/admin/blog"); // Redirect to blog list
     } catch (error) {

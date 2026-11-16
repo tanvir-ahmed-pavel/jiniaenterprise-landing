@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import posthog from "posthog-js";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -29,13 +30,20 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const {
+        data: { user },
+        error: signInError,
+      } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
         throw signInError;
+      }
+
+      if (user) {
+        posthog.identify(user.id, { email: user.email });
       }
 
       // Successful login

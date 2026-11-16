@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateAdminEmailHtml, generateCustomerEmailHtml, EmailSourceType } from "@/lib/email-templates";
+import { SeverityNumber } from "@opentelemetry/api-logs";
+import { posthogLogger } from "@/instrumentation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,6 +57,12 @@ export async function POST(request: NextRequest) {
       console.error("Supabase error:", error);
       throw error;
     }
+
+    posthogLogger?.emit({
+      body: "booking request persisted",
+      severityNumber: SeverityNumber.INFO,
+      attributes: { route: "/api/bookings" },
+    });
 
     // Send Email Notification (if configured)
     const resendApiKey = process.env.RESEND_API_KEY;

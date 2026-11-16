@@ -15,6 +15,7 @@ import {
   EyeOff,
   Loader2,
 } from "lucide-react";
+import posthog from "posthog-js";
 
 interface BlogPost {
   id: string;
@@ -63,6 +64,7 @@ export default function BlogListPage() {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
     } else {
+      posthog.capture("blog_deleted");
       setPosts(posts.filter((p) => p.id !== id));
 
       // Clean up cover image from S3 if present
@@ -86,6 +88,7 @@ export default function BlogListPage() {
     if (error) {
       console.error("Error toggling publish:", error);
     } else {
+      posthog.capture("blog_publication_updated", { is_published: !currentStatus });
       setPosts(
         posts.map((p) =>
           p.id === id ? { ...p, is_published: !currentStatus } : p

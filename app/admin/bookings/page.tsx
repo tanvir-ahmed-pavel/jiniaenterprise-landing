@@ -18,6 +18,7 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
+import posthog from "posthog-js";
 
 interface Booking {
   id: string;
@@ -73,6 +74,7 @@ export default function BookingsManagementPage() {
       console.error("Error updating status:", error);
       alert("Failed to update status");
     } else {
+      posthog.capture("booking_status_updated", { status: newStatus });
       setBookings(
         bookings.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
       );
@@ -92,6 +94,7 @@ export default function BookingsManagementPage() {
       console.error("Error deleting booking:", error);
       alert("Failed to delete booking");
     } else {
+      posthog.capture("booking_deleted");
       setBookings(bookings.filter((b) => b.id !== id));
       if (selectedBooking?.id === id) {
         setSelectedBooking(null);

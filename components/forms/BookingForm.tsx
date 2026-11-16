@@ -9,6 +9,7 @@ import { ArrowRight, Check, ChevronDown, Loader2, Search, X } from "lucide-react
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { orderVehicleImages } from "@/lib/vehicles/images";
+import posthog from "posthog-js";
 
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -307,6 +308,10 @@ export function BookingForm({ preselectedVehicle, vehicles = [] }: BookingFormPr
 
       if (!response.ok) throw new Error("Failed to submit booking");
 
+      posthog.capture("booking_request_submitted", {
+        rental_type: data.rental_type,
+        has_selected_vehicle: Boolean(data.vehicle_id),
+      });
       setIsSuccess(true);
       reset();
     } catch {

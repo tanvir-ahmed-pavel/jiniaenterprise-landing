@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, X, MapPin, Calendar as CalendarIcon, Car, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import posthog from "posthog-js";
 
 export function HeroBookingWidget() {
   const [rentalType, setRentalType] = useState("daily");
@@ -53,6 +54,10 @@ export function HeroBookingWidget() {
       });
 
       if (response.ok) {
+        posthog.capture("quick_quote_request_submitted", {
+          rental_type: rentalType,
+          has_vehicle_preference: Boolean(vehicleName.trim()),
+        });
         setIsSuccess(true);
         setIsModalOpen(false);
       }

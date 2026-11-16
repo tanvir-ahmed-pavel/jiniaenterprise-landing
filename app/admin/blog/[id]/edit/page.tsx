@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { blogService, BlogPost } from "@/lib/supabase/admin-service";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import posthog from "posthog-js";
 
 export default function EditBlogPostPage() {
   const router = useRouter();
@@ -54,6 +55,7 @@ export default function EditBlogPostPage() {
 
     try {
       await blogService.update(id, postData);
+      posthog.capture("blog_updated", { is_published: postData.is_published, has_cover_image: Boolean(postData.cover_image) });
       alert("Post updated successfully!");
       router.push("/admin/blog");
     } catch (error) {

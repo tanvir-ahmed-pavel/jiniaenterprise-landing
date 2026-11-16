@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateAdminEmailHtml, generateCustomerEmailHtml, EmailSourceType } from "@/lib/email-templates";
+import { SeverityNumber } from "@opentelemetry/api-logs";
+import { posthogLogger } from "@/instrumentation";
 
 export async function POST(request: Request) {
   try {
@@ -57,6 +59,12 @@ export async function POST(request: Request) {
 
     if (dbError) {
       console.error("Supabase inquiries insert error:", dbError);
+    } else {
+      posthogLogger?.emit({
+        body: "inquiry request persisted",
+        severityNumber: SeverityNumber.INFO,
+        attributes: { route: "/api/inquiries" },
+      });
     }
 
     // Send email notifications
