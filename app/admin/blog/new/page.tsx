@@ -17,20 +17,13 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { blogService } from "@/lib/supabase/admin-service";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import posthog from "posthog-js";
+import { generateBlogSlug } from "@/lib/blog/slug";
 
 export default function AddBlogPostPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<string>("");
-
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
-      .substring(0, 50);
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +33,7 @@ export default function AddBlogPostPage() {
     const title = formData.get("title") as string;
     const manualSlug = formData.get("slug") as string;
 
-    const slug = manualSlug || generateSlug(title);
+    const slug = manualSlug || generateBlogSlug(title);
 
     const blogData = {
       title: title,
