@@ -1,4 +1,4 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/session";
 import { htmlToMarkdownResponse, wantsMarkdown } from "@/lib/markdown/negotiate";
 
@@ -10,7 +10,16 @@ export async function proxy(request: NextRequest) {
     if (markdown) return markdown;
   }
 
-  const response = await updateSession(request);
+  // Only admin routes need the Supabase session (login guard and cookie
+  // refresh). Public pages skip it, so they stay cacheable at the edge and
+  // do not make a Supabase round trip on every request.
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const response = await updateSession(request);
+    response.headers.append("Vary", "Accept");
+    return response;
+  }
+
+  const response = NextResponse.next();
   response.headers.append("Vary", "Accept");
   return response;
 }

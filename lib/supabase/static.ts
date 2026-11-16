@@ -16,3 +16,16 @@ export function createStaticClient() {
 
   return createClient<Database>(url, key);
 }
+
+/**
+ * Anonymous, cookie-free client for public reads (fleet, blog, booking form).
+ * It never touches `cookies()`, so pages that use it can be prerendered and
+ * cached at the edge. Only published / active rows are read through it.
+ */
+export function createPublicReadClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  return createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+}

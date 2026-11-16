@@ -1,11 +1,14 @@
 import { BookingForm } from "@/components/forms/BookingForm";
 import { siteConfig } from "@/lib/config";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/static";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Eyebrow } from "@/components/layout/Section";
 import { createMetadata } from "@/lib/seo/metadata";
 import { ArrowUpRight, Check, Phone } from "lucide-react";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
+
+// Refresh the fleet and blog data every minute while still serving prerendered HTML.
+export const revalidate = 60;
 
 export const metadata = createMetadata({
   title: "Book Car Rental in Dhaka",
@@ -28,7 +31,7 @@ export default async function BookingPage({
   searchParams: Promise<{ vehicle?: string | string[] }>;
 }) {
   const params = await searchParams;
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data: vehicles } = await supabase
     .from("vehicles")
     .select("*")

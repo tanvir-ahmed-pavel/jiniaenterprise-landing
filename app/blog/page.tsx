@@ -1,12 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/static";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { OpenWizardButton } from "@/components/wizard/OpenWizardButton";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
 import { siteConfig } from "@/lib/config";
 import { createMetadata } from "@/lib/seo/metadata";
+
+// Refresh the fleet and blog data every minute while still serving prerendered HTML.
+export const revalidate = 60;
 
 export const metadata = createMetadata({
   title: "Car Rental Guides & Travel Notes",
@@ -29,7 +32,7 @@ interface BlogPost {
 }
 
 async function getBlogPosts(): Promise<BlogPost[]> {
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")

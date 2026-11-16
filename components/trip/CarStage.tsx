@@ -98,7 +98,7 @@ export function CarStage({
               pointerEvents: far > 2 ? "none" : undefined,
             }}
           >
-            <Image src={src} alt={d === 0 ? name : ""} fill priority={d === 0} sizes="(max-width: 1024px) 78vw, 520px" className="object-contain object-bottom" />
+            <Image src={src} alt={d === 0 ? name : ""} fill priority={d === 0} loading={d === 0 ? "eager" : "lazy"} fetchPriority={d === 0 ? "high" : "auto"} sizes="(max-width: 1024px) 78vw, 520px" className="object-contain object-bottom" />
           </button>
         );
       })}

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/static";
 import { vehiclePhotos } from "@/lib/vehicles/photos";
 import type { StoreVehicle } from "@/components/trip/FleetStore";
 
@@ -27,7 +27,7 @@ export type FleetRow = {
 };
 
 export async function getFleetRows(): Promise<FleetRow[]> {
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase.from("vehicles").select("*").eq("is_active", true).order("sort_order", { ascending: true });
   if (error) {
     console.error("Error fetching vehicles:", error);
