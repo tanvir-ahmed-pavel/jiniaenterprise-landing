@@ -65,6 +65,22 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // RFC 8288 Link headers so agents can find the API catalog and docs
+        // from the homepage (RFC 9727 section 3).
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value: [
+              '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+              '</openapi/blog-api.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"',
+              '</docs/blog-api.md>; rel="service-doc"; type="text/markdown"',
+              '</auth.md>; rel="describedby"; type="text/markdown"',
+            ].join(", "),
+          },
+        ],
+      },
     ];
   },
   async redirects() {
