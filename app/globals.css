@@ -1442,17 +1442,18 @@
   /* See-through: little blur and less tint, so the text and shapes behind
      show and bend along the edge. */
   --jx-blur: blur(1px);
-  --glass-rim: 30%;
-  --glass-hi: 42%;
-  --glass-lo: 30%;
+  /* Solid enough to read on every browser, Safari included, which has no edge bend. */
+  --glass-rim: 64%;
+  --glass-hi: 82%;
+  --glass-lo: 66%;
   --glass-feather: 6px;
   --glass-soft: 16px;
-  /* A clear lift and a fine edge, so the bar stands out on a white page. */
+  /* A clear lift and a visible edge, so the bar stands out on cards and white alike. */
   box-shadow:
-    0 26px 48px -14px rgb(10 40 30 / 0.5),
-    0 8px 18px -6px rgb(10 40 30 / 0.3),
-    0 0 0 1px rgb(10 40 30 / 0.1),
-    inset 0 0 0 1px rgb(10 40 30 / 0.1);
+    0 26px 48px -12px rgb(10 40 30 / 0.55),
+    0 10px 20px -6px rgb(10 40 30 / 0.35),
+    0 0 0 1px rgb(10 40 30 / 0.16),
+    inset 0 0 0 1px rgb(10 40 30 / 0.12);
 }
 .jx-glass-dock::before {
   box-shadow:
