@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/static";
 import { createStaticClient } from "@/lib/supabase/static";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
@@ -15,6 +15,9 @@ import {
   getArticleSchema,
   getBreadcrumbSchema,
 } from "@/lib/seo/schema";
+
+// Refresh the fleet and blog data every minute while still serving prerendered HTML.
+export const revalidate = 60;
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -35,7 +38,7 @@ interface BlogPost {
 
 // Fetch blog post by slug
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
@@ -51,7 +54,7 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 // Fetch recent posts for sidebar
 async function getRecentPosts(excludeSlug: string): Promise<BlogPost[]> {
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")

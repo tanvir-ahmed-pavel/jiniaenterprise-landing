@@ -50,8 +50,8 @@ export function Footer() {
         {/* Brand + actions */}
         <div className="flex flex-col gap-8 border-b border-paper/10 pb-10 lg:flex-row lg:items-center lg:justify-between">
           <Link href="/" className="inline-flex items-center gap-3" aria-label="Jinia Enterprise, home">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-paper p-1.5">
-              <Image src="/images/logo.png" alt="" width={300} height={242} className="h-full w-auto" />
+            <span className="flex h-14 items-center justify-center rounded-2xl bg-paper px-2.5">
+              <Image src="/images/logo.png" alt="" width={300} height={242} className="h-10 w-auto" />
             </span>
             <span className="flex flex-col leading-none">
               <span className="font-heading text-2xl font-semibold tracking-[-0.03em]">Jinia Enterprise</span>

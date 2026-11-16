@@ -18,6 +18,9 @@ import { ClientVoices } from "@/components/trip/ClientVoices";
 import { CountUp } from "@/components/trip/CountUp";
 import { StackCards } from "@/components/trip/StackCards";
 
+// Refresh the fleet and blog data every minute while still serving prerendered HTML.
+export const revalidate = 60;
+
 export const metadata = createMetadata({
   title: "Car Rental in Dhaka with Driver | Jinia Enterprise",
   description: "Book chauffeur-driven car and bus rental in Dhaka. Daily, monthly, corporate, and airport transfer service from Jinia Enterprise.",

@@ -7,7 +7,7 @@ import { classOfName, hireTerms } from "@/lib/vehicles/fleet";
 import { SimilarCars, VehicleActions, VehicleStage } from "@/components/trip/VehicleDetail";
 import { getFleetRows, toStoreVehicles, type FleetRow } from "@/lib/vehicles/store";
 import { sampleVehicles, siteConfig } from "@/lib/config";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/static";
 import { createStaticClient } from "@/lib/supabase/static";
 import { createMetadata } from "@/lib/seo/metadata";
 import { orderVehicleImages } from "@/lib/vehicles/images";
@@ -16,6 +16,9 @@ import {
   getBreadcrumbSchema,
   getVehicleSchema,
 } from "@/lib/seo/schema";
+
+// Refresh the fleet and blog data every minute while still serving prerendered HTML.
+export const revalidate = 60;
 
 interface VehiclePageProps {
   params: Promise<{ slug: string }>;
@@ -42,7 +45,7 @@ interface Vehicle {
 
 // Fetch vehicle data from Supabase
 async function getVehicle(slug: string): Promise<Vehicle | null> {
-  const supabase = await createClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("vehicles")
     .select("id,name,slug,category,seats,engine_cc,features,rental_types,description,images,image_url,starting_price,price_label,is_active,sort_order,is_featured")
