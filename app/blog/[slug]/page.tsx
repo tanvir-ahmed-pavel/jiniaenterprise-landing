@@ -10,6 +10,7 @@ import { createMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { OpenWizardButton } from "@/components/wizard/OpenWizardButton";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
+import { RelatedLinks } from "@/components/seo/RelatedLinks";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
@@ -373,6 +374,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <p className="mt-5 text-xs text-ink/50">The desk is open 24/7. No deposit to ask.</p>
             </div>
           </aside>
+        </div>
+
+        {/* Links from the article to the pages that earn the booking */}
+        <div className="mt-16 border-t border-ink/10 pt-10 sm:mt-20">
+          <RelatedLinks
+            title="Plan your trip"
+            links={[
+              { href: "/vehicles", label: "See the fleet" },
+              { href: "/pricing", label: "Pricing" },
+              { href: "/car-rental-dhaka", label: "Car rental in Dhaka" },
+              { href: "/airport-car-rental", label: "Airport transfers" },
+              { href: "/routes", label: "Routes out of Dhaka" },
+              { href: "/booking", label: "Request a quote" },
+            ]}
+          />
         </div>
 
         {/* Related */}

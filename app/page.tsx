@@ -19,7 +19,7 @@ import { CountUp } from "@/components/trip/CountUp";
 import { StackCards } from "@/components/trip/StackCards";
 
 export const metadata = createMetadata({
-  title: "Car Rental in Dhaka with Driver",
+  title: "Car Rental in Dhaka with Driver | Jinia Enterprise",
   description: "Book chauffeur-driven car and bus rental in Dhaka. Daily, monthly, corporate, and airport transfer service from Jinia Enterprise.",
   path: "/",
   keywords: ["car rental Dhaka", "car rental with driver Dhaka", "airport transfer Dhaka", "corporate car rental Bangladesh", "monthly car rental Dhaka", "Jinia Enterprise"],

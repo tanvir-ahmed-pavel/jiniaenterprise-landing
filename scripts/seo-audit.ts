@@ -35,7 +35,7 @@ const CHECKS: CheckItem[] = [
   { label: "Glossary", relativePath: "app/glossary/page.tsx" },
   { label: "Service detail", relativePath: "app/services/[slug]/page.tsx" },
   { label: "Sitemap", relativePath: "app/sitemap.ts" },
-  { label: "Robots", relativePath: "app/robots.ts" },
+  { label: "Robots", relativePath: "app/robots.txt/route.ts" },
   { label: "Manifest", relativePath: "app/manifest.ts" },
   { label: "Business identity", relativePath: "lib/business/identity.ts" },
   { label: "SEO schema", relativePath: "lib/seo/schema.ts" },
