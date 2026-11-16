@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import posthog from "posthog-js";
 
 const adminNavItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -37,6 +38,7 @@ function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val:
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    posthog.reset();
     router.push("/admin/login");
   };
 
@@ -137,6 +139,7 @@ export default function AdminLayout({
         if (!session) {
           router.push("/admin/login");
         } else {
+          posthog.identify(session.user.id, { email: session.user.email });
           setIsCheckingAuth(false);
         }
       } catch (err) {

@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
 import { vehicleService, Vehicle } from "@/lib/supabase/admin-service";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import posthog from "posthog-js";
 
 export default function EditVehiclePage() {
   const router = useRouter();
@@ -91,6 +92,12 @@ export default function EditVehiclePage() {
 
     try {
       await vehicleService.update(id, vehicleData);
+      posthog.capture("vehicle_updated", {
+        category: vehicleData.category,
+        is_active: vehicleData.is_active,
+        is_featured: vehicleData.is_featured,
+        image_count: filteredImages.length,
+      });
       alert("Vehicle updated successfully!");
       router.push("/admin/vehicles");
     } catch (error) {

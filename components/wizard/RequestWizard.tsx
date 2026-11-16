@@ -10,6 +10,7 @@ import { brief, fmtDate, placeName, placeShort as placeShortName, summary } from
 import { pushEvent } from "@/lib/analytics/datalayer";
 import { vehiclePhotos } from "@/lib/vehicles/photos";
 import { classOfName } from "@/lib/vehicles/fleet";
+import posthog from "posthog-js";
 
 const STORE_KEY = "jinia:request";
 
@@ -294,6 +295,13 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
+      posthog.capture("booking_wizard_request_submitted", {
+        trip_type: s.type,
+        vehicle_class: s.cls,
+        passenger_count: s.pax,
+        trip_count: s.count,
+        has_selected_vehicle: Boolean(s.model?.id),
+      });
       setSent(true);
       pushEvent("generate_lead", { method: "booking_wizard", trip_type: s.type, vehicle_class: s.cls, from: s.from, to: s.to, passengers: s.pax });
     } catch {

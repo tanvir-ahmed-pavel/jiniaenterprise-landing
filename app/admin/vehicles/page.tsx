@@ -10,6 +10,7 @@ import { vehicleService } from "@/lib/supabase/admin-service";
 import { createClient } from "@/lib/supabase/client";
 import { orderVehicleImages } from "@/lib/vehicles/images";
 import { Plus, Pencil, Trash2, Car, Users, Loader2, Copy, Star, Eye, EyeOff, Hash, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import posthog from "posthog-js";
 
 interface Vehicle {
   id: string;
@@ -82,6 +83,7 @@ export default function VehiclesListPage() {
       console.error("Error deleting vehicle:", error);
       alert("Failed to delete vehicle");
     } else {
+      posthog.capture("vehicle_deleted", { category: targetVehicle?.category || "unknown" });
       const nextPage = vehicles.length === 1 && page > 1 ? page - 1 : page;
       setPage(nextPage);
       if (nextPage === page) fetchVehicles(page);
@@ -132,6 +134,7 @@ export default function VehiclesListPage() {
       const newVehicle = await vehicleService.create(clonedData as Parameters<typeof vehicleService.create>[0]);
 
       if (newVehicle) {
+        posthog.capture("vehicle_cloned", { category: vehicle.category });
         await fetchVehicles(page);
         alert("Vehicle cloned successfully! The clone is inactive by default.");
       }
@@ -151,7 +154,8 @@ export default function VehiclesListPage() {
       .update({ is_featured: newValue } as never)
       .eq("id", vehicle.id);
     if (!error) {
-        setVehicles(vehicles.map((v) =>
+      posthog.capture("vehicle_featured_updated", { is_featured: newValue, category: vehicle.category });
+      setVehicles(vehicles.map((v) =>
         v.id === vehicle.id ? { ...v, is_featured: newValue } : v
       ));
     }
@@ -165,7 +169,8 @@ export default function VehiclesListPage() {
       .update({ is_active: newValue } as never)
       .eq("id", vehicle.id);
     if (!error) {
-        setVehicles(vehicles.map((v) =>
+      posthog.capture("vehicle_visibility_updated", { is_active: newValue, category: vehicle.category });
+      setVehicles(vehicles.map((v) =>
         v.id === vehicle.id ? { ...v, is_active: newValue } : v
       ));
     }
