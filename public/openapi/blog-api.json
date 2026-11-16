@@ -1,0 +1,201 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Jinia Enterprise Blog Publishing API",
+    "version": "1.0.0",
+    "description": "Lets an automated agent list, read and create blog posts on jiniaenterprise.com without logging in to /admin. Every endpoint requires the API key. See https://jiniaenterprise.com/docs/blog-api.md for the full guide."
+  },
+  "servers": [{ "url": "https://jiniaenterprise.com" }],
+  "security": [{ "bearerAuth": [] }, { "apiKeyAuth": [] }],
+  "paths": {
+    "/api/blog/posts": {
+      "get": {
+        "operationId": "listBlogPosts",
+        "summary": "List blog posts",
+        "description": "Returns every post, including drafts, so the caller can check for duplicates before creating one.",
+        "responses": {
+          "200": {
+            "description": "The list of posts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["count", "posts"],
+                  "properties": {
+                    "count": { "type": "integer" },
+                    "posts": { "type": "array", "items": { "$ref": "#/components/schemas/BlogPostSummary" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/ServerError" },
+          "503": { "$ref": "#/components/responses/NotConfigured" }
+        }
+      },
+      "post": {
+        "operationId": "createBlogPost",
+        "summary": "Create a blog post",
+        "description": "Creates a post. If the slug already exists, nothing is created and the response is 409 with the existing post's URL, so a retried request cannot publish twice.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateBlogPostRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The post was created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateBlogPostResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "The body is not valid JSON, or a field failed validation.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "409": {
+            "description": "A post with this slug already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "slug": { "type": "string" },
+                    "url": { "type": "string", "format": "uri" }
+                  }
+                }
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/ServerError" },
+          "503": { "$ref": "#/components/responses/NotConfigured" }
+        }
+      }
+    },
+    "/api/blog/posts/{slug}": {
+      "get": {
+        "operationId": "getBlogPost",
+        "summary": "Get one blog post",
+        "description": "Returns one post, including its body and whether it is a draft.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The post slug, for example hiring-a-car-with-driver-in-dhaka."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The post.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BlogPostDetail" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": {
+            "description": "No post has this slug.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/ServerError" },
+          "503": { "$ref": "#/components/responses/NotConfigured" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "description": "Authorization: Bearer <BLOG_API_KEY>" },
+      "apiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key", "description": "X-API-Key: <BLOG_API_KEY>" }
+    },
+    "schemas": {
+      "CreateBlogPostRequest": {
+        "type": "object",
+        "required": ["title", "excerpt", "content"],
+        "properties": {
+          "title": { "type": "string", "maxLength": 255 },
+          "excerpt": { "type": "string", "maxLength": 300 },
+          "content": { "type": "string", "maxLength": 100000, "description": "Markdown body, without a leading # title." },
+          "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 255, "description": "Optional. Generated from the title when omitted." },
+          "author": { "type": "string", "maxLength": 100, "default": "Jinia Enterprise" },
+          "coverImageUrl": { "type": "string", "format": "uri", "maxLength": 500, "description": "http or https only." },
+          "published": { "type": "boolean", "default": true }
+        }
+      },
+      "CreateBlogPostResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "type": "string", "enum": ["published", "draft"] },
+          "publishedAt": { "type": "string", "format": "date-time" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "BlogPostSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "status": { "type": "string", "enum": ["published", "draft"] },
+          "date": { "type": "string", "format": "date-time" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "BlogPostDetail": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BlogPostSummary" },
+          {
+            "type": "object",
+            "properties": {
+              "excerpt": { "type": "string" },
+              "content": { "type": "string" },
+              "author": { "type": "string" },
+              "coverImageUrl": { "type": ["string", "null"], "format": "uri" },
+              "updatedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": { "error": { "type": "string" } }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "The API key is missing or wrong.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "More than 10 authenticated requests in one minute. The limit is held per running instance.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "ServerError": {
+        "description": "The server failed to complete the request.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "NotConfigured": {
+        "description": "The server has no BLOG_API_KEY set.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}
