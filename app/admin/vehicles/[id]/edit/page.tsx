@@ -79,6 +79,12 @@ export default function EditVehiclePage() {
         : null,
       price_label: (formData.get("price_label") as string) || "per day",
       description: formData.get("description") as string,
+      model_year: formData.get("model_year") ? parseInt(formData.get("model_year") as string) : null,
+      transmission: (formData.get("transmission") as string) || null,
+      fuel_type: (formData.get("fuel_type") as string) || null,
+      colour: ((formData.get("colour") as string) || "").trim() || null,
+      luggage_bags: formData.get("luggage_bags") ? parseInt(formData.get("luggage_bags") as string) : null,
+      insurance: ((formData.get("insurance") as string) || "").trim() || null,
       features: features.filter((f) => f.trim() !== ""),
       rental_types: (formData.get("rental_types") as string)
         .split(",")
@@ -245,6 +251,49 @@ export default function EditVehiclePage() {
                 defaultValue={vehicle.description || ""}
                 className="w-full px-3 py-2 rounded-md border border-input bg-background resize-none"
               />
+            </div>
+
+            {/* Facts shown in the public vehicle drawer */}
+            <div className="space-y-4 pt-2 border-t border-gray-100">
+              <div>
+                <p className="text-sm font-semibold">More details</p>
+                <p className="text-xs text-muted-foreground">Shown in the vehicle drawer on the website. Leave blank to hide.</p>
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="model_year">Model Year</Label>
+                  <Input id="model_year" name="model_year" type="number" defaultValue={vehicle.model_year || ""} placeholder="e.g. 2019" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="transmission">Transmission</Label>
+                  <select id="transmission" name="transmission" defaultValue={vehicle.transmission || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                    <option value="">Not set</option>
+                    <option value="Automatic">Automatic</option>
+                    <option value="Manual">Manual</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fuel_type">Fuel</Label>
+                  <select id="fuel_type" name="fuel_type" defaultValue={vehicle.fuel_type || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                    <option value="">Not set</option>
+                    {["Petrol", "Diesel", "CNG", "Hybrid", "Electric"].map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="colour">Colour</Label>
+                  <Input id="colour" name="colour" defaultValue={vehicle.colour || ""} placeholder="e.g. Pearl white" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="luggage_bags">Luggage (large bags)</Label>
+                  <Input id="luggage_bags" name="luggage_bags" type="number" defaultValue={vehicle.luggage_bags || ""} placeholder="e.g. 4" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="insurance">Insurance note</Label>
+                <textarea id="insurance" name="insurance" rows={2} defaultValue={vehicle.insurance || ""} placeholder="e.g. Comprehensive cover for passengers and the car" className="w-full px-3 py-2 rounded-md border border-input bg-background resize-none" />
+              </div>
             </div>
 
             {/* Vehicle Images Uploader */}

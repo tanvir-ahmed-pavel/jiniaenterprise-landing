@@ -15,6 +15,15 @@ export type FleetRow = {
   image_url: string | null;
   is_featured: boolean;
   sort_order: number;
+  description: string | null;
+  engine_cc: number | null;
+  price_label: string | null;
+  model_year: number | null;
+  transmission: string | null;
+  fuel_type: string | null;
+  colour: string | null;
+  luggage_bags: number | null;
+  insurance: string | null;
 };
 
 export async function getFleetRows(): Promise<FleetRow[]> {
@@ -42,6 +51,17 @@ export function toStoreVehicles(rows: FleetRow[]): StoreVehicle[] {
       cutout: photos,
       fallback,
       featured: !!r.is_featured,
+      details: {
+        description: r.description?.trim() || "",
+        engine_cc: r.engine_cc ?? null,
+        price_label: r.price_label || "per day",
+        model_year: r.model_year ?? null,
+        transmission: r.transmission || null,
+        fuel_type: r.fuel_type || null,
+        colour: r.colour || null,
+        luggage_bags: r.luggage_bags ?? null,
+        insurance: r.insurance?.trim() || null,
+      },
     };
   });
 }

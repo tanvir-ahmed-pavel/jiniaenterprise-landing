@@ -17,6 +17,12 @@ export interface Database {
           category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats: number;
           engine_cc: number | null;
+          model_year: number | null;
+          transmission: string | null;
+          fuel_type: string | null;
+          colour: string | null;
+          luggage_bags: number | null;
+          insurance: string | null;
           features: string[];
           rental_types: string[];
           description: string;
@@ -36,6 +42,12 @@ export interface Database {
           category: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats: number;
           engine_cc?: number | null;
+          model_year?: number | null;
+          transmission?: string | null;
+          fuel_type?: string | null;
+          colour?: string | null;
+          luggage_bags?: number | null;
+          insurance?: string | null;
           features?: string[];
           rental_types?: string[];
           description?: string;
@@ -55,6 +67,12 @@ export interface Database {
           category?: "Economy" | "Standard" | "Premium" | "SUV" | "Microbus" | "Bus";
           seats?: number;
           engine_cc?: number | null;
+          model_year?: number | null;
+          transmission?: string | null;
+          fuel_type?: string | null;
+          colour?: string | null;
+          luggage_bags?: number | null;
+          insurance?: string | null;
           features?: string[];
           rental_types?: string[];
           description?: string;
