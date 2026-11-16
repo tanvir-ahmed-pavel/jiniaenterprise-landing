@@ -319,7 +319,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
   // Edge refraction on Chromium: the backdrop bends along the rim of the glass.
   // The options stay the same when the panel opens or folds, so the filter is
   // not torn down during the move.
-  useGlassRefraction(panel, { bevel: 34, maxShift: 36, blur: 16 });
+  useGlassRefraction(panel, { bevel: 30, maxShift: 80 });
 
   return (
     <>

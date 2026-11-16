@@ -1389,8 +1389,8 @@
   z-index: -2;
   border-radius: inherit;
   pointer-events: none;
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: var(--jx-blur, blur(16px)) saturate(1.8);
+  backdrop-filter: var(--jx-blur, blur(16px)) saturate(1.8);
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.12),
     inset 2px 3px 4px -1px rgb(255 255 255 / 0.7),
@@ -1425,10 +1425,12 @@
    ramp, so there is no frame. */
 .jx-glass-dock {
   --tile: color-mix(in oklch, white 80%, var(--color-paper));
-  /* Less tint than before, so the backdrop shows through and the bend shows. */
-  --glass-rim: 56%;
-  --glass-hi: 84%;
-  --glass-lo: 64%;
+  /* See-through: little blur and less tint, so the text and shapes behind
+     show and bend along the edge. */
+  --jx-blur: blur(2px);
+  --glass-rim: 46%;
+  --glass-hi: 64%;
+  --glass-lo: 48%;
   --glass-feather: 6px;
   --glass-soft: 16px;
   /* Lift and a fine edge, so the glass reads on a white page too. */
@@ -1510,12 +1512,12 @@
 .jx-btn-gold:active:not(:disabled),
 .jx-btn-forest:active:not(:disabled) { transform: translateY(1px); }
 
-/* Chromium only: the hook sets data-refract and --jx-bf to an SVG
-   displacement filter plus a light blur, so the backdrop bends along the
-   edges. Everyone else keeps the frosted look above. */
+/* Chromium only: the hook sets data-refract and --jx-ref to an SVG
+   displacement filter. It runs first, so the backdrop bends, and the blur
+   after it softens that bend. Everyone else keeps the frosted look above. */
 .jx-glass[data-refract]::before {
-  -webkit-backdrop-filter: var(--jx-bf);
-  backdrop-filter: var(--jx-bf);
+  -webkit-backdrop-filter: var(--jx-ref) var(--jx-blur, blur(16px)) saturate(1.8);
+  backdrop-filter: var(--jx-ref) var(--jx-blur, blur(16px)) saturate(1.8);
 }
 
 /* No blur available, or the visitor asked for less transparency: solid. */
