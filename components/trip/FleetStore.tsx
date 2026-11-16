@@ -9,6 +9,19 @@ import { vehicleClasses } from "@/lib/trip/data";
 import { useRequest } from "./RequestProvider";
 import { classOfName, cleanName, hireTerms } from "@/lib/vehicles/fleet";
 
+/** Vehicle facts the drawer shows. Filled in by the admin panel. */
+export type VehicleDetails = {
+  description: string;
+  engine_cc: number | null;
+  price_label: string;
+  model_year: number | null;
+  transmission: string | null;
+  fuel_type: string | null;
+  colour: string | null;
+  luggage_bags: number | null;
+  insurance: string | null;
+};
+
 export type StoreVehicle = {
   id: string;
   name: string;
@@ -20,7 +33,25 @@ export type StoreVehicle = {
   cutout: { side: string; front: string } | null;
   fallback: string | null;
   featured?: boolean;
+  details: VehicleDetails;
 };
+
+/** The spec list in the drawer: only the facts that are filled in. */
+function specRows(d: VehicleDetails): Array<[string, string]> {
+  const rows: Array<[string, string | number | null]> = [
+    ["Model year", d.model_year],
+    ["Engine", d.engine_cc ? `${d.engine_cc.toLocaleString("en-US")} cc` : null],
+    ["Transmission", d.transmission],
+    ["Fuel", d.fuel_type],
+    ["Colour", d.colour],
+    ["Luggage", d.luggage_bags ? `${d.luggage_bags} ${d.luggage_bags === 1 ? "bag" : "bags"}` : null],
+    ["Billed", d.price_label],
+  ];
+  return rows.filter((r): r is [string, string] => r[1] !== null && r[1] !== "");
+}
+
+/** Plain text from the admin description (it may hold a little HTML). */
+const plainText = (s: string) => s.replace(/<[^>]*>/g, "").trim();
 
 export type Angle = "side" | "front";
 export const clean = cleanName;
@@ -114,7 +145,7 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
   return createPortal(
     <>
       <div aria-hidden onClick={onClose} className={`fixed inset-0 z-[60] bg-ink/40 backdrop-blur-[2px] transition-opacity duration-500 ${v ? "opacity-100" : "pointer-events-none opacity-0"}`} />
-      <div role="dialog" aria-modal="true" aria-label={v ? clean(v.name) : "Vehicle"} inert={!v} className={`fixed inset-y-0 right-0 z-[61] flex w-full max-w-xl flex-col overflow-y-auto bg-paper transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? "translate-x-0" : "translate-x-full"}`}>
+      <div role="dialog" aria-modal="true" aria-label={v ? clean(v.name) : "Vehicle"} inert={!v} className={`fixed inset-y-0 right-0 z-[61] flex w-full max-w-xl flex-col overflow-x-hidden overflow-y-auto bg-paper transition-[transform,visibility] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? "translate-x-0 visible" : "invisible translate-x-full"}`}>
         {v && (
           <>
             <div className="relative aspect-[4/3] shrink-0" style={{ backgroundColor: c?.tint ?? "var(--color-paper-deep)" }}>
@@ -142,6 +173,19 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
                 <div><dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Seats</dt><dd className="mt-1 font-semibold">{v.seats}</dd></div>
                 <div><dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Hire</dt><dd className="mt-1 font-semibold">{terms(v)}</dd></div>
               </dl>
+              {plainText(v.details.description) && (
+                <p className="mt-6 whitespace-pre-line text-[0.95rem] leading-relaxed text-ink/70">{plainText(v.details.description)}</p>
+              )}
+              {specRows(v.details).length > 0 && (
+                <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-ink/10 pt-6 text-sm">
+                  {specRows(v.details).map(([k, val]) => (
+                    <div key={k}><dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">{k}</dt><dd className="mt-1 font-semibold">{val}</dd></div>
+                  ))}
+                </dl>
+              )}
+              {v.details.insurance && (
+                <p className="mt-6 rounded-2xl bg-paper-deep p-4 text-sm leading-relaxed"><span className="font-semibold">Insurance: </span>{v.details.insurance}</p>
+              )}
               <div className="mt-auto grid gap-3 pt-8 sm:grid-cols-2">
                 <button type="button" onClick={() => { chooseModel({ id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id }); onClose(); window.setTimeout(() => window.dispatchEvent(new CustomEvent("jinia:open-wizard", { detail: { step: req.date ? 3 : 1 } })), 350); }} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ink py-4 text-sm font-semibold text-paper transition-colors hover:bg-forest-soft">
                   {req.model?.id === v.id ? <><Check className="h-4 w-4" /> Chosen · back to request</> : "Choose for my request"}
