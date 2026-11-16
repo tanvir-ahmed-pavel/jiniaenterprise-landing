@@ -101,7 +101,7 @@ export function ClientVoices({ items: quotes = [], clients = [], sample = false 
                   type="button"
                   onClick={() => { setI(n); pauseBriefly(); }}
                   aria-current={n === i}
-                  className={`w-full truncate rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${n === i ? "bg-white font-semibold text-ink" : "text-ink/55 hover:text-ink"}`}
+                  className={`w-full truncate rounded-xl px-3 py-3 text-left text-sm transition-colors ${n === i ? "bg-white font-semibold text-ink" : "text-ink/55 hover:text-ink"}`}
                 >
                   {x.label}
                 </button>

@@ -1569,3 +1569,56 @@
 @media (prefers-reduced-motion: reduce) {
   .jx-glow { animation: none; }
 }
+
+/* ══════════════════════════════════════════════════
+   TOUCH + SMALL SCREENS
+   ══════════════════════════════════════════════════ */
+
+/* Tiny controls (dots, icon buttons) get a ~44px tap area without changing
+   their layout: the pseudo-element sits over the padding around them. */
+.tap-expand {
+  position: relative;
+}
+.tap-expand::after {
+  content: "";
+  position: absolute;
+  inset: -10px -8px;
+}
+
+/* Taps should respond at once, not after the browser's double-tap delay. */
+a,
+button,
+label,
+select,
+summary,
+[role="button"],
+[role="tab"],
+[role="radio"] {
+  touch-action: manipulation;
+}
+
+/* On phones no label goes below 12px. These are the arbitrary small sizes
+   used for eyebrows, tags and table labels; tablets and desktop keep them. */
+@media (max-width: 640px) {
+  .jinia-site [class*="text-[0.5"],
+  .jinia-site [class*="text-[0.6"],
+  .jinia-site [class*="text-[0.7rem]"] {
+    font-size: 0.75rem;
+  }
+}
+
+/* Touch screens never hover, so the custom cursor bubble stays hidden. */
+@media (hover: none) {
+  .jx-cursor {
+    display: none !important;
+  }
+}
+
+/* Touch: the departure-hour scrubber is a thin bar, so its hit area reaches
+   beyond the bar. It is transparent, so nothing changes visually. */
+@media (pointer: coarse) {
+  .jx-scrub {
+    inset: -14px 0 !important;
+    height: auto !important;
+  }
+}

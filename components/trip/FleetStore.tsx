@@ -150,7 +150,7 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
           <>
             <div className="relative aspect-[4/3] shrink-0" style={{ backgroundColor: c?.tint ?? "var(--color-paper-deep)" }}>
               <VehicleImage v={v} angle={angle} sizes="576px" />
-              <button ref={close} type="button" onClick={onClose} aria-label="Close" className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-paper-deep text-ink"><X className="h-4 w-4" /></button>
+              <button ref={close} type="button" onClick={onClose} aria-label="Close" className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-paper-deep text-ink"><X className="h-4 w-4" /></button>
               {v.cutout && v.cutout.front !== v.cutout.side && (
                 <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1 rounded-full bg-paper-deep p-1">
                   {(["side", "front"] as Angle[]).map((a) => (
@@ -285,14 +285,14 @@ export function FleetStore({ vehicles: all, featuredOnly = false, allHref = "/ve
       {!featuredOnly && <div className="flex flex-col gap-4 border-b border-ink/10 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Filter by class">
           {chips.map((ch) => (
-            <button key={ch.id} role="tab" type="button" aria-selected={filter === ch.id} onClick={() => setFilter(ch.id)} className={`h-10 shrink-0 rounded-full px-4 text-sm font-semibold transition-colors ${filter === ch.id ? "bg-ink text-paper" : "bg-paper-deep text-ink/70 hover:text-ink"}`}>
+            <button key={ch.id} role="tab" type="button" aria-selected={filter === ch.id} onClick={() => setFilter(ch.id)} className={`h-11 shrink-0 rounded-full px-4 text-sm font-semibold transition-colors ${filter === ch.id ? "bg-ink text-paper" : "bg-paper-deep text-ink/70 hover:text-ink"}`}>
               {ch.label} <sup className="ml-0.5 text-[0.65rem] opacity-60">{counts[ch.id] ?? 0}</sup>
             </button>
           ))}
         </div>
         <label className="flex items-center gap-2 text-sm text-ink/60">
           Sort
-          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="h-10 rounded-full bg-paper-deep px-4 text-sm font-semibold text-ink outline-none focus:ring-2 focus:ring-gold-deep">
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="h-11 rounded-full bg-paper-deep px-4 text-sm font-semibold text-ink outline-none focus:ring-2 focus:ring-gold-deep">
             <option value="featured">Featured</option>
             <option value="low">Price, low to high</option>
             <option value="high">Price, high to low</option>

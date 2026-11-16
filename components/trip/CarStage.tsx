@@ -163,12 +163,12 @@ export function CarStage({
 
       <div className="mt-1 flex items-center justify-center gap-1">
         {onTogglePlay && (
-          <button type="button" data-autoplay-toggle onClick={onTogglePlay} aria-label={playing ? "Pause the car tour" : "Play the car tour"} aria-pressed={playing} className="mr-1.5 flex h-7 w-7 items-center justify-center rounded-full text-ink/60 ring-1 ring-ink/15 transition-colors hover:bg-ink hover:text-paper">
+          <button type="button" data-autoplay-toggle onClick={onTogglePlay} aria-label={playing ? "Pause the car tour" : "Play the car tour"} aria-pressed={playing} className="tap-expand mr-1.5 flex h-7 w-7 items-center justify-center rounded-full text-ink/60 ring-1 ring-ink/15 transition-colors hover:bg-ink hover:text-paper">
             {playing ? <Pause className="h-3 w-3" /> : <Play className="ml-px h-3 w-3" />}
           </button>
         )}
         {vehicleClasses.map((c) => (
-          <button key={c.id} type="button" onClick={() => setCls(c.id)} aria-label={`Show ${c.label}`} aria-pressed={c.id === cls} className="flex h-6 w-7 items-center justify-center">
+          <button key={c.id} type="button" onClick={() => setCls(c.id)} aria-label={`Show ${c.label}`} aria-pressed={c.id === cls} className="tap-expand flex h-6 w-7 items-center justify-center">
             {/* fixed slot; only scale animates, so the row never reflows */}
             <span className={`block h-1.5 w-6 rounded-full transition-[transform,background-color] duration-300 ${c.id === cls ? "scale-x-100 bg-ink" : "scale-x-[0.25] bg-ink/20 hover:bg-ink/40"}`} />
           </button>

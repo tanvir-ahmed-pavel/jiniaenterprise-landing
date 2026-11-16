@@ -79,7 +79,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="group inline-flex items-center gap-1 text-sm text-paper/75 transition-colors hover:text-paper">
+                    <Link href={l.href} className="group inline-flex items-center gap-1 py-3 -my-3 text-sm text-paper/75 transition-colors hover:text-paper">
                       {l.label}
                       <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                     </Link>
@@ -90,15 +90,15 @@ export function Footer() {
           ))}
           <div className="space-y-4 text-sm sm:col-span-2 lg:col-span-4 lg:col-start-9">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper/40">Office</p>
-            <a href="https://maps.google.com/?q=Unicorn+Plaza+Gulshan+Dhaka" target="_blank" rel="noopener noreferrer" className="flex gap-3 text-paper/75 transition-colors hover:text-paper">
+            <a href="https://maps.google.com/?q=Unicorn+Plaza+Gulshan+Dhaka" target="_blank" rel="noopener noreferrer" className="flex gap-3 py-2.5 -my-2.5 text-paper/75 transition-colors hover:text-paper">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <span>{siteConfig.address.line1}, {siteConfig.address.line2}<br />{siteConfig.address.city}, {siteConfig.address.country}</span>
             </a>
-            <a href={`tel:${siteConfig.phone2.replace(/\s/g, "")}`} className="flex gap-3 text-paper/75 transition-colors hover:text-paper">
+            <a href={`tel:${siteConfig.phone2.replace(/\s/g, "")}`} className="flex gap-3 py-2.5 -my-2.5 text-paper/75 transition-colors hover:text-paper">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <span>{siteConfig.phone} · {siteConfig.phone2}<br />{siteConfig.phone3}</span>
             </a>
-            <a href={`mailto:${siteConfig.email}`} className="flex gap-3 break-all text-paper/75 transition-colors hover:text-paper">
+            <a href={`mailto:${siteConfig.email}`} className="flex gap-3 break-all py-3 -my-3 text-paper/75 transition-colors hover:text-paper">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <span>{siteConfig.email}</span>
             </a>
@@ -109,9 +109,9 @@ export function Footer() {
         <div className="flex flex-col gap-3 border-t border-paper/10 py-6 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Jinia Enterprise. All rights reserved.</p>
           <div className="flex gap-5">
-            <Link href="/policies" className="hover:text-paper">Policies</Link>
-            <Link href="/contact" className="hover:text-paper">Contact</Link>
-            <a href="#top" className="hover:text-paper">Back to top ↑</a>
+            <Link href="/policies" className="inline-flex items-center py-3.5 -my-3.5 hover:text-paper">Policies</Link>
+            <Link href="/contact" className="inline-flex items-center py-3.5 -my-3.5 hover:text-paper">Contact</Link>
+            <a href="#top" className="inline-flex items-center py-3.5 -my-3.5 hover:text-paper">Back to top ↑</a>
           </div>
         </div>
       </div>

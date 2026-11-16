@@ -267,7 +267,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <div className="container">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8rem] text-ink/45">
-          <Link href="/" className="hover:text-ink">Home</Link>
+          <Link href="/" className="inline-flex items-center py-3 -my-3 hover:text-ink">Home</Link>
           <span aria-hidden className="text-ink/25">/</span>
           <Link href="/blog" className="hover:text-ink">Journal</Link>
           <span aria-hidden className="text-ink/25">/</span>

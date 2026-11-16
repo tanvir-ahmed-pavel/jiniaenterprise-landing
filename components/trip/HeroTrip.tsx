@@ -210,7 +210,7 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
             tabs={
               <div role="tablist" aria-label="Kind of trip" className="scrollbar-none -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 {tripTypes.map((x) => (
-                  <button key={x.id} type="button" role="tab" aria-selected={req.type === x.id} onClick={() => setType(x.id)} className={`h-9 shrink-0 whitespace-nowrap rounded-full px-3.5 text-[0.8rem] font-semibold transition-colors sm:h-10 sm:px-4 sm:text-sm ${req.type === x.id ? "bg-ink text-paper" : "bg-paper-deep text-ink/65 hover:text-ink"}`}>
+                  <button key={x.id} type="button" role="tab" aria-selected={req.type === x.id} onClick={() => setType(x.id)} className={`h-11 shrink-0 whitespace-nowrap rounded-full px-3.5 text-[0.8rem] font-semibold transition-colors sm:h-10 sm:px-4 sm:text-sm ${req.type === x.id ? "bg-ink text-paper" : "bg-paper-deep text-ink/65 hover:text-ink"}`}>
                     {x.label}
                   </button>
                 ))}
