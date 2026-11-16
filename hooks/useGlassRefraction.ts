@@ -110,6 +110,8 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
     // rebuild adds a new filter under a new id and drops the older ones.
     let version = 0;
     let timer = 0;
+    let builtW = 0;
+    let builtH = 0;
     const rebuild = () => {
       const w = Math.round(el.offsetWidth);
       const h = Math.round(el.offsetHeight);
@@ -117,6 +119,8 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
       const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 24;
       const href = buildDisplacementMap(w, h, radius, bevel);
       if (!href) return;
+      builtW = w;
+      builtH = h;
 
       const id = `${baseId}-${++version}`;
       const holder = document.createElementNS(SVG_NS, "svg");
@@ -134,7 +138,13 @@ export function useGlassRefraction(ref: RefObject<HTMLElement | null>, options: 
       // Keep the current and previous filter; remove anything older.
       while (svg.children.length > 2) svg.removeChild(svg.firstElementChild!);
     };
+    // While the panel is changing size (the open and close animations), the
+    // map built for the old size would bend the wrong edges. So refraction is
+    // switched off for the move and built again once the size has settled. The
+    // blur stays on throughout, so the glass never drops out.
     const schedule = () => {
+      if (Math.round(el.offsetWidth) === builtW && Math.round(el.offsetHeight) === builtH) return;
+      el.removeAttribute("data-refract");
       window.clearTimeout(timer);
       timer = window.setTimeout(rebuild, 120);
     };

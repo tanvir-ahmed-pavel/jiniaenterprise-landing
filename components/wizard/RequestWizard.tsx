@@ -317,7 +317,9 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
   const image = s.model?.image ?? cls.image;
 
   // Edge refraction on Chromium: the backdrop bends along the rim of the glass.
-  useGlassRefraction(panel, open ? { bevel: 44, maxShift: 46, blur: 5.6 } : { bevel: 22, maxShift: 24, blur: 1.7 });
+  // The options stay the same when the panel opens or folds, so the filter is
+  // not torn down during the move.
+  useGlassRefraction(panel, { bevel: 34, maxShift: 36, blur: 16 });
 
   return (
     <>
@@ -330,7 +332,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
         aria-label="Request a car"
         aria-hidden={!visible}
         inert={!visible}
-        className={`fixed z-[57] mx-auto overflow-hidden transition-[max-width,background-color,color,transform,opacity,box-shadow,border-radius] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "inset-x-0 bottom-0 max-w-[30rem] rounded-t-[1.75rem] jx-glass jx-glass-sheet text-ink sm:inset-x-3 sm:bottom-5 sm:rounded-[2rem]" : "jx-glass jx-glass-dock inset-x-3 bottom-3 max-w-2xl rounded-[2rem] text-paper sm:bottom-5"} ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
+        className={`fixed z-[57] mx-auto overflow-hidden transition-[max-width,background-color,color,transform,opacity,box-shadow,border-radius,--tile,--glass-rim,--glass-hi,--glass-lo] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "inset-x-0 bottom-0 max-w-[30rem] rounded-t-[1.75rem] jx-glass jx-glass-sheet text-ink sm:inset-x-3 sm:bottom-5 sm:rounded-[2rem]" : "jx-glass jx-glass-dock inset-x-3 bottom-3 max-w-2xl rounded-[2rem] text-ink sm:bottom-5"} ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
       >
         {/* Steps: grow out of the bar */}
         <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
@@ -507,7 +509,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
           )}
 
           <button type="button" onClick={open ? undefined : () => openWizard(touched ? 1 : 0)} disabled={open} className={`min-w-0 flex-1 px-2 text-left disabled:cursor-default ${open ? "max-sm:hidden" : ""}`}>
-            <span className={`block text-[0.62rem] font-semibold uppercase tracking-[0.16em] ${open ? "text-gold-deep" : "text-gold"}`}>
+            <span className="block text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-gold-deep">
               {open ? (sent ? "Sent to the desk" : `Step ${step + 1} of 4 · ${shortStep[step]}`) : touched ? "Your request" : "Need a car?"}
             </span>
             <span className="block truncate text-sm font-semibold">{touched || open ? summary(input) : "Plan the trip in four taps"}</span>
@@ -531,7 +533,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
           ) : (
             <>
               <a href={waHref} target="_blank" rel="noopener noreferrer" onClick={waClick} aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`} title={`WhatsApp ${whatsappDisplay}`} className="flex h-11 shrink-0 items-center gap-2 rounded-full px-3 text-[#25D366] jx-btn-frost">
-                <WhatsAppIcon className="h-[1.1rem] w-[1.1rem]" /><span className="hidden text-sm font-semibold tabular-nums text-paper lg:inline">{whatsappDisplay}</span>
+                <WhatsAppIcon className="h-[1.1rem] w-[1.1rem]" /><span className="hidden text-sm font-semibold tabular-nums text-ink lg:inline">{whatsappDisplay}</span>
               </a>
               <button type="button" onClick={() => openWizard(touched ? 1 : 0)} className="flex h-11 shrink-0 items-center gap-2 rounded-full jx-btn-gold jx-glow px-4 text-sm font-semibold text-ink sm:px-5">
                 <CarFront className="h-4 w-4" /><span className="hidden sm:inline">Request a quote</span><span className="sm:hidden">Request</span>
