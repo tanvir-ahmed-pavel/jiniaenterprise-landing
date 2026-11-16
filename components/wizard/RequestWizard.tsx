@@ -11,6 +11,7 @@ import { pushEvent } from "@/lib/analytics/datalayer";
 import { vehiclePhotos } from "@/lib/vehicles/photos";
 import { classOfName } from "@/lib/vehicles/fleet";
 import posthog from "posthog-js";
+import { useGlassRefraction } from "@/hooks/useGlassRefraction";
 
 const STORE_KEY = "jinia:request";
 
@@ -315,9 +316,12 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
   const visible = open || (show && overlays === 0);
   const image = s.model?.image ?? cls.image;
 
+  // Edge refraction on Chromium: the backdrop bends along the rim of the glass.
+  useGlassRefraction(panel, open ? { bevel: 44, maxShift: 46, blur: 5.6 } : { bevel: 22, maxShift: 24, blur: 1.7 });
+
   return (
     <>
-      <div aria-hidden onClick={shut} className={`fixed inset-0 z-[56] bg-ink/35 transition-opacity duration-500 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`} />
+      <div aria-hidden onClick={shut} className={`jx-scrim fixed inset-0 z-[56] transition-opacity duration-500 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`} />
 
       <div
         ref={panel}
@@ -326,14 +330,14 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
         aria-label="Request a car"
         aria-hidden={!visible}
         inert={!visible}
-        className={`fixed z-[57] mx-auto overflow-hidden transition-[max-width,background-color,color,transform,opacity,box-shadow,border-radius] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "inset-x-0 bottom-0 max-w-[30rem] rounded-t-[1.75rem] bg-paper text-ink shadow-[0_-20px_60px_-20px_rgba(8,30,20,.45)] sm:inset-x-3 sm:bottom-5 sm:rounded-[2rem] sm:shadow-[0_30px_80px_-24px_rgba(8,30,20,.5)]" : "inset-x-3 bottom-3 max-w-2xl rounded-[2rem] bg-ink text-paper shadow-[0_24px_60px_-20px_rgba(8,30,20,.6)] sm:bottom-5"} ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
+        className={`fixed z-[57] mx-auto overflow-hidden transition-[max-width,background-color,color,transform,opacity,box-shadow,border-radius] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "inset-x-0 bottom-0 max-w-[30rem] rounded-t-[1.75rem] jx-glass jx-glass-sheet text-ink sm:inset-x-3 sm:bottom-5 sm:rounded-[2rem]" : "jx-glass jx-glass-dock inset-x-3 bottom-3 max-w-2xl rounded-[2rem] text-paper sm:bottom-5"} ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
       >
         {/* Steps: grow out of the bar */}
         <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
           <div className="min-h-0 overflow-hidden">
             <div className="flex max-h-[calc(92dvh-5rem)] flex-col sm:max-h-[calc(88dvh-5rem)]">
               {/* Header: the car you're asking for, on its tint, with the trip so far. */}
-              <div className="relative shrink-0 overflow-hidden transition-[background-color] duration-700" style={{ backgroundColor: cls.tint }}
+              <div className="relative shrink-0 overflow-hidden transition-[background-color] duration-700" style={{ backgroundImage: `linear-gradient(180deg, color-mix(in oklch, ${cls.tint} 66%, transparent), color-mix(in oklch, ${cls.tint} 34%, transparent) 62%, transparent)` }}
                 onPointerDown={(e) => { dragY.current = e.clientY; }}
                 onPointerUp={(e) => { if (dragY.current !== null && e.clientY - dragY.current > 70) shut(); dragY.current = null; }}
               >
@@ -461,7 +465,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
                     <Field label="Anything else (optional)">
                       <textarea value={s.note} onChange={(e) => set({ note: e.target.value })} rows={2} placeholder="Flight number, stops, luggage, child seat…" className="wz-input resize-none py-3" />
                     </Field>
-                    <div className="rounded-2xl p-4" style={{ backgroundColor: cls.tint }}>
+                    <div className="rounded-2xl p-4" style={{ backgroundColor: `color-mix(in oklch, ${cls.tint} 58%, transparent)` }}>
                       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
                         <dt className="text-ink/55">Trip</dt><dd className="font-semibold">{t.label}{t.count ? ` · ${s.count} ${s.count === 1 ? t.count.unit[0] : t.count.unit[1]}` : ""}</dd>
                         <dt className="text-ink/55">Route</dt><dd className="font-semibold">{placeName(s.from)} → {placeName(s.to)}</dd>
@@ -489,7 +493,7 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
         </div>
 
         {/* The bar: folded it is the whole dock; open it is the footer. */}
-        <div className={`flex items-center gap-2 p-2 transition-colors duration-500 ${open ? "border-t border-ink/10 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:px-2 sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-2" : "pl-2"}`}>
+        <div className={`flex items-center gap-2 p-2 transition-colors duration-500 ${open ? "border-t border-white/40 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:px-2 sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-2" : "pl-2"}`}>
           {open ? (
             step > 0 ? (
               <button type="button" onClick={() => setStep(step - 1)} aria-label="Back" className="flex h-12 w-12 shrink-0 sm:h-11 sm:w-11 items-center justify-center rounded-full ring-1 ring-ink/15 hover:ring-ink"><ArrowLeft className="h-4 w-4" /></button>
@@ -511,25 +515,25 @@ export function RequestWizard({ whatsapp, phone }: { whatsapp: string; phone: st
 
           {open ? (
             sent ? (
-              <button type="button" onClick={shut} className="ml-auto flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-semibold text-paper hover:bg-forest-soft sm:h-11 sm:flex-none">Done</button>
+              <button type="button" onClick={shut} className="ml-auto flex h-12 flex-1 items-center justify-center gap-2 rounded-full jx-btn-forest px-5 text-sm font-semibold text-paper sm:h-11 sm:flex-none">Done</button>
             ) : step === 0 ? null : step < 3 ? (
-              <button type="button" onClick={() => canNext && setStep(step + 1)} disabled={!canNext} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 sm:h-11 sm:flex-none text-sm font-semibold text-paper hover:bg-forest-soft disabled:opacity-40" title={canNext ? undefined : "Pick a date first"}>
+              <button type="button" onClick={() => canNext && setStep(step + 1)} disabled={!canNext} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full jx-btn-forest px-5 sm:h-11 sm:flex-none text-sm font-semibold text-paper disabled:opacity-40" title={canNext ? undefined : "Pick a date first"}>
                 {canNext ? "Next" : !s.date ? "Pick a date" : "Add the place"} <ArrowRight className="h-4 w-4" />
               </button>
             ) : (
               <>
                 <a href={waHref} target="_blank" rel="noopener noreferrer" onClick={waClick} aria-label={`Send on WhatsApp instead, ${whatsappDisplay}`} title="Send on WhatsApp instead" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[#128C4B] ring-1 ring-ink/15 hover:ring-[#128C4B]"><WhatsAppIcon className="h-[1.1rem] w-[1.1rem]" /></a>
-                <button type="button" onClick={submit} disabled={!detailsOk || sending} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-gold px-5 sm:h-11 sm:flex-none text-sm font-semibold text-ink hover:bg-gold-deep hover:text-paper disabled:opacity-40">
+                <button type="button" onClick={submit} disabled={!detailsOk || sending} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full jx-btn-gold px-5 sm:h-11 sm:flex-none text-sm font-semibold text-ink disabled:opacity-40">
                   {sending ? "Sending…" : "Send request"} {!sending && <ArrowRight className="h-4 w-4" />}
                 </button>
               </>
             )
           ) : (
             <>
-              <a href={waHref} target="_blank" rel="noopener noreferrer" onClick={waClick} aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`} title={`WhatsApp ${whatsappDisplay}`} className="flex h-11 shrink-0 items-center gap-2 rounded-full px-3 text-[#25D366] ring-1 ring-paper/20 transition-colors hover:bg-paper">
+              <a href={waHref} target="_blank" rel="noopener noreferrer" onClick={waClick} aria-label={`WhatsApp ${whatsappDisplay} (opens WhatsApp)`} title={`WhatsApp ${whatsappDisplay}`} className="flex h-11 shrink-0 items-center gap-2 rounded-full px-3 text-[#25D366] jx-btn-frost">
                 <WhatsAppIcon className="h-[1.1rem] w-[1.1rem]" /><span className="hidden text-sm font-semibold tabular-nums text-paper lg:inline">{whatsappDisplay}</span>
               </a>
-              <button type="button" onClick={() => openWizard(touched ? 1 : 0)} className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-gold px-4 text-sm font-semibold text-ink transition-colors hover:bg-paper sm:px-5">
+              <button type="button" onClick={() => openWizard(touched ? 1 : 0)} className="flex h-11 shrink-0 items-center gap-2 rounded-full jx-btn-gold jx-glow px-4 text-sm font-semibold text-ink sm:px-5">
                 <CarFront className="h-4 w-4" /><span className="hidden sm:inline">Request a quote</span><span className="sm:hidden">Request</span>
               </button>
             </>
