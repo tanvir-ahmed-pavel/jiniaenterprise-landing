@@ -9,7 +9,7 @@ import { brief, fmtDate, placeShort } from "@/lib/trip/brief";
 import { CarStage } from "./CarStage";
 import { AutoPan } from "./AutoPan";
 import { classById, useRequest, type ChosenModel } from "./RequestProvider";
-import type { RingItem } from "./HeroDisk";
+import type { RingItem } from "./CarStage";
 
 /** A car from admin that is shown on the turntable. */
 export type HeroCar = { id: string; slug: string; name: string; image: string; classId: ClassId };
