@@ -8,8 +8,8 @@ const isProduction = process.env.VERCEL_ENV
 
 // Content-Signal states what the site allows AI systems to do with its content
 // (see https://contentsignals.org/). ai-train=no: do not train on it.
-// search=yes: search indexing is fine. ai-input=no: do not use it as live input.
-const CONTENT_SIGNAL = "Content-Signal: ai-train=no, search=yes, ai-input=no";
+// search=yes: search indexing is fine. ai-input=yes: AI systems may use it as live input.
+const CONTENT_SIGNAL = "Content-Signal: ai-train=no, search=yes, ai-input=yes";
 
 const AGENTS = [
   "*",
