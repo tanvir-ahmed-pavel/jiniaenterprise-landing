@@ -8,7 +8,11 @@ import { article, estimate, outstations, places, tripTypes, vehicleClasses, type
 import { brief, fmtDate, placeShort } from "@/lib/trip/brief";
 import { CarStage } from "./CarStage";
 import { AutoPan } from "./AutoPan";
-import { classById, useRequest } from "./RequestProvider";
+import { classById, useRequest, type ChosenModel } from "./RequestProvider";
+import type { RingItem } from "./HeroDisk";
+
+/** A car from admin that is shown on the turntable. */
+export type HeroCar = { id: string; slug: string; name: string; image: string; classId: ClassId };
 
 const CODES: Record<string, string> = {
   dac: "DAC", uttara: "UTT", bashundhara: "BSD", baridhara: "BRD", gulshan: "GUL", banani: "BAN",
@@ -80,23 +84,70 @@ function todayISO(offset = 0) {
   return d.toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
 }
 
-export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number | null>; whatsapp: string }) {
+export function HeroTrip({ floors, whatsapp, heroCars = [] }: { floors: Record<ClassId, number | null>; whatsapp: string; heroCars?: HeroCar[] }) {
   const { req, set, setType, chooseModel } = useRequest();
   const [today, setToday] = useState("");
   const t = tripTypes.find((x) => x.id === req.type)!;
   const C = classById(req.cls);
   const est = useMemo(() => estimate(req.from, req.to), [req.from, req.to]);
 
-  // Autoplay: the ring turns by itself until the visitor interacts with the
-  // hero (or has already picked a car), and only while the hero is on screen.
+  // The turntable. With two or more cars flagged in admin, each item is one
+  // car; otherwise each item is one car class, as before.
+  const carMode = heroCars.length >= 2;
+  const items: RingItem[] = useMemo(
+    () => (carMode
+      ? heroCars.map((c) => ({ key: c.id, label: c.name, image: c.image }))
+      : vehicleClasses.map((c) => ({ key: c.id, label: c.label, image: c.image }))),
+    [carMode, heroCars],
+  );
+  const itemClass: ClassId[] = carMode ? heroCars.map((c) => c.classId) : vehicleClasses.map((c) => c.id);
+  const itemTint = itemClass.map((id) => vehicleClasses.find((c) => c.id === id)?.tint ?? "var(--color-tile-stone)");
+
+  // The car in front. It follows the request (a picked car or class) and the autoplay.
+  const focusOf = (model: ChosenModel | null, cls: ClassId) => {
+    if (model) {
+      const j = items.findIndex((it) => it.key === model.id);
+      if (j >= 0) return j;
+    }
+    const k = itemClass.indexOf(cls);
+    return k >= 0 ? k : 0;
+  };
+  const [focus, setFocus] = useState(0);
+  useEffect(() => {
+    setFocus(focusOf(req.model, req.cls));
+    // focusOf reads the current list; it only needs to run when the pick changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [req.model?.id, req.cls, carMode]);
+
+  // Picking a car (or class) from the turntable sets the request, not just the view.
+  const pick = (i: number) => {
+    setAuto(false);
+    setFocus(i);
+    const car = carMode ? heroCars[i] : undefined;
+    if (car) chooseModel({ id: car.id, slug: car.slug, name: car.name, image: car.image, classId: car.classId });
+    else chooseModel(null);
+    set({ cls: itemClass[i] });
+  };
+
+  // Autoplay: the turntable turns by itself until the visitor interacts with the
+  // hero, and only while the hero is on screen. In car mode it only turns the
+  // view and leaves the request alone; in class mode it also sets the class.
   const hero = useRef<HTMLElement>(null);
   const [auto, setAuto] = useState(true);
   const [side, setSide] = useState<"left" | "right" | null>(null);
-  const clsRef = useRef(req.cls);
-  useEffect(() => { clsRef.current = req.cls; }, [req.cls]);
+  const focusRef = useRef(focus);
+  const countRef = useRef(items.length);
+  const carModeRef = useRef(carMode);
+  const classRef = useRef(itemClass);
+  useEffect(() => {
+    focusRef.current = focus;
+    countRef.current = items.length;
+    carModeRef.current = carMode;
+    classRef.current = itemClass;
+  });
   useEffect(() => {
     const el = hero.current;
-    if (!el || !auto || req.model) return;
+    if (!el || !auto) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let visible = true;
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.4 });
@@ -105,13 +156,16 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
     el.addEventListener("pointerdown", stop);
     el.addEventListener("keydown", stop);
     el.addEventListener("focusin", stop);
-    const order = vehicleClasses.map((c) => c.id);
     let turns = 0;
     const id = window.setInterval(() => {
-      if (!visible || document.hidden) return;
-      set({ cls: order[(order.indexOf(clsRef.current) + 1) % order.length] });
+      const total = countRef.current;
+      if (!visible || document.hidden || total < 2) return;
+      const next = (focusRef.current + 1) % total;
+      focusRef.current = next;
+      setFocus(next);
+      if (!carModeRef.current) set({ cls: classRef.current[next] });
       // One full turn of the ring, then rest so the visitor can take it in.
-      if (++turns >= order.length) setAuto(false);
+      if (++turns >= total) setAuto(false);
     }, 4000);
     return () => {
       window.clearInterval(id);
@@ -120,7 +174,7 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
       el.removeEventListener("keydown", stop);
       el.removeEventListener("focusin", stop);
     };
-  }, [auto, req.model, set]);
+  }, [auto, set]);
 
   // Client-only bits: today's date in Dhaka, current Dhaka hour as default.
   useEffect(() => {
@@ -196,7 +250,7 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
 
         <div className="mt-4 sm:mt-5">
           <CarStage
-            cls={req.cls}
+            cls={req.model ? req.cls : itemClass[focus] ?? req.cls}
             model={req.model}
             hour={req.hour}
             setHour={(h) => set({ hour: h })}
@@ -204,8 +258,10 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
             outstation={est?.outstation}
             routeLabel={`${CODES[req.from]} → ${CODES[req.to]}`}
             rate={floors[req.cls]}
-            setCls={(c) => { chooseModel(null); set({ cls: c }); }}
-            playing={auto && !req.model}
+            items={items}
+            active={focus}
+            onPick={pick}
+            playing={auto}
             onTogglePlay={() => setAuto((a) => !a)}
             tabs={
               <div role="tablist" aria-label="Kind of trip" className="scrollbar-none -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
@@ -251,9 +307,11 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
             that half of the hero wakes it: a soft glow rises from the edge in
             the next car's tint, the chevron sharpens, and a preview appears. */}
         {(["prev", "next"] as const).map((dir) => {
-          const order = vehicleClasses.map((c) => c.id);
-          const i = order.indexOf(req.cls);
-          const target = vehicleClasses[(i + (dir === "next" ? 1 : -1) + order.length) % order.length];
+          const total = items.length;
+          if (total < 2) return null;
+          const j = (focus + (dir === "next" ? 1 : -1) + total) % total;
+          const target = items[j];
+          const tint = itemTint[j];
           const isNext = dir === "next";
           const on = side === (isNext ? "right" : "left");
           return (
@@ -264,12 +322,12 @@ export function HeroTrip({ floors, whatsapp }: { floors: Record<ClassId, number 
                 className="absolute inset-0 -z-10 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{
                   opacity: on ? 1 : 0,
-                  background: `radial-gradient(70% 50% at ${isNext ? "100%" : "0%"} 55%, color-mix(in oklch, ${target.tint} 55%, transparent) 0%, color-mix(in oklch, ${target.tint} 25%, transparent) 40%, transparent 75%)`,
+                  background: `radial-gradient(70% 50% at ${isNext ? "100%" : "0%"} 55%, color-mix(in oklch, ${tint} 55%, transparent) 0%, color-mix(in oklch, ${tint} 25%, transparent) 40%, transparent 75%)`,
                 }}
               />
               <button
                 type="button"
-                onClick={() => { setAuto(false); chooseModel(null); set({ cls: target.id }); }}
+                onClick={() => pick(j)}
                 aria-label={`${isNext ? "Next" : "Previous"} car type: ${target.label}`}
                 className={`pointer-events-auto absolute top-1/2 z-30 flex -translate-y-1/2 items-center gap-3 py-8 outline-none ${isNext ? "right-0 flex-row-reverse pl-4 pr-3 lg:pr-6" : "left-0 pl-3 pr-4 lg:pl-6"}`}
               >

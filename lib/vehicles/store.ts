@@ -24,6 +24,7 @@ export type FleetRow = {
   colour: string | null;
   luggage_bags: number | null;
   insurance: string | null;
+  show_in_hero?: boolean | null;
 };
 
 export async function getFleetRows(): Promise<FleetRow[]> {

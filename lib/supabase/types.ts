@@ -22,6 +22,7 @@ export interface Database {
           fuel_type: string | null;
           colour: string | null;
           luggage_bags: number | null;
+          show_in_hero: boolean;
           insurance: string | null;
           features: string[];
           rental_types: string[];
@@ -47,6 +48,7 @@ export interface Database {
           fuel_type?: string | null;
           colour?: string | null;
           luggage_bags?: number | null;
+          show_in_hero?: boolean;
           insurance?: string | null;
           features?: string[];
           rental_types?: string[];
@@ -72,6 +74,7 @@ export interface Database {
           fuel_type?: string | null;
           colour?: string | null;
           luggage_bags?: number | null;
+          show_in_hero?: boolean;
           insurance?: string | null;
           features?: string[];
           rental_types?: string[];

@@ -1,16 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
+import { HeroDisk, type RingItem } from "./HeroDisk";
 import { Pause, Play } from "lucide-react";
 import { TRAFFIC, driveMinutes, fmtClock, fmtDuration, trafficLabel, vehicleClasses, type ClassId, type Outstation } from "@/lib/trip/data";
 import type { ChosenModel } from "./RequestProvider";
 
 /**
- * The hero stage. One tinted card holds the chosen car; the other car types
- * wait outside the card on a shallow 3D ring and turn in when chosen (tap a
- * side car, swipe, or use the arrow keys). Below the car, a plain readout of
- * when you'd arrive, with the hour picked on the day's traffic curve.
+ * The hero stage. One tinted card holds the trip controls. The cars stand on
+ * a turntable behind it: the picked car comes to the front and the rest turn
+ * behind the card. Tap a car, swipe, or use the arrow keys. Below the card, a
+ * readout of when you'd arrive, with the hour picked on the day's traffic curve.
  */
 export function CarStage({
   cls,
@@ -21,7 +21,9 @@ export function CarStage({
   outstation,
   routeLabel,
   rate,
-  setCls,
+  items,
+  active,
+  onPick,
   tabs,
   sentence,
   actions,
@@ -36,7 +38,10 @@ export function CarStage({
   outstation?: Outstation;
   routeLabel: string;
   rate: number | null;
-  setCls: (c: ClassId) => void;
+  /** The cars (or classes) on the turntable, and the one in front. */
+  items: RingItem[];
+  active: number;
+  onPick: (i: number) => void;
   /** Trip-type tabs across the top of the card. */
   tabs?: React.ReactNode;
   /** The trip sentence under the car. */
@@ -47,20 +52,19 @@ export function CarStage({
   playing?: boolean;
   onTogglePlay?: () => void;
 }) {
-  const n = vehicleClasses.length;
-  const active = Math.max(0, vehicleClasses.findIndex((c) => c.id === cls));
-  const C = vehicleClasses[active];
+  const C = vehicleClasses.find((c) => c.id === cls) ?? vehicleClasses[0];
   const m = TRAFFIC[hour];
   const [likely, lo, hi] = driveMinutes(km, hour, outstation);
   const name = model?.name ?? `Any ${C.label.toLowerCase()}`;
   const tone = m < 1.3 ? "bg-[oklch(0.9_0.05_150)] text-forest" : m < 1.9 ? "bg-[oklch(0.92_0.07_90)] text-[oklch(0.38_0.07_75)]" : "bg-[oklch(0.88_0.06_40)] text-[oklch(0.4_0.1_35)]";
   const startX = useRef<number | null>(null);
-  const go = (d: number) => setCls(vehicleClasses[(active + d + n) % n].id);
+  const n = items.length;
+  const go = (d: number) => n && onPick((active + d + n) % n);
 
   const ring = (
     <div
       role="radiogroup"
-      aria-label="Vehicle class"
+      aria-label="Choose a car"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
@@ -73,35 +77,9 @@ export function CarStage({
         startX.current = null;
         if (Math.abs(dx) > 30) go(dx < 0 ? 1 : -1);
       }}
-      className="relative z-10 mx-auto -mt-[calc((100vw-3rem)*0.373)] sm:-mt-[calc((100vw-3rem)*0.264)] lg:-mt-[calc(var(--stage)*0.1568)] aspect-[3/2] w-[100%] touch-pan-y select-none outline-none [perspective:1000px] focus-visible:rounded-2xl focus-visible:ring-2 focus-visible:ring-gold-deep sm:w-[76%] lg:w-[calc(var(--stage)*0.5)]"
+      className="relative z-10 mx-auto mt-2 aspect-[2/1] w-[100%] touch-pan-y select-none outline-none focus-visible:rounded-2xl focus-visible:ring-2 focus-visible:ring-gold-deep sm:w-[76%] lg:w-[calc(var(--stage)*0.5)]"
     >
-      {vehicleClasses.map((c, i) => {
-        let d = i - active;
-        if (d > n / 2) d -= n;
-        if (d < -n / 2) d += n;
-        const far = Math.abs(d);
-        const src = d === 0 && model?.image ? model.image : c.image;
-        return (
-          <button
-            key={c.id}
-            type="button"
-            role="radio"
-            aria-checked={d === 0}
-            aria-label={`${c.label}, ${c.seats}`}
-            tabIndex={-1}
-            onClick={() => d !== 0 && setCls(c.id)}
-            className={`absolute inset-0 origin-bottom transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${far > 1 ? "max-lg:pointer-events-none max-lg:opacity-0" : ""}`}
-            style={{
-              transform: d === 0 ? "translate3d(0,0,0) scale(0.91)" : `translate3d(${d * (far === 1 ? 92 : 150)}%, 0, ${-far * 140}px) rotateY(${-d * 28}deg) scale(${far === 1 ? 0.5 : 0.34})`,
-              opacity: d === 0 ? 1 : far === 1 ? 0.55 : far === 2 ? 0.22 : 0,
-              zIndex: 10 - far,
-              pointerEvents: far > 2 ? "none" : undefined,
-            }}
-          >
-            <Image src={src} alt={d === 0 ? name : ""} fill priority={d === 0} loading={d === 0 ? "eager" : "lazy"} fetchPriority={d === 0 ? "high" : "auto"} sizes="(max-width: 1024px) 78vw, 520px" className="object-contain object-bottom" />
-          </button>
-        );
-      })}
+      {n > 0 && <HeroDisk items={items} active={active} onPick={onPick} tint={C.tint} />}
     </div>
   );
 
@@ -118,7 +96,7 @@ export function CarStage({
       {sentence && <div className="relative z-10 mx-auto mt-4 max-w-4xl px-1 sm:mt-6 sm:text-center sm:[@media(max-height:800px)]:mt-3">{sentence}</div>}
 
       <div
-        className="relative mx-auto mt-3 w-full rounded-[1.75rem] pb-[calc((100vw-3rem)*0.22+1rem)] pt-5 sm:pb-[calc((100vw-3rem)*0.147+1rem)] lg:pb-[calc(var(--stage)*0.0881+1rem)] transition-[background-color] duration-700 sm:mt-3 sm:w-[78%] sm:rounded-[2rem] sm:pt-10 lg:w-[64%] lg:pt-8"
+        className="relative z-20 mx-auto mt-3 w-full rounded-[1.75rem] pb-5 pt-5 sm:pb-6 transition-[background-color] duration-700 sm:mt-3 sm:w-[78%] sm:rounded-[2rem] sm:pt-10 lg:w-[64%] lg:pt-8"
         style={{ backgroundColor: C.tint }}
       >
         <div className="relative z-20 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 sm:gap-y-4 sm:px-8">
@@ -167,10 +145,10 @@ export function CarStage({
             {playing ? <Pause className="h-3 w-3" /> : <Play className="ml-px h-3 w-3" />}
           </button>
         )}
-        {vehicleClasses.map((c) => (
-          <button key={c.id} type="button" onClick={() => setCls(c.id)} aria-label={`Show ${c.label}`} aria-pressed={c.id === cls} className="tap-expand flex h-6 w-7 items-center justify-center">
+        {items.map((it, i) => (
+          <button key={it.key} type="button" onClick={() => onPick(i)} aria-label={`Show ${it.label}`} aria-pressed={i === active} className="tap-expand flex h-6 w-7 items-center justify-center">
             {/* fixed slot; only scale animates, so the row never reflows */}
-            <span className={`block h-1.5 w-6 rounded-full transition-[transform,background-color] duration-300 ${c.id === cls ? "scale-x-100 bg-ink" : "scale-x-[0.25] bg-ink/20 hover:bg-ink/40"}`} />
+            <span className={`block h-1.5 w-6 rounded-full transition-[transform,background-color] duration-300 ${i === active ? "scale-x-100 bg-ink" : "scale-x-[0.25] bg-ink/20 hover:bg-ink/40"}`} />
           </button>
         ))}
       </div>
