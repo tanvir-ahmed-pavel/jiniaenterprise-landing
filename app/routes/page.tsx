@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 export const metadata = createMetadata({
   title: "Outstation Car Rental Routes from Dhaka",
   description:
-    "Chauffeur-driven routes from Dhaka to Cox’s Bazar, Sylhet, Chattogram, and Sreemangal—journey notes and booking steps.",
+    "Chauffeur-driven routes from Dhaka to Cox’s Bazar, Sylhet, Rajshahi, Khulna, Barishal, Bandarban, Kuakata, and more. Journey notes and booking steps for each.",
   path: "/routes",
 });
 
