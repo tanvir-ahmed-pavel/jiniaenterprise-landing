@@ -1,0 +1,17 @@
+{
+  "name": "Jinia Enterprise",
+  "description": "Chauffeur-driven car rental in Dhaka and Bangladesh. Search cars, read each car's details and send a booking request.",
+  "url": "https://jiniaenterprise.com/api/mcp",
+  "version": "1.0.0",
+  "websiteUrl": "https://jiniaenterprise.com",
+  "transport": { "type": "streamable-http", "endpoint": "/api/mcp" },
+  "protocolVersion": "2025-06-18",
+  "capabilities": { "tools": { "listChanged": false } },
+  "authentication": { "required": false },
+  "tools": [
+    { "name": "search_vehicles", "description": "List the active cars, filtered by seats, rental type or a maximum day rate.", "readOnly": true },
+    { "name": "get_vehicle", "description": "Get one car's full details and page URL by its slug.", "readOnly": true },
+    { "name": "create_booking_request", "description": "Send a booking request to the desk for a customer.", "readOnly": false }
+  ],
+  "documentation": "https://jiniaenterprise.com/llms.txt"
+}

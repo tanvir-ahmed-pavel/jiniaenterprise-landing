@@ -86,6 +86,9 @@ ${carLines || "- Cars are listed on the fleet page."}
 
 ## For developers and agents
 
+- [Fleet data (JSON)](${SITE_URL}/api/vehicles): every active car with its rate, specs and page. Filters: min_seats, rental_type, max_day_rate_bdt. One car: /api/vehicles/{slug}
+- [OpenAPI description](${SITE_URL}/openapi/public-api.json): the public fleet and booking request endpoints
+- [MCP server card](${SITE_URL}/.well-known/mcp/server-card.json)
 - [Booking and fleet tools (MCP)](${SITE_URL}/api/mcp): Model Context Protocol endpoint (Streamable HTTP, JSON-RPC over POST). Tools: search_vehicles, get_vehicle, create_booking_request
 - [Agent discovery index](${SITE_URL}/.well-known/api-catalog): machine-readable API catalog (RFC 9727)
 - [Blog publishing API](${SITE_URL}/openapi/blog-api.json): OpenAPI 3.1 description. Requires an API key.
