@@ -5,7 +5,7 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { RequestProvider } from "@/components/trip/RequestProvider";
 import { plainText, specRows } from "@/lib/vehicles/details";
 import { classOfName, hireTerms } from "@/lib/vehicles/fleet";
-import { SimilarCars, VehicleActions, VehicleStage } from "@/components/trip/VehicleDetail";
+import { PickThisCar, SimilarCars, VehicleActions, VehicleStage } from "@/components/trip/VehicleDetail";
 import { getFleetRows, toStoreVehicles, type FleetRow } from "@/lib/vehicles/store";
 import { sampleVehicles, siteConfig } from "@/lib/config";
 import { createPublicReadClient } from "@/lib/supabase/static";
@@ -136,8 +136,16 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     ...(car.details.engine_cc ? [] : [{ k: "Cabin", v: ac ? "Air-conditioned" : "Standard" }]),
   ];
 
+  const glance = specs.filter((s) => ["Seats", "Hire", "Transmission", "Fuel", "Engine", "Cabin"].includes(s.k));
+  const steps: Array<[string, string]> = [
+    ["Pick this car", "Plan a trip in it, or message the desk."],
+    ["Tell us the trip", "Date, pickup point, and where you are going."],
+    ["Get one fixed price", vehicle.starting_price ? "Usually inside the hour. No deposit to ask." : "The desk replies with a fixed price, usually inside the hour."],
+  ];
+
   return (
     <RequestProvider>
+      <PickThisCar v={car} />
       <div className="bg-white pb-24 pt-24 text-ink sm:pt-32">
         <JsonLd
           data={[
@@ -172,43 +180,61 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
             <span aria-current="page" className="text-ink/70">{title}</span>
           </nav>
 
-          <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <header className="mt-6 sm:mt-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{cls?.label ?? vehicle.category} · {vehicle.seats} seats</p>
+            <h1 className="type-display mt-3 font-heading text-[clamp(2.4rem,6vw,4.4rem)] leading-[1.02] [overflow-wrap:anywhere]">
+              {title}
+              {years && <> <span className="type-accent text-gold-deep">{years}</span></>}
+            </h1>
+          </header>
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-12">
             <div className="min-w-0 lg:col-span-7">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{cls?.label ?? vehicle.category} · {vehicle.seats} seats</p>
-              <h1 className="type-display mt-3 font-heading text-[clamp(2.6rem,8vw,5.2rem)] [overflow-wrap:anywhere]">
-                {title}
-                {years && <> <span className="type-accent text-gold-deep">{years}</span></>}
-              </h1>
-              <div className="mt-8">
-                <VehicleStage v={car} />
-              </div>
+              <VehicleStage v={car} />
+              <ul aria-label="At a glance" className="mt-4 flex flex-wrap gap-2">
+                {glance.map((s) => (
+                  <li key={s.k} className="flex min-w-[7.5rem] flex-1 flex-col rounded-2xl bg-paper-deep px-4 py-3">
+                    <span className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">{s.k}</span>
+                    <span className="mt-1 text-sm font-semibold">{s.v}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <aside className="min-w-0 lg:col-span-5 lg:pt-24">
-              <div className="lg:sticky lg:top-28">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink/45">Day rate from</p>
+            <aside className="min-w-0 lg:col-span-5">
+              <div className="rounded-[1.6rem] border border-ink/10 p-6 sm:p-7 lg:sticky lg:top-28">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink/45">{vehicle.starting_price ? "Day rate from" : "Rate"}</p>
                 <p className="mt-1 font-heading text-[clamp(2.4rem,6vw,3.4rem)] font-semibold leading-none tracking-[-0.05em] tabular-nums">
-                  {vehicle.starting_price ? `৳${vehicle.starting_price.toLocaleString("en-US")}` : "On request"}
+                  {vehicle.starting_price ? `৳${vehicle.starting_price.toLocaleString("en-US")}` : "Quote on request"}
                 </p>
-                <p className="mt-2 text-sm text-ink/55">With driver, inside Dhaka. Fuel, hours and overtime are spelled out in your quote.</p>
-
-                <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-ink/10">
-                  {specs.map((s) => (
-                    <div key={s.k} className="bg-paper-deep p-4">
-                      <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/45">{s.k}</dt>
-                      <dd className="mt-1 text-sm font-semibold">{s.v}</dd>
-                    </div>
-                  ))}
-                </dl>
+                <p className="mt-2 text-sm text-ink/55">
+                  {vehicle.starting_price ? "With driver, inside Dhaka. Fuel, hours and overtime are spelled out in your quote." : "With driver. The desk replies with a fixed price for your trip."}
+                </p>
 
                 <div className="mt-6">
                   <VehicleActions v={car} whatsapp={siteConfig.whatsapp} phone={siteConfig.phone} />
+                  <a href="#booking" className="mt-3 block text-center text-sm font-semibold text-ink/60 underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink">Prefer to write it out? Use the form below</a>
+                </div>
+
+                <div className="mt-7 border-t border-ink/10 pt-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/45">How it works</p>
+                  <ol className="mt-4 space-y-4">
+                    {steps.map(([t, d], i) => (
+                      <li key={t} className="flex gap-3">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">{i + 1}</span>
+                        <span className="text-sm leading-relaxed">
+                          <span className="block font-semibold">{t}</span>
+                          <span className="text-ink/60">{d}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
               </div>
             </aside>
           </div>
 
-          <div className="mt-16 grid gap-12 border-t border-ink/10 pt-12 lg:grid-cols-12 lg:gap-14">
+          <div className="mt-16 grid gap-12 border-t border-ink/10 pt-12 lg:grid-cols-12 lg:gap-12">
             <div className="min-w-0 lg:col-span-7">
               <h2 className="type-display font-heading text-[clamp(2rem,5vw,3.2rem)]">About <span className="type-accent text-gold-deep">this car.</span></h2>
               <p className="mt-5 max-w-2xl whitespace-pre-line text-base leading-relaxed text-ink/65">{description}</p>
@@ -223,21 +249,41 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
                 <p className="mt-6 text-sm text-ink/55">Available for {vehicle.rental_types.map((t) => t.toLowerCase()).join(", ")} hire.</p>
               )}
               {car.details.insurance && (
-                <p className="mt-6 rounded-2xl bg-paper-deep p-4 text-sm leading-relaxed"><span className="font-semibold">Insurance: </span>{car.details.insurance}</p>
+                <div className="mt-8 rounded-2xl bg-paper-deep p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/45">Insurance</p>
+                  <p className="mt-2 text-sm leading-relaxed">{car.details.insurance}</p>
+                </div>
               )}
             </div>
 
             <div className="min-w-0 lg:col-span-5">
+              <h2 className="font-heading text-2xl font-semibold tracking-[-0.02em]">Specifications</h2>
+              <dl className="mt-4 divide-y divide-ink/10 border-y border-ink/10">
+                {specs.map((s) => (
+                  <div key={s.k} className="flex items-baseline justify-between gap-6 py-3.5">
+                    <dt className="text-sm text-ink/55">{s.k}</dt>
+                    <dd className="text-right text-sm font-semibold">{s.v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+
+          <div id="booking" className="mt-16 grid scroll-mt-28 gap-10 border-t border-ink/10 pt-12 lg:grid-cols-12 lg:gap-12">
+            <div className="min-w-0 lg:col-span-5">
               <h2 className="type-heading font-heading text-2xl">Rather write it out?</h2>
-              <p className="mt-2 text-sm text-ink/55">Send the details and the desk replies with a quote.</p>
-              <div className="mt-6 rounded-[1.6rem] bg-paper-deep p-5 sm:p-7">
+              <p className="mt-2 text-sm text-ink/55">Send the details and the desk replies with a quote. Nothing is charged here.</p>
+              <p className="mt-6 text-sm text-ink/55">Prefer a call? <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="font-semibold text-ink underline decoration-gold decoration-2 underline-offset-[5px]">{siteConfig.phone}</a></p>
+            </div>
+            <div className="min-w-0 lg:col-span-7">
+              <div className="rounded-[1.6rem] bg-paper-deep p-5 sm:p-7">
                 <InquiryForm vehicleName={vehicle.name} vehicleId={vehicle.id} />
               </div>
             </div>
           </div>
 
           {similar.length > 0 && (
-            <section className="mt-20">
+            <section className="mt-20 border-t border-ink/10 pt-12">
               <div className="mb-6 flex items-end justify-between gap-4">
                 <h2 className="type-display font-heading text-[clamp(2rem,5vw,3.2rem)]">Also in <span className="type-accent text-gold-deep">{cls?.label ?? "the fleet"}.</span></h2>
                 <Link href="/vehicles" className="shrink-0 text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">All cars</Link>

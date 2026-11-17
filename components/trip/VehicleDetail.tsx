@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Check, Phone } from "lucide-react";
 import { WhatsAppIcon, whatsappDisplay } from "@/components/brand/WhatsApp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { classOf, clean, VehicleImage, type Angle, type StoreVehicle } from "./FleetStore";
 import { useRequest } from "./RequestProvider";
 
@@ -27,6 +27,19 @@ export function VehicleStage({ v }: { v: StoreVehicle }) {
       )}
     </div>
   );
+}
+
+/** Opening a car's page makes it the car on the trip request, so the request
+ *  dock and planner show the car you are looking at. Runs once per page. */
+export function PickThisCar({ v }: { v: StoreVehicle }) {
+  const { req, chooseModel } = useRequest();
+  useEffect(() => {
+    if (req.model?.id === v.id) return;
+    chooseModel({ id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: classOf(v)?.id });
+    // Only when the page's car changes; later picks by the visitor are kept.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v.id]);
+  return null;
 }
 
 /** Put this exact car on the trip request, then open the planner with it. */
@@ -61,9 +74,9 @@ export function VehicleActions({ v, whatsapp, phone }: { v: StoreVehicle; whatsa
 export function SimilarCars({ list }: { list: StoreVehicle[] }) {
   if (!list.length) return null;
   return (
-    <div className="scrollbar-none -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
+    <div className="scrollbar-none -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
       {list.map((v) => (
-        <Link key={v.id} href={`/vehicles/${v.slug}`} className="group w-64 shrink-0 sm:w-auto">
+        <Link key={v.id} href={`/vehicles/${v.slug}`} className="group w-64 shrink-0 sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)]">
           <span className="relative block aspect-[16/10] overflow-hidden rounded-[1.4rem] transition-shadow group-hover:shadow-[0_18px_40px_-28px_rgba(8,30,20,.35)]" style={{ backgroundColor: classOf(v)?.tint ?? "var(--color-paper-deep)" }}>
             <VehicleImage v={v} angle="side" sizes="(max-width: 640px) 256px, 30vw" />
           </span>
