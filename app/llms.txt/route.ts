@@ -1,16 +1,39 @@
 import { businessIdentity as b } from "@/lib/business/identity";
 import { SITE_URL } from "@/lib/seo/canonical";
+import { createStaticClient } from "@/lib/supabase/static";
 
-export const dynamic = "force-static";
+// Rebuild the car list hourly, so new and changed cars reach agents without a deploy.
+export const revalidate = 3600;
 
 /**
  * llms.txt: a short, plain-language map of the site for AI assistants and
  * answer engines (https://llmstxt.org). Facts come from the business identity,
  * so they stay in step with the schema markup and the contact details.
  */
-export function GET() {
+export async function GET() {
   const address = `${b.address.street}, ${b.address.locality}, ${b.address.city}, ${b.address.region}, Bangladesh`;
   const hours = (b.openingHours ?? []).map((h) => `- ${h}`).join("\n");
+
+  // Every active car, with its own page. A car without a published rate says so.
+  type CarRow = { name: string; slug: string; seats: number; starting_price: number | null };
+  let cars: CarRow[] = [];
+  const supabase = createStaticClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from("vehicles")
+      .select("name,slug,seats,starting_price")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    cars = (data as unknown as CarRow[]) ?? [];
+  }
+  const carLines = cars
+    .map(
+      (c) =>
+        `- [${c.name} with driver](${SITE_URL}/vehicles/${c.slug}): ${c.seats} seats, ${
+          c.starting_price ? `day rate from BDT ${c.starting_price}` : "rate on request"
+        }`,
+    )
+    .join("\n");
 
   const body = `# ${b.brandName}
 
@@ -28,6 +51,7 @@ export function GET() {
 ${hours}
 - Service areas: ${b.serviceAreas.join(", ")}
 - Price range: ${b.priceRange ?? "not stated"}
+- Payment methods: ${b.paymentMethods.join(", ")} (BDT)
 
 ## Services
 
@@ -42,6 +66,8 @@ ${hours}
 ## Fleet, prices and routes
 
 - [Fleet](${SITE_URL}/vehicles): cars, SUVs, MPVs and microbuses, with seats and features
+${carLines || "- Cars are listed on the fleet page."}
+
 - [Pricing](${SITE_URL}/pricing): day and month rates
 - [Routes](${SITE_URL}/routes): popular trips, including Dhaka to Cox's Bazar, Sylhet, Chattogram and Sreemangal
 - [Locations](${SITE_URL}/locations): pickup areas in Dhaka
@@ -60,6 +86,10 @@ ${hours}
 
 ## For developers and agents
 
+- [Fleet data (JSON)](${SITE_URL}/api/vehicles): every active car with its rate, specs and page. Filters: min_seats, rental_type, max_day_rate_bdt. One car: /api/vehicles/{slug}
+- [OpenAPI description](${SITE_URL}/openapi/public-api.json): the public fleet and booking request endpoints
+- [MCP server card](${SITE_URL}/.well-known/mcp/server-card.json)
+- [Booking and fleet tools (MCP)](${SITE_URL}/api/mcp): Model Context Protocol endpoint (Streamable HTTP, JSON-RPC over POST). Tools: search_vehicles, get_vehicle, create_booking_request
 - [Agent discovery index](${SITE_URL}/.well-known/api-catalog): machine-readable API catalog (RFC 9727)
 - [Blog publishing API](${SITE_URL}/openapi/blog-api.json): OpenAPI 3.1 description. Requires an API key.
 - [Blog API guide](${SITE_URL}/docs/blog-api.md)

@@ -35,7 +35,7 @@ export const teamMembers = [
     role: "Managing Director",
     description:
       "With over 10 years of experience in Bangladesh's transport industry, MD. Shahab Uddin founded Jinia Enterprise to provide dependable, high-quality car rental services with a personal touch.",
-    image: "/images/team/md-shahab-uddin.png",
+    image: "/images/team/md-shahab-uddin.webp",
   },
   {
     id: "2",

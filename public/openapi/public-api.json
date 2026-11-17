@@ -1,0 +1,118 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Jinia Enterprise public API",
+    "version": "1.0.0",
+    "summary": "Fleet data and booking requests for chauffeur-driven cars in Dhaka and Bangladesh.",
+    "description": "Read-only fleet data and a booking request endpoint. No API key is needed. Every car has a day rate in BDT, or rate_status is quote_required and the desk quotes it. The MCP endpoint at /api/mcp offers the same tools to AI agents.",
+    "contact": { "name": "Jinia Enterprise", "url": "https://jiniaenterprise.com/contact" }
+  },
+  "servers": [{ "url": "https://jiniaenterprise.com" }],
+  "paths": {
+    "/api/vehicles": {
+      "get": {
+        "operationId": "listVehicles",
+        "summary": "List active cars",
+        "parameters": [
+          { "name": "min_seats", "in": "query", "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "rental_type", "in": "query", "schema": { "type": "string", "enum": ["daily", "weekly", "monthly", "corporate"] } },
+          { "name": "max_day_rate_bdt", "in": "query", "schema": { "type": "number", "minimum": 0 }, "description": "Only cars with a published rate at or below this." }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching cars.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleList" } } }
+          },
+          "400": { "description": "Bad filter value.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/vehicles/{slug}": {
+      "get": {
+        "operationId": "getVehicle",
+        "summary": "One car by slug",
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string" }, "example": "toyota-prado" }],
+        "responses": {
+          "200": { "description": "The car.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vehicle" } } } },
+          "404": { "description": "No active car has this slug.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/bookings": {
+      "post": {
+        "operationId": "createBookingRequest",
+        "summary": "Send a booking request to the desk",
+        "description": "Stores the request and emails the desk. The desk confirms the car and price by phone or email. Nothing is charged here.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookingRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Received.",
+            "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "message": { "type": "string" }, "id": { "type": "string" } } } } }
+          },
+          "400": { "description": "A field is missing or invalid.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Vehicle": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "seats": { "type": "integer" },
+          "day_rate_bdt": { "type": ["number", "null"] },
+          "rate_status": { "type": "string", "enum": ["published", "quote_required"] },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "rental_types": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "specs": {
+            "type": "object",
+            "properties": {
+              "model_year": { "type": ["integer", "null"] },
+              "engine_cc": { "type": ["integer", "null"] },
+              "transmission": { "type": ["string", "null"] },
+              "fuel_type": { "type": ["string", "null"] },
+              "colour": { "type": ["string", "null"] },
+              "luggage_bags": { "type": ["integer", "null"] },
+              "insurance": { "type": ["string", "null"] },
+              "billed": { "type": "string" }
+            }
+          }
+        },
+        "required": ["name", "slug", "url", "seats", "rate_status"]
+      },
+      "VehicleList": {
+        "type": "object",
+        "properties": { "count": { "type": "integer" }, "vehicles": { "type": "array", "items": { "$ref": "#/components/schemas/Vehicle" } } }
+      },
+      "BookingRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+          "phone": { "type": "string", "description": "7 to 15 digits, optionally starting with +." },
+          "email": { "type": "string", "format": "email" },
+          "pickup_date": { "type": "string", "format": "date", "description": "Dhaka date, today or later." },
+          "return_date": { "type": "string", "format": "date" },
+          "rental_type": { "type": "string", "enum": ["daily", "weekly", "monthly", "corporate"] },
+          "vehicle_id": { "type": "string", "description": "Optional. The car's id from the fleet data." },
+          "vehicle_name": { "type": "string" },
+          "pickup_location": { "type": "string" },
+          "destination": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["name", "phone", "email", "pickup_date"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": { "error": { "type": "string" } },
+        "required": ["error"]
+      }
+    }
+  }
+}

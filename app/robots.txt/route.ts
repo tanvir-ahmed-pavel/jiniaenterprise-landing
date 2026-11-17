@@ -31,6 +31,9 @@ function buildRobots(): string {
       `User-agent: ${agent}`,
       "Allow: /",
       "Disallow: /admin/",
+      // Fleet data and the MCP endpoint are public for agents; the rest of /api stays closed.
+      "Allow: /api/vehicles",
+      "Allow: /api/mcp",
       "Disallow: /api/",
       CONTENT_SIGNAL,
     ].join("\n"),

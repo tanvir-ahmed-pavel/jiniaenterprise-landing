@@ -91,6 +91,7 @@ export default function EditVehiclePage() {
         .map((t) => t.trim()),
       is_active: formData.get("is_active") === "on",
       is_featured: formData.get("is_featured") === "on",
+      show_in_hero: formData.get("show_in_hero") === "on",
       sort_order: parseInt(formData.get("sort_order") as string) || 0,
       image_url: imageUrl,
       images: filteredImages,
@@ -367,6 +368,16 @@ export default function EditVehiclePage() {
                   className="h-4 w-4"
                 />
                 <Label htmlFor="is_featured">⭐ Featured (show on homepage)</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="show_in_hero"
+                  name="show_in_hero"
+                  defaultChecked={vehicle.show_in_hero === true}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="show_in_hero">🎞️ Show in the homepage hero carousel</Label>
               </div>
             </div>
 

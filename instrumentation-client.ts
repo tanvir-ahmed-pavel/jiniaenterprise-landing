@@ -9,6 +9,9 @@ if (token && host) {
     defaults: "2026-08-30",
     capture_exceptions: true,
     debug: process.env.NODE_ENV === "development",
+    // Session replay is the heaviest part of PostHog on a phone. Page views and
+    // events are still recorded there; replays are kept for desktop visitors.
+    disable_session_recording: typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
   });
 } else if (process.env.NODE_ENV === "development") {
   const missingVariable = token

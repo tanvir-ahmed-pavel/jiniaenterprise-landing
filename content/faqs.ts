@@ -137,7 +137,7 @@ export const operationsFaqs: FaqItem[] = [
   {
     question: "What payment methods do you accept?",
     answer:
-      "Payment options are confirmed at booking and may vary for corporate accounts versus private hires. Ask the desk which methods apply to your trip before paying any advance.",
+      "We accept Visa, Mastercard, American Express, bKash and cash, in Bangladeshi taka (BDT). Ask the desk which methods apply to your trip before paying any advance.",
   },
   {
     question: "What happens if the car has a problem on the road?",

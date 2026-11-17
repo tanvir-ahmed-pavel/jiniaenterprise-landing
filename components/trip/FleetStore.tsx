@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { vehicleClasses } from "@/lib/trip/data";
 import { useRequest } from "./RequestProvider";
 import { classOfName, cleanName, hireTerms } from "@/lib/vehicles/fleet";
+import { plainText, specRows } from "@/lib/vehicles/details";
 
 /** Vehicle facts the drawer shows. Filled in by the admin panel. */
 export type VehicleDetails = {
@@ -36,22 +37,6 @@ export type StoreVehicle = {
   details: VehicleDetails;
 };
 
-/** The spec list in the drawer: only the facts that are filled in. */
-function specRows(d: VehicleDetails): Array<[string, string]> {
-  const rows: Array<[string, string | number | null]> = [
-    ["Model year", d.model_year],
-    ["Engine", d.engine_cc ? `${d.engine_cc.toLocaleString("en-US")} cc` : null],
-    ["Transmission", d.transmission],
-    ["Fuel", d.fuel_type],
-    ["Colour", d.colour],
-    ["Luggage", d.luggage_bags ? `${d.luggage_bags} ${d.luggage_bags === 1 ? "bag" : "bags"}` : null],
-    ["Billed", d.price_label],
-  ];
-  return rows.filter((r): r is [string, string] => r[1] !== null && r[1] !== "");
-}
-
-/** Plain text from the admin description (it may hold a little HTML). */
-const plainText = (s: string) => s.replace(/<[^>]*>/g, "").trim();
 
 export type Angle = "side" | "front";
 export const clean = cleanName;
@@ -80,14 +65,17 @@ function Card({ v, onView }: { v: StoreVehicle; onView: () => void }) {
 
   return (
     <article className="group/card flex flex-col" onMouseEnter={() => v.cutout && v.cutout.front !== v.cutout.side && setFront(true)} onMouseLeave={() => setFront(false)}>
-      <button type="button" data-cursor="Details" onClick={onView} aria-label={`${clean(v.name)} details`} style={{ backgroundColor: c?.tint ?? "var(--color-paper-deep)" }} className={`relative block aspect-[4/3] w-full overflow-hidden rounded-[1.8rem] text-left transition-shadow duration-300 ${chosen ? "ring-2 ring-ink" : "hover:shadow-[0_22px_44px_-30px_rgba(8,30,20,.45)]"}`}>
+      {/* A real link to the car's own page: crawlers, agents and shared links land on it. */}
+      <Link href={`/vehicles/${v.slug}`} data-cursor="Details" style={{ backgroundColor: c?.tint ?? "var(--color-paper-deep)" }} className={`relative block aspect-[4/3] w-full overflow-hidden rounded-[1.8rem] text-left transition-shadow duration-300 ${chosen ? "ring-2 ring-ink" : "hover:shadow-[0_22px_44px_-30px_rgba(8,30,20,.45)]"}`}>
         <VehicleImage v={v} angle={front ? "front" : "side"} sizes="(max-width: 768px) 94vw, (max-width: 1280px) 48vw, 32vw" />
         <span className="absolute left-4 top-4 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-ink">{c?.label ?? "Special"}</span>
         <span className="absolute right-4 top-4 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-paper">With driver</span>
-      </button>
+      </Link>
 
       <div className="mt-4 flex flex-1 flex-col px-1">
-        <h3 className="line-clamp-2 font-heading text-xl font-semibold leading-snug tracking-[-0.025em]">{clean(v.name)}</h3>
+        <h3 className="line-clamp-2 font-heading text-xl font-semibold leading-snug tracking-[-0.025em]">
+          <Link href={`/vehicles/${v.slug}`} className="rounded-sm underline-offset-4 hover:underline hover:decoration-gold hover:decoration-2">{clean(v.name)}</Link>
+        </h3>
         <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink/55">
           <li className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{v.seats} seats</li>
           {ac && <li className="flex items-center gap-1"><Snowflake className="h-3.5 w-3.5" />AC</li>}
@@ -104,14 +92,19 @@ function Card({ v, onView }: { v: StoreVehicle; onView: () => void }) {
               <span className="text-sm text-ink/55">Rate on request</span>
             )}
           </p>
-          <button
-            type="button"
-            onClick={() => chooseModel(chosen ? null : { id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id })}
-            aria-pressed={chosen}
-            className={`inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full px-5 text-sm font-semibold transition-colors ${chosen ? "bg-gold text-ink" : "bg-ink text-paper hover:bg-forest-soft"}`}
-          >
-            {chosen ? <><Check className="h-3.5 w-3.5" /> Chosen</> : "Choose"}
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <button type="button" onClick={onView} aria-label={`${clean(v.name)}, quick view`} className="inline-flex h-11 items-center rounded-full px-3 text-sm font-semibold text-ink/70 transition-colors hover:text-ink">
+              Quick view
+            </button>
+            <button
+              type="button"
+              onClick={() => chooseModel(chosen ? null : { id: v.id, slug: v.slug, name: clean(v.name), image: v.cutout?.side ?? v.fallback ?? undefined, classId: c?.id })}
+              aria-pressed={chosen}
+              className={`inline-flex h-11 items-center gap-1.5 rounded-full px-5 text-sm font-semibold transition-colors ${chosen ? "bg-gold text-ink" : "bg-ink text-paper hover:bg-forest-soft"}`}
+            >
+              {chosen ? <><Check className="h-3.5 w-3.5" /> Chosen</> : "Choose"}
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -194,6 +187,9 @@ function QuickView({ v, onClose }: { v: StoreVehicle | null; onClose: () => void
                   Booking form <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
+              <Link href={`/vehicles/${v.slug}`} onClick={onClose} className="mt-5 self-center text-sm font-semibold underline decoration-gold decoration-2 underline-offset-[6px]">
+                Full details page for {clean(v.name)}
+              </Link>
             </div>
           </>
         )}

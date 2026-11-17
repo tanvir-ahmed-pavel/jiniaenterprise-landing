@@ -9,7 +9,8 @@ import { getFleetRows, toStoreVehicles } from "@/lib/vehicles/store";
 import { classFloor, vehicleClasses, type ClassId } from "@/lib/trip/data";
 import { RequestProvider } from "@/components/trip/RequestProvider";
 import { Convoy } from "@/components/trip/Convoy";
-import { HeroTrip } from "@/components/trip/HeroTrip";
+import { HeroTrip, type HeroCar } from "@/components/trip/HeroTrip";
+import { classOfName, cleanName } from "@/lib/vehicles/fleet";
 import { FleetStore } from "@/components/trip/FleetStore";
 import { ServiceCard, type Service } from "@/components/trip/ServiceCard";
 import { Magnetic, PinnedRail, VelocityMarquee } from "@/components/trip/Motion";
@@ -100,6 +101,14 @@ export default async function Home() {
 
   const floors = Object.fromEntries(vehicleClasses.map((c) => [c.id, classFloor(c, rows)])) as Record<ClassId, number | null>;
   const storeVehicles = toStoreVehicles(rows);
+  // Cars ticked "Show in the homepage hero carousel" in admin, in display order.
+  const heroCars = toStoreVehicles(rows.filter((r) => r.show_in_hero))
+    .map((v): HeroCar | null => {
+      const image = v.cutout?.side ?? v.fallback;
+      if (!image) return null;
+      return { id: v.id, slug: v.slug, name: cleanName(v.name), image, classId: (classOfName(v.name)?.id ?? "sedan") as HeroCar["classId"] };
+    })
+    .filter((c): c is HeroCar => c !== null);
   // Testimonials are managed per client in admin. Only published ones show,
   // locally and live alike. SHOW_TESTIMONIAL_DRAFTS=1 previews the drafts.
   const toVoice = (c: (typeof activeClients)[number]): ClientTestimonial => ({
@@ -120,7 +129,7 @@ export default async function Home() {
       <main className="overflow-x-clip bg-white text-ink">
 
         {/* 1 ── Trip builder */}
-        <div id="plan"><HeroTrip floors={floors} whatsapp={siteConfig.whatsapp} /></div>
+        <div id="plan"><HeroTrip floors={floors} whatsapp={siteConfig.whatsapp} heroCars={heroCars} /></div>
 
         {/* 2 ── Velocity marquee */}
         <section aria-label="Services" className="border-y border-ink/10 bg-white py-6 sm:py-8">
