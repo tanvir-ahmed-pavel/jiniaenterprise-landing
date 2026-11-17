@@ -25,6 +25,8 @@ export function getLocalBusinessSchema() {
     image: `${SITE_URL}${businessIdentity.logoPath}`,
     logo: `${SITE_URL}${businessIdentity.logoPath}`,
     priceRange: businessIdentity.priceRange,
+    currenciesAccepted: "BDT",
+    paymentAccepted: businessIdentity.paymentMethods.join(", "),
     foundingDate: String(businessIdentity.foundingYear),
     address: {
       "@type": "PostalAddress",
@@ -124,6 +126,12 @@ export function getServiceSchema({
   };
 }
 
+/**
+ * A chauffeur-driven car for hire, as a schema.org Car. Every fact the page
+ * shows (seats, engine, transmission, fuel, colour, model year) is repeated
+ * here so crawlers and answer engines can read it without the drawer. The
+ * offer is only included when a day rate is set, so no price is ever invented.
+ */
 export function getVehicleSchema({
   name,
   description,
@@ -131,6 +139,12 @@ export function getVehicleSchema({
   image,
   seats,
   category,
+  price,
+  modelYear,
+  fuelType,
+  transmission,
+  engineCc,
+  colour,
 }: {
   name: string;
   description: string;
@@ -138,13 +152,20 @@ export function getVehicleSchema({
   image?: string | null;
   seats?: number;
   category?: string;
+  price?: number | null;
+  modelYear?: number | null;
+  fuelType?: string | null;
+  transmission?: string | null;
+  engineCc?: number | null;
+  colour?: string | null;
 }) {
+  const url = getCanonicalUrl(path);
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${name} rental`,
+    "@type": "Car",
+    name: `${name} with driver`,
     description,
-    url: getCanonicalUrl(path),
+    url,
     image: image
       ? image.startsWith("http")
         ? image
@@ -154,27 +175,47 @@ export function getVehicleSchema({
       "@type": "Brand",
       name: name.split(" ")[0],
     },
-    category: category,
-    additionalProperty: seats
-      ? [
-          {
-            "@type": "PropertyValue",
-            name: "seats",
-            value: seats,
+    vehicleModelDate: modelYear ? String(modelYear) : undefined,
+    vehicleSeatingCapacity: seats,
+    vehicleTransmission: transmission || undefined,
+    fuelType: fuelType || undefined,
+    color: colour || undefined,
+    vehicleEngine: engineCc
+      ? {
+          "@type": "EngineSpecification",
+          engineDisplacement: {
+            "@type": "QuantitativeValue",
+            value: engineCc,
+            unitCode: "CMQ",
           },
-        ]
+        }
       : undefined,
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      priceCurrency: "BDT",
-      url: getCanonicalUrl(path),
-      seller: {
-        "@type": "LocalBusiness",
-        "@id": `${SITE_URL}/#business`,
-        name: businessIdentity.brandName,
-      },
-    },
+    category: category,
+    offers: price
+      ? {
+          "@type": "Offer",
+          availability: "https://schema.org/InStock",
+          businessFunction: "http://purl.org/goodrelations/v1#LeaseOut",
+          price,
+          priceCurrency: "BDT",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price,
+            priceCurrency: "BDT",
+            referenceQuantity: {
+              "@type": "QuantitativeValue",
+              value: 1,
+              unitCode: "DAY",
+            },
+          },
+          url,
+          seller: {
+            "@type": "LocalBusiness",
+            "@id": `${SITE_URL}/#business`,
+            name: businessIdentity.brandName,
+          },
+        }
+      : undefined,
   };
 }
 

@@ -113,4 +113,9 @@ export const pricingFaqs: FaqItem[] = [
     answer:
       "Monthly and corporate packages are scoped differently from a one-day city hire. Request a monthly quote with typical hours and routes rather than multiplying a day rate.",
   },
+  {
+    question: "How can I pay?",
+    answer:
+      "We accept Visa, Mastercard, American Express, bKash and cash, in Bangladeshi taka (BDT). Confirm the method with the desk when you book.",
+  },
 ];

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { RequestProvider } from "@/components/trip/RequestProvider";
+import { plainText, specRows } from "@/lib/vehicles/details";
 import { classOfName, hireTerms } from "@/lib/vehicles/fleet";
 import { SimilarCars, VehicleActions, VehicleStage } from "@/components/trip/VehicleDetail";
 import { getFleetRows, toStoreVehicles, type FleetRow } from "@/lib/vehicles/store";
@@ -68,9 +69,12 @@ export async function generateMetadata({
     return { title: "Vehicle Not Found" };
   }
 
-  const description =
-    vehicle.description ||
+  const base =
+    plainText(vehicle.description ?? "") ||
     `Rent a ${vehicle.name} with a professional driver in Dhaka from Jinia Enterprise.`;
+  const description = vehicle.starting_price
+    ? `${base} Day rate from ৳${vehicle.starting_price.toLocaleString("en-US")} with driver.`
+    : base;
 
   return createMetadata({
     title: `${vehicle.name} Rental in Dhaka | With Driver`,
@@ -113,7 +117,7 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
     .slice(0, 3);
 
   const description =
-    vehicle.description ||
+    plainText(vehicle.description ?? "") ||
     `Rent a ${vehicle.name} with a professional driver in Dhaka.`;
 
   // "Hyundai H1 (2019-20)" → name in grotesk, model years in the serif accent.
@@ -123,11 +127,13 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
   const years = yearAt > 0 ? name.slice(yearAt).replace(/[()]/g, "").trim() : "";
   const ac = car.features.some((f) => /air/i.test(f));
 
-  const specs = [
+  // The same spec sheet the drawer shows, so the permalink page carries every fact.
+  const specs: Array<{ k: string; v: string }> = [
     { k: "Seats", v: String(vehicle.seats) },
     { k: "Driver", v: "Included" },
     { k: "Hire", v: hireTerms(car.rental_types) },
-    vehicle.engine_cc ? { k: "Engine", v: `${vehicle.engine_cc} cc` } : { k: "Cabin", v: ac ? "Air-conditioned" : "Standard" },
+    ...specRows(car.details).map(([k, v]) => ({ k, v })),
+    ...(car.details.engine_cc ? [] : [{ k: "Cabin", v: ac ? "Air-conditioned" : "Standard" }]),
   ];
 
   return (
@@ -142,6 +148,12 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               image: orderVehicleImages(vehicle.images, vehicle.image_url)[0],
               seats: vehicle.seats,
               category: vehicle.category,
+              price: car.starting_price,
+              modelYear: car.details.model_year,
+              fuelType: car.details.fuel_type,
+              transmission: car.details.transmission,
+              engineCc: car.details.engine_cc,
+              colour: car.details.colour,
             }),
             getBreadcrumbSchema([
               { name: "Home", path: "/" },
@@ -209,6 +221,9 @@ export default async function VehicleDetailPage({ params }: VehiclePageProps) {
               )}
               {vehicle.rental_types?.length > 0 && (
                 <p className="mt-6 text-sm text-ink/55">Available for {vehicle.rental_types.map((t) => t.toLowerCase()).join(", ")} hire.</p>
+              )}
+              {car.details.insurance && (
+                <p className="mt-6 rounded-2xl bg-paper-deep p-4 text-sm leading-relaxed"><span className="font-semibold">Insurance: </span>{car.details.insurance}</p>
               )}
             </div>
 

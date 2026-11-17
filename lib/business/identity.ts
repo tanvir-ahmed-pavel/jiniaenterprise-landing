@@ -25,6 +25,7 @@ export type BusinessIdentity = {
     longitude: number;
   };
   priceRange?: string;
+  paymentMethods: string[];
   openingHours?: string[];
   sameAs: string[];
   serviceAreas: string[];
@@ -55,6 +56,7 @@ export const businessIdentity: BusinessIdentity = {
     longitude: 90.4049,
   },
   priceRange: "$$",
+  paymentMethods: ["Visa", "Mastercard", "American Express", "bKash", "Cash"],
   openingHours: [
     "Mo-Th 09:00-20:00",
     "Sa-Su 09:00-20:00",
