@@ -428,6 +428,328 @@ export const locations: LocationPage[] = [
       "/vehicles",
     ],
   },
+  {
+    slug: "motijheel",
+    name: "Motijheel",
+    title: "Car Rental in Motijheel, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Motijheel, Dhaka's main financial and government district. Pickups near Dilkusha and Bangladesh Bank, with quotes for meetings and airport transfers.",
+    answer:
+      "Motijheel is the commercial heart of Dhaka, home to banks, offices, and government buildings. Jinia Enterprise arranges timed pickups here for meetings, airport runs, and full-day hire. Share the office address and the time you need the car.",
+    coverageNotes:
+      "Coverage is strong for office pickups around Dilkusha, the Motijheel commercial area, and the roads toward Gulistan. Traffic is heavy at peak hours, so schedule meetings with a buffer.",
+    landmarks: [
+      "Dilkusha commercial area",
+      "Bangladesh Bank head office area",
+      "Dhaka Stock Exchange area",
+      "Gulistan and the Motijheel roundabouts",
+      "Shapla Chattar",
+    ],
+    pickupTips:
+      "Give the office or building name, the road number, and the nearest junction. Drivers often wait at the building gate, and some offices need a set pickup point for security.",
+    airportNotes:
+      "Travel time from Motijheel to Hazrat Shahjalal International Airport (DAC) is often about 45 to 75 minutes, longer at peak hours. Plan a generous buffer for flight check-in.",
+    popularTrips: [
+      "Office to DAC airport transfer",
+      "Half-day meetings across Motijheel and Gulshan",
+      "Motijheel to Old Dhaka or Narayanganj day runs",
+      "Outstation departures from a Motijheel office",
+    ],
+    faqs: [
+      {
+        question: "Can you pick up from a bank or office in Motijheel?",
+        answer:
+          "Yes. Share the building name, floor if known, and a landmark. We confirm the pickup point with you when the quote is made.",
+      },
+      {
+        question: "How long from Motijheel to the airport?",
+        answer:
+          "Often 45 to 75 minutes, depending on traffic. Ask the desk to schedule the pickup with your flight time in mind.",
+      },
+      {
+        question: "Do you offer half-day hire around Motijheel?",
+        answer:
+          "Yes, for meetings and errands. Half-day and full-day packages show the hours and overtime rules in the quote.",
+      },
+    ],
+    relatedPaths: ["/car-rental-dhaka", "/airport-car-rental", "/corporate-car-rental", "/booking"],
+  },
+  {
+    slug: "old-dhaka",
+    name: "Old Dhaka",
+    title: "Car Rental in Old Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental for Old Dhaka, including Sadarghat, Lalbagh Fort, and Ahsan Manzil. Pickup points on main roads, with notes on the narrow lanes.",
+    answer:
+      "Old Dhaka has narrow lanes and dense traffic, so most pickups happen on a main road rather than inside the old streets. Jinia Enterprise plans the route around the area and agrees the pickup point when you book.",
+    coverageNotes:
+      "Coverage is practical on the main roads serving Sadarghat, Lalbagh, and the approach to Narayanganj. Cars do not enter the narrowest lanes, so ask for the nearest main-road pickup.",
+    landmarks: [
+      "Sadarghat launch terminal",
+      "Lalbagh Fort",
+      "Ahsan Manzil",
+      "Star Mosque (Tara Masjid)",
+      "Chawk Bazar and the main shopping streets",
+    ],
+    pickupTips:
+      "Choose a main-road pickup point, such as a named junction or a well-known landmark. Tell us if you carry heavy bags, because the last stretch may be on foot.",
+    airportNotes:
+      "Travel time from Old Dhaka to DAC is often 60 to 90 minutes or more, because the trip crosses much of the city. Start early for flights.",
+    popularTrips: [
+      "Heritage day tour: Lalbagh, Ahsan Manzil, and Sadarghat",
+      "Sadarghat to a riverside launch or a Narayanganj run",
+      "Old Dhaka to Gulshan or Banani business meetings",
+      "Early airport transfer from a family home in Old Dhaka",
+    ],
+    faqs: [
+      {
+        question: "Can the car go inside the narrow lanes of Old Dhaka?",
+        answer:
+          "Usually not. Most visitors are picked up on a main road close to the area and walk the final stretch. We agree the point when booking.",
+      },
+      {
+        question: "Is a heritage day tour possible with a driver?",
+        answer:
+          "Yes. Share the sites you want to see, and we plan the route and stops so the driver can wait where it is safe to park.",
+      },
+      {
+        question: "How long does it take to reach the airport from Old Dhaka?",
+        answer:
+          "Often more than an hour in normal traffic. Plan an early start for flights.",
+      },
+    ],
+    relatedPaths: ["/car-rental-dhaka", "/airport-car-rental", "/booking", "/vehicles"],
+  },
+  {
+    slug: "tejgaon",
+    name: "Tejgaon",
+    title: "Car Rental in Tejgaon, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Tejgaon, a business and industrial area close to the airport road. Pickups for offices, factories, and airport transfers.",
+    answer:
+      "Tejgaon is a busy business area on the way to the airport, with offices, factories, and media houses. Jinia Enterprise arranges timed pickups here for staff, visitors, and airport runs.",
+    coverageNotes:
+      "Coverage is strong around the Tejgaon industrial area, the Tejgaon link roads, and the Kawran Bazar side toward Farmgate. Staff transport and visitor runs are common here.",
+    landmarks: [
+      "Tejgaon industrial area",
+      "Tejgaon link road",
+      "Farmgate interchange",
+      "Kawran Bazar",
+      "The road toward the airport",
+    ],
+    pickupTips:
+      "Share the office or factory gate, the building name, and the nearest junction. For factory pickups, tell us the shift times and the entry point so the driver can plan.",
+    airportNotes:
+      "From Tejgaon, the airport is often about 30 to 50 minutes in light traffic and longer at peak hours. Tejgaon is one of the closer business areas to DAC, but plan a buffer for the road.",
+    popularTrips: [
+      "Staff runs to and from a factory or office",
+      "Visitor pickups from Tejgaon hotels and offices to DAC",
+      "Half-day client visits across Tejgaon, Gulshan, and Banani",
+      "Corporate transport on a monthly arrangement",
+    ],
+    faqs: [
+      {
+        question: "Do you handle staff transport from factories in Tejgaon?",
+        answer:
+          "Yes, on a monthly or fixed-route arrangement. Give us the shift times and entry points, and we quote the routes together.",
+      },
+      {
+        question: "How close is Tejgaon to the airport?",
+        answer:
+          "Closer than many parts of Dhaka. Traffic still varies, so allow 30 to 50 minutes in normal conditions and more at peak times.",
+      },
+      {
+        question: "Can a visitor be collected from a hotel near Tejgaon?",
+        answer:
+          "Yes. Share the hotel name, the room number if needed, and the flight time, and we arrange the pickup.",
+      },
+    ],
+    relatedPaths: ["/corporate-car-rental", "/monthly-car-rental", "/airport-car-rental", "/booking"],
+  },
+  {
+    slug: "mohakhali",
+    name: "Mohakhali",
+    title: "Car Rental in Mohakhali, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Mohakhali, close to the bus terminal, Gulshan, and Banani. Pickups for airport runs, intercity departures, and office visits.",
+    answer:
+      "Mohakhali sits between Gulshan, Banani, and the main bus terminal. It is a practical pickup for airport runs and for travelers heading out of town. Share your address and the time for a timed quote.",
+    coverageNotes:
+      "Coverage is strong around the Mohakhali bus terminal, the flyover, and the roads to Banani and Gulshan. Intercity departures from here are common.",
+    landmarks: [
+      "Mohakhali bus terminal",
+      "Mohakhali flyover",
+      "Banani Road junction",
+      "Gulshan side roads",
+      "DOHS Mohakhali",
+    ],
+    pickupTips:
+      "Mohakhali has heavy traffic around the flyover and the bus station. Tell us the nearest junction and any boarding point at the bus terminal, so the car meets you on the right side.",
+    airportNotes:
+      "Mohakhali to DAC is often about 35 to 55 minutes in light traffic, and longer at peak hours. It is a useful midpoint for early airport runs.",
+    popularTrips: [
+      "Mohakhali to DAC airport transfers",
+      "Outstation departures for travelers arriving at the bus terminal",
+      "Banani and Gulshan business meetings",
+      "Full-day family hire across Dhaka",
+    ],
+    faqs: [
+      {
+        question: "Can you meet me at the Mohakhali bus terminal?",
+        answer:
+          "Yes. Tell us the gate or area you use, and we arrange the meeting point. Allow extra time for the crowds at the bus station.",
+      },
+      {
+        question: "How long from Mohakhali to the airport?",
+        answer:
+          "Often 35 to 55 minutes in light traffic, and more at peak hours. Book with your flight time in mind.",
+      },
+      {
+        question: "Is Mohakhali good for an intercity start?",
+        answer:
+          "It works well for a morning departure. Share your intended departure time, and we plan the route out of the city.",
+      },
+    ],
+    relatedPaths: ["/airport-car-rental", "/routes", "/car-rental-dhaka", "/booking"],
+  },
+  {
+    slug: "shahbagh",
+    name: "Shahbagh",
+    title: "Car Rental in Shahbagh, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Shahbagh, near Dhaka University and the National Museum. Pickups for campus visits, research trips, and city day hire.",
+    answer:
+      "Shahbagh is the center of university and museum life in Dhaka. Jinia Enterprise arranges pickups for campus visits, research trips, and day hire. Share the campus gate or building and the time you need.",
+    coverageNotes:
+      "Coverage is strong around the Shahbagh intersection, the Dhaka University campus roads, and the links to Paltan and Motijheel. Expect traffic and crowding on weekdays.",
+    landmarks: [
+      "Shahbagh intersection",
+      "Dhaka University campus gates",
+      "National Museum",
+      "Ramna area",
+      "Links to Paltan and Motijheel",
+    ],
+    pickupTips:
+      "Campus gates can be crowded and have restricted vehicle access. Tell us the gate or building name, and we confirm a safe pickup point with the driver.",
+    airportNotes:
+      "Shahbagh to DAC is often 60 to 80 minutes or more, depending on traffic. Start early for morning flights.",
+    popularTrips: [
+      "Campus visits and student or faculty transport",
+      "Museum and heritage day trips across central Dhaka",
+      "Research visits between Shahbagh and Motijheel",
+      "Airport transfers with an early start",
+    ],
+    faqs: [
+      {
+        question: "Can you pick up students or faculty at a campus gate?",
+        answer:
+          "Yes, at a set point the driver can reach safely. Share the gate name and the time, and we confirm the point.",
+      },
+      {
+        question: "Is Shahbagh busy at certain times?",
+        answer:
+          "Yes, especially on weekdays and during protests or events. Allow extra time, and ask the desk to plan the day with you.",
+      },
+      {
+        question: "Can we visit the National Museum and other sites in one day?",
+        answer:
+          "Yes. List the places you want to see, and the driver plans the route and stops.",
+      },
+    ],
+    relatedPaths: ["/car-rental-dhaka", "/airport-car-rental", "/booking", "/services"],
+  },
+  {
+    slug: "farmgate",
+    name: "Farmgate",
+    title: "Car Rental in Farmgate, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Farmgate, a central Dhaka junction between Tejgaon, Kawran Bazar, and Mohakhali. Pickups for offices, hotels, and airport runs.",
+    answer:
+      "Farmgate is a busy central junction, close to Tejgaon, Kawran Bazar, and the roads to Mohakhali and Gulshan. It is a practical pickup for hotel guests, office visitors, and airport trips.",
+    coverageNotes:
+      "Coverage is strong on the Farmgate interchange, the Kawran Bazar side roads, and the Tejgaon link. Traffic is heavy at the interchange, so pickups are usually set a short walk away.",
+    landmarks: [
+      "Farmgate interchange",
+      "Kawran Bazar",
+      "Tejgaon link road",
+      "Hotels along the Farmgate road",
+      "Mohakhali side roads",
+    ],
+    pickupTips:
+      "Farmgate traffic can be heavy. Tell us the hotel or building name and the nearest side street, and the driver waits at the easiest safe point.",
+    airportNotes:
+      "Farmgate to DAC is often about 40 to 60 minutes in light traffic, and longer at peak hours. Build in a buffer for the interchange.",
+    popularTrips: [
+      "Hotel guests from Farmgate to DAC",
+      "Office visits across Tejgaon and Kawran Bazar",
+      "Half-day city hire from a central base",
+      "Outstation departures with a morning pickup",
+    ],
+    faqs: [
+      {
+        question: "Is it easy to get picked up at Farmgate?",
+        answer:
+          "Yes, with a clear pickup point. The interchange is crowded, so we usually meet on a nearby side street. Give us the building name and we confirm.",
+      },
+      {
+        question: "How long from Farmgate to the airport?",
+        answer:
+          "Often 40 to 60 minutes in light traffic. Plan more time at peak hours.",
+      },
+      {
+        question: "Can we hire a car for a day from a Farmgate hotel?",
+        answer:
+          "Yes. Share the hotel and the day's plan, and we quote a day package with the hours and overtime rules.",
+      },
+    ],
+    relatedPaths: ["/airport-car-rental", "/car-rental-dhaka", "/booking", "/corporate-car-rental"],
+  },
+  {
+    slug: "badda",
+    name: "Badda",
+    title: "Car Rental in Badda, Dhaka with Driver",
+    description:
+      "Chauffeur-driven car rental from Badda and Merul Badda, east of Gulshan and close to the Dhaka-Chattogram highway. Pickups for homes, offices, and airport transfers.",
+    answer:
+      "Badda sits east of Gulshan, with residential and office areas along the roads toward Merul Badda and the highway. Jinia Enterprise arranges timed pickups, airport transfers, and outstation departures from here.",
+    coverageNotes:
+      "Coverage is practical across Badda, Merul Badda, and the roads toward Gulshan and Rampura. Outstation departures on the Chattogram highway are common from this side of the city.",
+    landmarks: [
+      "Merul Badda",
+      "Badda main road",
+      "Gulshan link roads",
+      "Rampura side roads",
+      "Access to the Dhaka-Chattogram highway",
+    ],
+    pickupTips:
+      "Share the house or building name, the road number, and a landmark. Narrow residential roads may need a pickup at the main road, and we agree that when booking.",
+    airportNotes:
+      "Badda to DAC is often about 45 to 70 minutes in light traffic, and longer at peak hours. Early departures avoid the worst of the traffic.",
+    popularTrips: [
+      "Home to DAC airport transfers",
+      "Badda to Gulshan or Banani office runs",
+      "Outstation departures toward Chattogram, Sylhet, or Cox's Bazar",
+      "Full-day family hire across Dhaka",
+    ],
+    faqs: [
+      {
+        question: "Can you pick up from a residential road in Badda?",
+        answer:
+          "Usually yes, but narrow roads sometimes need a pickup at the main road. Tell us the house and road number, and we agree the point.",
+      },
+      {
+        question: "How long from Badda to the airport?",
+        answer:
+          "Often 45 to 70 minutes in light traffic. Book the pickup with your flight in mind.",
+      },
+      {
+        question: "Is Badda a good start for outstation trips?",
+        answer:
+          "It is convenient for trips toward Chattogram and the east. Share your departure time so the route and quote are planned.",
+      },
+    ],
+    relatedPaths: ["/airport-car-rental", "/routes", "/car-rental-dhaka", "/booking"],
+  },
 ];
 
 export function getLocationBySlug(slug: string): LocationPage | undefined {

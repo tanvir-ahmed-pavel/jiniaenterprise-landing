@@ -213,6 +213,390 @@ export const routes: RoutePage[] = [
       },
     ],
   },
+  {
+    slug: "dhaka-to-mymensingh",
+    title: "Dhaka to Mymensingh Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Mymensingh for family visits, campus trips, and day or overnight stays. Approximate journey times, vehicle suggestions, and booking steps.",
+    answer:
+      "Mymensingh is one of the closest outstation trips from Dhaka, so it works as a day trip or a single overnight stay. Share your pickup area, passenger count, and whether you need the car back the same day.",
+    typicalDuration:
+      "Road time is often roughly 3 to 5 hours each way, depending on traffic leaving Dhaka and the bridge crossing. Treat this as approximate, not a guarantee.",
+    vehicleSuggestions: [
+      "Sedan for 1 to 3 passengers on a short day trip",
+      "Noah or similar MPV for families",
+      "SUV for comfort on mixed road surfaces",
+      "Hyundai H1 for groups of up to 11",
+    ],
+    luggageNotes:
+      "Most Mymensingh trips carry a few bags and gifts. Tell us the count so the boot or van space matches the group.",
+    oneWayVsRoundTrip:
+      "Round trips are the common pattern, either the same day or with one night in town. One-way drops are possible; the quote confirms how the return is priced.",
+    overnightPolicy:
+      "If the car stays overnight in Mymensingh, agree in advance whether the driver rests locally or returns to Dhaka, and whether the vehicle stays on call the next day.",
+    stopsConsiderations:
+      "Tea and meal stops are normal. Ask for any visits to campuses, markets, or family homes to be listed before departure so the day's hours are clear.",
+    bookingSteps: [
+      "Share travel date, pickup area in Dhaka, and passenger count.",
+      "Choose a day trip or an overnight stay.",
+      "Pick a vehicle class that fits the group and luggage.",
+      "Receive a written quote covering hours, fuel, and overtime.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does a day trip from Dhaka to Mymensingh take?",
+        answer:
+          "Many guests complete the round trip in one long day, but the total depends on time spent in town and traffic. Share your timings so the desk can plan a realistic schedule.",
+      },
+      {
+        question: "Can we visit more than one place in Mymensingh?",
+        answer:
+          "Yes. List the places in advance so the driver can plan the route and hours. Extra stops are covered in the quote.",
+      },
+      {
+        question: "Is Mymensingh a same-day trip for a family?",
+        answer:
+          "It can be, with an early start. For a relaxed visit with several stops, an overnight stay usually suits better.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-rajshahi",
+    title: "Dhaka to Rajshahi Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Rajshahi for business trips, family visits, and university travel. Approximate journey times, vehicle suggestions, and booking steps.",
+    answer:
+      "Rajshahi is a long outstation trip, usually booked as a round trip with an overnight stay or as a one-way drop. Share your dates, passenger count, and whether the car should wait in town.",
+    typicalDuration:
+      "Road time is often roughly 6 to 8 hours each way, with the Padma Bridge route common from Dhaka. Traffic, crossings, and rest stops change the total. Treat this as approximate.",
+    vehicleSuggestions: [
+      "Sedan for business travel with light luggage",
+      "SUV for comfort on the longer legs",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for groups with more luggage",
+    ],
+    luggageNotes:
+      "Long trips need room for overnight bags and any gifts. Tell us the suitcase count so the vehicle has enough boot or van space.",
+    oneWayVsRoundTrip:
+      "Most Rajshahi trips are round trips with one or more nights. One-way drops are possible, but the driver's return is priced in the quote.",
+    overnightPolicy:
+      "Agree in advance whether the driver rests in Rajshahi and whether the vehicle is on call during your stay. Multi-day trips need clear duty hours for the driver.",
+    stopsConsiderations:
+      "Plan meal and rest stops on the road. If you want to stop at the Padma Bridge or along the river, list it when booking so the timing stays realistic.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Confirm the Rajshahi plan: day trip, overnight, or one-way.",
+      "Choose a vehicle that suits the group and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does Dhaka to Rajshahi take by car?",
+        answer:
+          "Often around 6 to 8 hours each way, but it varies with traffic, crossings, and rest stops. Ask for a departure time that suits your plans.",
+      },
+      {
+        question: "Can the car stay with us in Rajshahi?",
+        answer:
+          "Yes, for a stay of one or more days. Confirm the daily hours and overnight arrangements when booking.",
+      },
+      {
+        question: "Is a same-day return to Dhaka realistic?",
+        answer:
+          "It is a very long day. Most guests prefer at least one night in Rajshahi, so ask the desk to plan the schedule with you.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-khulna",
+    title: "Dhaka to Khulna Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Khulna for business, family travel, and trips toward the Sundarbans. Approximate journey times, vehicle choice, and booking steps.",
+    answer:
+      "Khulna is a long outstation trip, often booked as a round trip with at least one overnight stay. Many guests continue toward Mongla for the Sundarbans, which we can plan with you.",
+    typicalDuration:
+      "Road time is often roughly 7 to 9 hours each way via the Padma Bridge, depending on traffic and stops. Trips onward to Mongla add time. Treat these figures as approximate.",
+    vehicleSuggestions: [
+      "SUV for comfort and luggage on a long route",
+      "Noah or Alphard-class MPV for families",
+      "Sedan for light business travel",
+      "Hyundai H1 for group travel",
+    ],
+    luggageNotes:
+      "Trips toward the Sundarbans often carry extra bags and supplies. Tell us the count, and whether you carry any equipment, so we suggest enough space.",
+    oneWayVsRoundTrip:
+      "Round trips with at least one overnight are the usual pattern. One-way drops and onward runs to Mongla are quoted separately, because the driver and vehicle must return.",
+    overnightPolicy:
+      "Confirm in advance where the driver rests, whether the car stays with you in Khulna, and how the return is handled. Long trips need clear duty hours.",
+    stopsConsiderations:
+      "Plan rest and meal stops along the route. For Mongla or Sundarbans visits, share the boat and launch timings in advance so the driver can plan the wait.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Confirm the destination: Khulna only, or onward to Mongla.",
+      "Choose a vehicle that suits the group and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does Dhaka to Khulna take by car?",
+        answer:
+          "Often around 7 to 9 hours each way, depending on traffic, bridge crossings, and stops. Treat this as an estimate and plan a full day.",
+      },
+      {
+        question: "Can you take us onward to Mongla for the Sundarbans?",
+        answer:
+          "We can plan that as part of the itinerary. The quote shows the extra distance, the overnight, and the driver's return.",
+      },
+      {
+        question: "Is a same-day trip possible?",
+        answer:
+          "A same-day round trip is very long. Most guests stay at least one night, which keeps the driver's hours safe and the day relaxed.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-barishal",
+    title: "Dhaka to Barishal Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Barishal for family visits, business trips, and onward travel to the south. Journey notes, vehicle suggestions, and booking steps.",
+    answer:
+      "Barishal is a long outstation trip that many guests book as a round trip with one or two nights. Share your dates and passenger count, and tell us about any stops on the way.",
+    typicalDuration:
+      "Road time is often roughly 6 to 8 hours each way via the Padma Bridge route. River crossings and traffic can add waiting time. Treat these figures as approximate.",
+    vehicleSuggestions: [
+      "Sedan for 1 to 3 passengers with light luggage",
+      "SUV for comfort on the longer stretches",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for larger groups",
+    ],
+    luggageNotes:
+      "Family trips often carry gifts and extra bags. Give us the count so the vehicle fits the luggage without a last-minute change.",
+    oneWayVsRoundTrip:
+      "Round trips with one or two nights are common. One-way drops are possible, and the driver's return is part of the quote.",
+    overnightPolicy:
+      "Confirm where the driver rests in Barishal and whether the car is on call during the stay. Agree the next-day duty hours before you travel.",
+    stopsConsiderations:
+      "Plan meal stops and any crossing waits on the road. Detours toward the coast should be listed in advance, since they change the hours and fuel.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Choose a day trip, an overnight stay, or a one-way drop.",
+      "Pick a vehicle class that fits the group and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does Dhaka to Barishal take by car?",
+        answer:
+          "Commonly around 6 to 8 hours each way. Crossings and traffic can add time, so ask for a departure window that leaves room.",
+      },
+      {
+        question: "Can the car stay with us in Barishal for several days?",
+        answer:
+          "Yes. Agree the daily hours and overnight arrangements in the quote, and confirm the return date.",
+      },
+      {
+        question: "Do you arrange trips from Barishal toward Patuakhali or Kuakata?",
+        answer:
+          "Yes, as a separate itinerary. Give us the places and nights so the driving plan and fuel can be quoted.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-bogura",
+    title: "Dhaka to Bogura Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Bogura, a gateway to Mahasthangarh and northern Bangladesh. Approximate journey times, vehicle suggestions, and booking steps.",
+    answer:
+      "Bogura is a common stop on the way north and a base for Mahasthangarh. Most guests book a round trip with an overnight stay, or a one-way drop for onward travel.",
+    typicalDuration:
+      "Road time is often roughly 5 to 7 hours each way via the Bangabandhu (Jamuna) Bridge, depending on traffic and stops. Treat these times as approximate.",
+    vehicleSuggestions: [
+      "Sedan for business travel",
+      "SUV for comfort on the longer legs",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for groups",
+    ],
+    luggageNotes:
+      "Family trips north often carry more bags than a city hire. Tell us the suitcase count so the vehicle has enough boot or van space.",
+    oneWayVsRoundTrip:
+      "Round trips with one night are the usual pattern. One-way drops are also possible, and the quote covers how the return is handled.",
+    overnightPolicy:
+      "Confirm the driver's rest arrangements and whether the vehicle stays on call in Bogura. Multi-day visits need clear hours.",
+    stopsConsiderations:
+      "Meal and rest stops are normal on this route. Visits to Mahasthangarh or other sites should be listed in advance so the day plan works.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Confirm the Bogura plan: day trip, overnight, or one-way.",
+      "Choose a vehicle that suits the group and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does Dhaka to Bogura take by car?",
+        answer:
+          "Often around 5 to 7 hours each way. The bridge crossing and traffic change the time, so leave a margin.",
+      },
+      {
+        question: "Can you take us to Mahasthangarh?",
+        answer:
+          "Yes, as part of the itinerary. Mention it when booking so the day and the return time are planned together.",
+      },
+      {
+        question: "Is it a long day trip from Dhaka?",
+        answer:
+          "A same-day round trip is very long. An overnight in Bogura is more comfortable for most guests.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-rangamati",
+    title: "Dhaka to Rangamati Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Rangamati and the Kaptai lake area in the Chattogram Hill Tracts. Road notes, journey times, and booking steps from Jinia Enterprise.",
+    answer:
+      "Rangamati is a long hill-country trip, usually booked as a round trip with two or more nights. Hill roads are slower and more tiring than the plains, so plan a generous schedule.",
+    typicalDuration:
+      "Road time is often roughly 9 to 12 hours each way via Chattogram and the hill roads, depending on traffic, road works, and rest stops. Treat this as approximate and build in a buffer.",
+    vehicleSuggestions: [
+      "SUV for hill roads and luggage",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for groups",
+      "Sedans are possible, but SUVs are more comfortable on steep stretches",
+    ],
+    luggageNotes:
+      "Hill trips carry hiking gear, cameras, and rain protection. Tell us about any equipment so we choose a vehicle with enough space.",
+    oneWayVsRoundTrip:
+      "Multi-day round trips are the usual pattern. One-way drops are possible, but the driver's return is priced separately.",
+    overnightPolicy:
+      "Hill-area nights need clear rules: where the driver rests, whether the car stays with you, and how daily duty hours stay within safe limits.",
+    stopsConsiderations:
+      "List scenic stops along the lake and hill roads in advance. Avoid planning the drive after dark, and tell us early if you need a night drive.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Confirm the route: Rangamati only, or combined with other hill districts.",
+      "Choose a vehicle that handles hill roads and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form, and ask about current road conditions.",
+    ],
+    faqs: [
+      {
+        question: "Is Rangamati a day trip from Dhaka?",
+        answer:
+          "Not realistically. The road is long and winding, so an overnight or longer stay is the usual plan.",
+      },
+      {
+        question: "Are the hill roads suitable for a chauffeur-driven car?",
+        answer:
+          "Drivers take hill roads at a safe pace and follow conditions on the day. Road works and weather can change the route, so ask the desk about current conditions before you travel.",
+      },
+      {
+        question: "Can we include Bandarban in the same trip?",
+        answer:
+          "Yes, as a combined itinerary. Give us the nights per place so the driving hours and the quote are accurate.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-bandarban",
+    title: "Dhaka to Bandarban Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Bandarban in the Chattogram Hill Tracts. Approximate journey times, vehicles for hill roads, and booking steps.",
+    answer:
+      "Bandarban is a hill-country destination reached through Chattogram. Most guests book a round trip with overnight stays. Hill roads are slower, so share your dates early.",
+    typicalDuration:
+      "Road time is often roughly 8 to 11 hours each way through Chattogram, depending on traffic and hill-road conditions. Treat these figures as approximate.",
+    vehicleSuggestions: [
+      "SUV for hill-road comfort and luggage",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for groups",
+      "Sedans are possible on the main roads",
+    ],
+    luggageNotes:
+      "Trekking and camping gear needs space. Tell us the count, and any bulky equipment, when booking.",
+    oneWayVsRoundTrip:
+      "Round trips with overnights are the usual pattern. One-way drops are priced in the quote, including the driver's return.",
+    overnightPolicy:
+      "Confirm where the driver stays and whether the vehicle is on call during your stay. Hill-area duty hours should be agreed before you travel.",
+    stopsConsiderations:
+      "Plan rest and viewpoint stops in advance. Some areas require registration at checkpoints, so ask the desk about current rules before booking.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Choose the nights you need in Bandarban and any onward places.",
+      "Pick a vehicle that suits hill roads and luggage.",
+      "Review the written quote for fuel, waiting, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long is the trip from Dhaka to Bandarban?",
+        answer:
+          "Often around 8 to 11 hours each way. Plan a full day each way and avoid night driving on the hill roads.",
+      },
+      {
+        question: "Do hill roads have restrictions I should know about?",
+        answer:
+          "Some areas require registration at checkpoints. The desk can advise on current requirements before you travel.",
+      },
+      {
+        question: "Can we go from Bandarban to Rangamati?",
+        answer:
+          "Yes, as a combined hill-country itinerary. Share the nights in each place so the driving hours and the quote are right.",
+      },
+    ],
+  },
+  {
+    slug: "dhaka-to-kuakata",
+    title: "Dhaka to Kuakata Car Rental with Driver",
+    description:
+      "Chauffeur-driven car hire from Dhaka to Kuakata on the southern coast. Long-route notes, approximate journey times, and booking steps.",
+    answer:
+      "Kuakata is a long southern coastal trip, normally booked as a round trip with one or two nights. Share dates and the places you want to see along the coast.",
+    typicalDuration:
+      "Road time is often roughly 9 to 12 hours each way, with river crossings and the route through Barishal or Patuakhali. Treat this as approximate and plan an early start.",
+    vehicleSuggestions: [
+      "SUV for comfort on the longest legs",
+      "Noah or Alphard-class MPV for families",
+      "Hyundai H1 for groups",
+      "Sedans for light travel only",
+    ],
+    luggageNotes:
+      "Beach trips carry bags, cooler boxes, and gifts. Tell us the count, and any bulky items, so the vehicle has the space.",
+    oneWayVsRoundTrip:
+      "Round trips with overnights are the usual pattern. One-way drops are possible, and the driver's return is priced in the quote.",
+    overnightPolicy:
+      "Long coastal trips need clear overnight rules. Confirm where the driver rests and the duty hours for the return day.",
+    stopsConsiderations:
+      "Ferry or river crossings can add waiting time. List the crossings and any stops in advance so the schedule is realistic.",
+    bookingSteps: [
+      "Share dates, Dhaka pickup area, and passenger count.",
+      "Choose a round trip with overnights, or a one-way drop.",
+      "Pick a vehicle class that fits the group and luggage.",
+      "Review the written quote for fuel, crossings, and overnight terms.",
+      "Confirm by call, WhatsApp, or the website form.",
+    ],
+    faqs: [
+      {
+        question: "How long does Dhaka to Kuakata take by car?",
+        answer:
+          "Often 9 to 12 hours each way, depending on crossings, traffic, and stops. Most guests plan an overnight on the way.",
+      },
+      {
+        question: "Is Kuakata possible as a same-day trip?",
+        answer:
+          "No, not comfortably. A long day each way leaves little time on the coast, so plan at least one night.",
+      },
+      {
+        question: "Can the car stay with us for the whole stay?",
+        answer:
+          "Yes. Agree the daily hours, the overnight rest, and the return date in the quote.",
+      },
+    ],
+  },
 ];
 
 export function getRouteBySlug(slug: string): RoutePage | undefined {

@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 export const metadata = createMetadata({
   title: "Car Rental Locations in Dhaka",
   description:
-    "Chauffeur-driven car rental coverage across Gulshan, Banani, Uttara, Dhanmondi, Mirpur, and more. Local pickup notes from Jinia Enterprise.",
+    "Chauffeur-driven car rental across Dhaka: Gulshan, Banani, Motijheel, Old Dhaka, Tejgaon, Mohakhali, Shahbagh, Farmgate, Badda, Uttara, Mirpur, and more. Local pickup notes from Jinia Enterprise.",
   path: "/locations",
 });
 
